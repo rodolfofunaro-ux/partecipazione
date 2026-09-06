@@ -107,13 +107,7 @@ window.onload = function() {
       })
 
       .then(function(data) {
-
-        // Eliminiamo subito il token dal campo
-        document
-          .getElementById("token")
-          .value = "";
-
-
+       
         if (data.ok === true) {
 
           risultato.innerHTML =
@@ -128,10 +122,7 @@ window.onload = function() {
 
       .catch(function(error) {
 
-        document
-          .getElementById("token")
-          .value = "";
-
+    
         risultato.innerHTML =
           "<strong>ERRORE DI COLLEGAMENTO</strong>";
       });
