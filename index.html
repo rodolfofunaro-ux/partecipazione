@@ -125,7 +125,7 @@ font-family: "Parisienne", "Times New Roman", serif;
 
   <script>
 
-    var TOKEN = "";
+   var TOKEN = "";
 
 window.onload = function() {
 
@@ -134,25 +134,54 @@ window.onload = function() {
       window.location.hash.substring(1)
     );
 
-  TOKEN =
+  var tokenDaUrl =
     String(
       parametri.get("t") || ""
     ).trim();
 
-  if (TOKEN) {
+  if (tokenDaUrl) {
 
-    history.replaceState(
-      null,
-      "",
-      window.location.pathname
-    );
+    TOKEN = tokenDaUrl;
+
+    try {
+      sessionStorage.setItem(
+        "tokenPartecipazione",
+        TOKEN
+      );
+
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname +
+        window.location.search
+      );
+
+    } catch (errore) {
+      // Se sessionStorage non è disponibile,
+      // lasciamo il token nell'URL.
+    }
+
+  } else {
+
+    try {
+      TOKEN =
+        String(
+          sessionStorage.getItem(
+            "tokenPartecipazione"
+          ) || ""
+        ).trim();
+
+    } catch (errore) {
+      TOKEN = "";
+    }
 
   }
-if (TOKEN) {
-  verificaToken();
-}
-};
 
+  if (TOKEN) {
+    verificaToken();
+  }
+
+};
     function verificaToken() {
 
       var token = TOKEN;
