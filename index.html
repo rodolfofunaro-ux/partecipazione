@@ -9,302 +9,558 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>Test Token Partecipazione</title>
+  <title>Partecipazione</title>
 
   <style>
-  @font-face {
-  font-family: "Parisienne";
-src: url("fonts/Parisienne-Regular.ttf?v=1") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-  
+
+    /* =========================
+       FONT
+       ========================= */
+
+    @font-face {
+      font-family: "Parisienne";
+      src:
+        url("fonts/Parisienne-Regular.ttf?v=1")
+        format("truetype");
+
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+
+    /* =========================
+       PAGINA
+       ========================= */
+
     body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #faf9f6;
-    font-family: Georgia, "Times New Roman", serif;
-  }
+      margin: 0;
 
-  #risultato {
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-  }
+      min-height: 100vh;
 
-  .scena-busta {
-    width: min(88vw, 440px);
-    height: 290px;
-    margin: auto;
-    position: relative;
-    perspective: 1000px;
-  }
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-  .busta {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 245px;
-    background:
-  linear-gradient(
-    135deg,
-    rgba(255,255,255,0.42) 0%,
-    rgba(255,255,255,0.12) 30%,
-    rgba(238,231,218,0) 58%
-  ),
-  #eee7da;
-    border-radius: 3px;
-box-shadow:
-  18px 24px 34px rgba(70, 58, 42, 0.20),
-  7px 10px 14px rgba(70, 58, 42, 0.10);
-    cursor: pointer;
-    border-top: 1px solid rgba(255,255,255,0.75);
-border-left: 1px solid rgba(255,255,255,0.55);
-  }
+      background: #faf9f6;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+    }
+
+
+    #risultato {
+      width: 100%;
+
+      padding: 20px;
+
+      box-sizing: border-box;
+    }
+
+
+    /* =========================
+       SCENA BUSTA
+       ========================= */
+
+    .scena-busta {
+      position: relative;
+
+      width: min(88vw, 440px);
+      height: 290px;
+
+      margin: auto;
+
+      perspective: 1000px;
+    }
+
+
+    /* =========================
+       BUSTA
+       ========================= */
+
+    .busta {
+      position: absolute;
+
+      left: 0;
+      bottom: 0;
+
+      width: 100%;
+      height: 245px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,0.42) 0%,
+          rgba(255,255,255,0.12) 30%,
+          rgba(238,231,218,0) 58%
+        ),
+        #eee7da;
+
+      border-radius: 3px;
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.75);
+
+      border-left:
+        1px solid
+        rgba(255,255,255,0.55);
+
+      box-shadow:
+        18px 24px 34px
+        rgba(70,58,42,0.20),
+
+        7px 10px 14px
+        rgba(70,58,42,0.10);
+
+      cursor: pointer;
+
+      overflow: visible;
+    }
+
+
+    /* Texture carta */
+
     .busta::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  border-radius: 3px;
+      content: "";
 
-background-image:
-  repeating-radial-gradient(
-    circle at 0 0,
-    rgba(90, 75, 55, 0.08) 0,
-    rgba(90, 75, 55, 0.08) 0.7px,
-    transparent 0.9px,
-    transparent 2.6px
-  );
+      position: absolute;
+      inset: 0;
 
-opacity: 0.65;
-}
+      pointer-events: none;
 
-  .aletta {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 135px;
-    background: #f8f3e9;
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
-    transform-origin: top center;
-    transition: transform 1s ease;
-    z-index: 3;
-  }
+      z-index: 1;
 
- .sigillo {
-  position: absolute;
-  left: 50%;
-  top: 108px;
-  transform: translateX(-50%) rotate(-2deg);
+      border-radius: 3px;
 
-  width: 54px;
-  height: 52px;
+      background-image:
+        repeating-radial-gradient(
+          circle at 0 0,
 
-border-radius:
-  58% 42% 63% 37% /
-  46% 61% 39% 54%;
+          rgba(90,75,55,0.08) 0,
 
-  background:
-    radial-gradient(
-      circle at 32% 28%,
-      #a76458 0%,
-      #87483f 38%,
-      #70372f 70%,
-      #5d2d28 100%
-    );
+          rgba(90,75,55,0.08) 0.7px,
 
-  box-shadow:
-    4px 6px 9px rgba(60, 35, 30, 0.30),
-    inset 2px 2px 3px rgba(255,255,255,0.13),
-    inset -3px -3px 4px rgba(60,20,20,0.22);
+          transparent 0.9px,
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+          transparent 2.6px
+        );
 
-  z-index: 5;
+      opacity: 0.65;
+    }
 
-  color: rgba(245,220,200,0.78);
-  font-size: 20px;
 
-  border: 1px solid rgba(80,35,30,0.35);
-}
+    /* =========================
+       ALETTA
+       ========================= */
+
+    .aletta {
+      position: absolute;
+
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 135px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,0.30),
+          rgba(248,243,233,0.95)
+        );
+
+      clip-path:
+        polygon(
+          0 0,
+          100% 0,
+          50% 100%
+        );
+
+      transform-origin:
+        top center;
+
+      transition:
+        transform 1s ease;
+
+      z-index: 3;
+    }
+
+
+    /* =========================
+       SIGILLO CERALACCA
+       ========================= */
+
+    .sigillo {
+      position: absolute;
+
+      left: 50%;
+      top: 108px;
+
+      transform:
+        translateX(-50%)
+        rotate(-2deg);
+
+      width: 54px;
+      height: 52px;
+
+      border-radius:
+        58% 42% 63% 37% /
+        46% 61% 39% 54%;
+
+      background:
+        radial-gradient(
+          circle at 32% 28%,
+
+          #a76458 0%,
+
+          #87483f 38%,
+
+          #70372f 70%,
+
+          #5d2d28 100%
+        );
+
+      border:
+        1px solid
+        rgba(80,35,30,0.35);
+
+      box-shadow:
+        4px 6px 9px
+        rgba(60,35,30,0.30),
+
+        inset 2px 2px 3px
+        rgba(255,255,255,0.13),
+
+        inset -3px -3px 4px
+        rgba(60,20,20,0.22);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 5;
+    }
+
+
+    /* Bordo irregolare della ceralacca */
 
     .sigillo::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
+      content: "";
 
-  border-radius:
-    41% 59% 48% 52% /
-    57% 43% 62% 38%;
+      position: absolute;
 
-  background: #7a3e36;
+      inset: -3px;
 
-  z-index: -1;
+      border-radius:
+        41% 59% 48% 52% /
+        57% 43% 62% 38%;
 
-  box-shadow:
-    2px 3px 4px rgba(55, 25, 22, 0.20);
-}
+      background:
+        #7a3e36;
 
-    .sigillo::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
+      z-index: -1;
 
-  border-radius:
-    52% 48% 54% 46% /
-    47% 53% 48% 52%;
+      box-shadow:
+        2px 3px 4px
+        rgba(55,25,22,0.20);
+    }
 
-  border: 1px solid rgba(255,225,205,0.24);
 
-  box-shadow:
-    inset 1px 1px 2px rgba(255,255,255,0.12),
-    inset -1px -1px 2px rgba(70,20,20,0.18);
-}
-.sigillo::after {
-  content: "";
-  position: absolute;
+    /* Impronta interna */
 
-  width: 44px;
-  height: 42px;
+    .sigillo::after {
+      content: "";
 
-  border-radius:
-    46% 54% 49% 51% /
-    54% 46% 52% 48%;
+      position: absolute;
 
-  box-shadow:
-    0 0 0 1px rgba(80,30,25,0.16);
-}
-.sigillo span {
-  transform: translateY(-1px);
-}
-  .fronte-busta {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding-top: 78px;
-    box-sizing: border-box;
-  }
+      width: 43px;
+      height: 41px;
 
-  .per {
-    font-size: 15px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    color: #8a7962;
-  }
+      border-radius:
+        51% 49% 55% 45% /
+        46% 54% 48% 52%;
 
-.nome-invitato {
-font-family: "Parisienne", "Times New Roman", serif;
-    font-size: clamp(28px, 7vw, 38px);
-    font-weight: 400;
-    line-height: 1.15;
-    color: #493f33;
-    padding: 0 24px;
-}
-  }
+      border:
+        1px solid
+        rgba(255,225,205,0.20);
 
-  .tocca {
-    position: absolute;
-    bottom: -38px;
-    width: 100%;
-    text-align: center;
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    color: #8a8175;
-  }
+      box-shadow:
+        inset 1px 1px 2px
+        rgba(255,255,255,0.10),
 
-  .busta.aperta .aletta {
-    transform: rotateX(180deg);
-  }
-</style>
+        inset -1px -1px 2px
+        rgba(65,20,18,0.22);
+
+      z-index: 1;
+    }
+
+
+    /* Iniziale nel sigillo */
+
+    .sigillo span {
+      position: relative;
+
+      z-index: 2;
+
+      font-family:
+        "Parisienne",
+        "Times New Roman",
+        serif;
+
+      font-size: 28px;
+      font-weight: 400;
+
+      color:
+        rgba(232,190,175,0.88);
+
+      text-shadow:
+        1px 1px 1px
+        rgba(255,255,255,0.12),
+
+        -1px -1px 1px
+        rgba(55,20,18,0.40);
+
+      transform:
+        translateY(-1px);
+    }
+
+
+    /* =========================
+       TESTO BUSTA
+       ========================= */
+
+    .fronte-busta {
+      position: absolute;
+
+      inset: 0;
+
+      z-index: 2;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
+
+      padding-top: 82px;
+
+      box-sizing: border-box;
+    }
+
+
+    .per {
+      font-size: 13px;
+
+      letter-spacing: 0.18em;
+
+      text-transform: uppercase;
+
+      margin-bottom: 8px;
+
+      color: #8a7962;
+    }
+
+
+    .nome-invitato {
+      font-family:
+        "Parisienne",
+        "Times New Roman",
+        serif;
+
+      font-size:
+        clamp(
+          29px,
+          7vw,
+          40px
+        );
+
+      font-weight: 400;
+
+      line-height: 1.15;
+
+      color: #493f33;
+
+      padding:
+        0 24px;
+    }
+
+
+    .tocca {
+      position: absolute;
+
+      bottom: -38px;
+
+      width: 100%;
+
+      text-align: center;
+
+      font-size: 13px;
+
+      letter-spacing: 0.08em;
+
+      color: #8a8175;
+    }
+
+
+    /* =========================
+       FUTURA APERTURA
+       ========================= */
+
+    .busta.aperta .aletta {
+      transform:
+        rotateX(180deg);
+    }
+
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 480px) {
+
+      #risultato {
+        padding:
+          14px;
+      }
+
+      .scena-busta {
+        width:
+          min(92vw, 420px);
+      }
+
+      .tocca {
+        bottom:
+          -34px;
+      }
+
+    }
+
+  </style>
 </head>
+
 
 <body>
 
-  <p id="risultato"></p>
+  <div id="risultato"></div>
 
 
   <script>
 
-   var TOKEN = "";
+    /* =========================
+       TOKEN
+       ========================= */
 
-window.onload = function() {
+    var TOKEN = "";
 
-  var parametri =
-    new URLSearchParams(
-      window.location.hash.substring(1)
-    );
 
-  var tokenDaUrl =
-    String(
-      parametri.get("t") || ""
-    ).trim();
+    window.onload = function() {
 
-  if (tokenDaUrl) {
+      var parametri =
+        new URLSearchParams(
+          window.location.hash.substring(1)
+        );
 
-    TOKEN = tokenDaUrl;
 
-    try {
-      sessionStorage.setItem(
-        "tokenPartecipazione",
-        TOKEN
-      );
-
-      history.replaceState(
-        null,
-        "",
-        window.location.pathname +
-        window.location.search
-      );
-
-    } catch (errore) {
-      // Se sessionStorage non è disponibile,
-      // lasciamo il token nell'URL.
-    }
-
-  } else {
-
-    try {
-      TOKEN =
+      var tokenDaUrl =
         String(
-          sessionStorage.getItem(
-            "tokenPartecipazione"
-          ) || ""
+          parametri.get("t") || ""
         ).trim();
 
-    } catch (errore) {
-      TOKEN = "";
-    }
 
-  }
+      /*
+        Se il token arriva dal link:
+        1. lo memorizziamo
+        2. lo togliamo dall'indirizzo
+      */
 
-  if (TOKEN) {
-    verificaToken();
-  }
+      if (tokenDaUrl) {
 
-};
+        TOKEN =
+          tokenDaUrl;
+
+
+        try {
+
+          sessionStorage.setItem(
+            "tokenPartecipazione",
+            TOKEN
+          );
+
+
+          history.replaceState(
+            null,
+            "",
+            window.location.pathname +
+            window.location.search
+          );
+
+        }
+
+        catch (errore) {
+
+          /*
+            Se sessionStorage non funziona,
+            il token resta nel fragment URL.
+          */
+
+        }
+
+      }
+
+
+      /*
+        Se abbiamo fatto refresh,
+        recuperiamo il token dalla sessione.
+      */
+
+      else {
+
+        try {
+
+          TOKEN =
+            String(
+              sessionStorage.getItem(
+                "tokenPartecipazione"
+              ) || ""
+            ).trim();
+
+        }
+
+        catch (errore) {
+
+          TOKEN = "";
+
+        }
+
+      }
+
+
+      if (TOKEN) {
+
+        verificaToken();
+
+      }
+
+    };
+
+
+    /* =========================
+       VERIFICA TOKEN
+       ========================= */
+
     function verificaToken() {
 
-      var token = TOKEN;
-
       var risultato =
-        document
-          .getElementById("risultato");
+        document.getElementById(
+          "risultato"
+        );
+
 
       risultato.textContent =
         "Verifica in corso...";
@@ -313,89 +569,209 @@ window.onload = function() {
       fetch(
         "https://partecipazione-test.rodolfo-funaro.workers.dev/",
         {
-          method: "POST",
+
+          method:
+            "POST",
 
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+              "application/json"
           },
 
-          body: JSON.stringify({
-            token: token
-          }),
+          body:
+            JSON.stringify({
+              token: TOKEN
+            }),
 
-          cache: "no-store"
+          cache:
+            "no-store"
+
         }
       )
 
-      .then(function(response) {
 
-        if (!response.ok) {
-          throw new Error("Errore HTTP");
+      .then(
+        function(response) {
+
+          if (!response.ok) {
+
+            throw new Error(
+              "Errore HTTP"
+            );
+
+          }
+
+          return response.json();
+
         }
+      )
 
-        return response.json();
-      })
 
-      .then(function(data) {
-       
-if (data.ok === true) {
+      .then(
+        function(data) {
 
-  risultato.innerHTML =
-    '<div class="scena-busta">' +
-      '<div id="bustaTest" class="busta" onclick="apriBusta()">' +
-  '<div class="aletta"></div>' +
-  '<div class="sigillo"><span>A</span></div>' +
-  '<div class="fronte-busta">' +
-          '<div class="per">Per</div>' +
-          '<div class="nome-invitato">' +
-            (data.intestazione || "") +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="tocca">TOCCA PER APRIRE</div>' +
-    '</div>';
-}
-        else {
+
+          /* TOKEN VALIDO */
+
+          if (data.ok === true) {
+
+            mostraBusta(
+              data.intestazione || ""
+            );
+
+          }
+
+
+          /* TOKEN NON VALIDO */
+
+          else {
+
+            risultato.innerHTML =
+              "<strong>TOKEN NON VALIDO</strong>";
+
+          }
+
+        }
+      )
+
+
+      .catch(
+        function(error) {
 
           risultato.innerHTML =
-            "<strong>TOKEN NON VALIDO</strong>";
+            "<strong>ERRORE DI COLLEGAMENTO</strong>";
+
         }
-      })
+      );
 
-      .catch(function(error) {
-
-    
-        risultato.innerHTML =
-          "<strong>ERRORE DI COLLEGAMENTO</strong>";
-      });
     }
-function apriBusta() {
-  var busta = document.getElementById("bustaTest");
 
-  if (!busta) return;
 
-  busta.innerHTML =
-    "<div style='font-size:26px;'>BUSTA APERTA</div>";
+    /* =========================
+       CREA BUSTA
+       ========================= */
 
-  busta.style.cursor = "default";
-}
-    .sigillo span {
-  position: relative;
-  z-index: 2;
+    function mostraBusta(
+      intestazione
+    ) {
 
-  font-family: "Parisienne", "Times New Roman", serif;
-  font-size: 27px;
-  font-weight: 400;
+      var risultato =
+        document.getElementById(
+          "risultato"
+        );
 
-  color: rgba(120, 58, 50, 0.88);
 
-  text-shadow:
-    1px 1px 1px rgba(255,255,255,0.18),
-    -1px -1px 1px rgba(55,20,18,0.28);
+      risultato.innerHTML =
 
-  transform: translateY(-1px);
-}
+        '<div class="scena-busta">' +
+
+          '<div ' +
+            'id="bustaTest" ' +
+            'class="busta" ' +
+            'onclick="apriBusta()">' +
+
+            '<div class="aletta"></div>' +
+
+            '<div class="sigillo">' +
+              '<span>A</span>' +
+            '</div>' +
+
+            '<div class="fronte-busta">' +
+
+              '<div class="per">' +
+                'Per' +
+              '</div>' +
+
+              '<div class="nome-invitato">' +
+                escapeHtml(
+                  intestazione
+                ) +
+              '</div>' +
+
+            '</div>' +
+
+          '</div>' +
+
+          '<div class="tocca">' +
+            'TOCCA PER APRIRE' +
+          '</div>' +
+
+        '</div>';
+
+    }
+
+
+    /* =========================
+       APERTURA - TEMPORANEA
+       ========================= */
+
+    function apriBusta() {
+
+      var busta =
+        document.getElementById(
+          "bustaTest"
+        );
+
+
+      if (!busta) {
+
+        return;
+
+      }
+
+
+      /*
+        Per ora apriamo solo l'aletta.
+        Nel prossimo passaggio
+        inseriremo il cartoncino.
+      */
+
+      busta.classList.add(
+        "aperta"
+      );
+
+    }
+
+
+    /* =========================
+       SICUREZZA TESTO
+       ========================= */
+
+    function escapeHtml(testo) {
+
+      return String(
+        testo || ""
+      )
+
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+    }
+
   </script>
 
 </body>
+
 </html>
