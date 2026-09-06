@@ -1,13 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Partecipazione</title>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>Test Partecipazione</title>
 </head>
 
 <body>
-  <h1>Test partecipazione</h1>
-  <p>Se vedi questa pagina, GitHub Pages funziona.</p>
+
+  <h1>Test collegamento completo</h1>
+
+  <p id="risultato">
+    Collegamento in corso...
+  </p>
+
+  <script>
+    var endpoint =
+      "https://partecipazione-test.rodolfo-funaro.workers.dev/";
+
+    fetch(endpoint, {
+      method: "GET",
+      cache: "no-store"
+    })
+    .then(function(response) {
+
+      if (!response.ok) {
+        throw new Error("Errore HTTP");
+      }
+
+      return response.json();
+
+    })
+    .then(function(data) {
+
+      if (
+        data.ok === true &&
+        data.messaggio === "COLLEGAMENTO OK"
+      ) {
+
+        document.getElementById("risultato").innerHTML =
+          "<strong>COLLEGAMENTO COMPLETO OK</strong>";
+
+      } else {
+
+        document.getElementById("risultato").textContent =
+          "RISPOSTA NON VALIDA";
+      }
+
+    })
+    .catch(function(error) {
+
+      document.getElementById("risultato").textContent =
+        "COLLEGAMENTO FALLITO";
+    });
+  </script>
+
 </body>
 </html>
