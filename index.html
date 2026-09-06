@@ -87,10 +87,18 @@ if (TOKEN) {
 
       .then(function(data) {
        
-  if (data.ok === true) {
+ if (data.ok === true) {
   risultato.innerHTML =
-    "<strong>TOKEN VALIDO</strong><br>" +
-    (data.intestazione || "");
+    '<div id="bustaTest" onclick="apriBusta()" ' +
+    'style="max-width:420px;margin:40px auto;padding:50px 20px;' +
+    'border:1px solid #bbb;text-align:center;cursor:pointer;' +
+    'font-family:Georgia,serif;">' +
+      '<div style="font-size:18px;margin-bottom:15px;">Per</div>' +
+      '<div style="font-size:28px;font-weight:bold;">' +
+        (data.intestazione || "") +
+      '</div>' +
+      '<div style="margin-top:30px;font-size:14px;">Tocca per aprire</div>' +
+    '</div>';
 }
         else {
 
@@ -106,7 +114,17 @@ if (TOKEN) {
           "<strong>ERRORE DI COLLEGAMENTO</strong>";
       });
     }
+function apriBusta() {
+  var busta = document.getElementById("bustaTest");
 
+  if (!busta) return;
+
+  busta.innerHTML =
+    "<div style='font-size:26px;'>BUSTA APERTA</div>";
+
+  busta.style.cursor = "default";
+}
+    
   </script>
 
 </body>
