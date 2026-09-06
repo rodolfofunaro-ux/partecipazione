@@ -1,60 +1,120 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
 
-  <title>Test Partecipazione</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Test Token Partecipazione</title>
 </head>
 
 <body>
 
-  <h1>Test collegamento completo</h1>
+  <h1>Test sicurezza token</h1>
 
-  <p id="risultato">
-    Collegamento in corso...
+  <p>
+    Incolla qui sotto il token di prova.
   </p>
 
+  <input
+    id="token"
+    type="password"
+    autocomplete="off"
+    style="width:90%;max-width:600px;padding:10px;"
+  >
+
+  <br><br>
+
+  <button
+    type="button"
+    onclick="verificaToken()"
+    style="padding:10px 20px;"
+  >
+    VERIFICA TOKEN
+  </button>
+
+  <p id="risultato"></p>
+
+
   <script>
-    var endpoint =
-      "https://partecipazione-test.rodolfo-funaro.workers.dev/";
 
-    fetch(endpoint, {
-      method: "GET",
-      cache: "no-store"
-    })
-    .then(function(response) {
+    function verificaToken() {
 
-      if (!response.ok) {
-        throw new Error("Errore HTTP");
-      }
+      var token =
+        document
+          .getElementById("token")
+          .value
+          .trim();
 
-      return response.json();
+      var risultato =
+        document
+          .getElementById("risultato");
 
-    })
-    .then(function(data) {
+      risultato.textContent =
+        "Verifica in corso...";
 
-      if (
-        data.ok === true &&
-        data.messaggio === "COLLEGAMENTO OK"
-      ) {
 
-        document.getElementById("risultato").innerHTML =
-          "<strong>COLLEGAMENTO COMPLETO OK</strong>";
+      fetch(
+        "https://partecipazione-test.rodolfo-funaro.workers.dev/",
+        {
+          method: "POST",
 
-      } else {
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-        document.getElementById("risultato").textContent =
-          "RISPOSTA NON VALIDA";
-      }
+          body: JSON.stringify({
+            token: token
+          }),
 
-    })
-    .catch(function(error) {
+          cache: "no-store"
+        }
+      )
 
-      document.getElementById("risultato").textContent =
-        "COLLEGAMENTO FALLITO";
-    });
+      .then(function(response) {
+
+        if (!response.ok) {
+          throw new Error("Errore HTTP");
+        }
+
+        return response.json();
+      })
+
+      .then(function(data) {
+
+        // Eliminiamo subito il token dal campo
+        document
+          .getElementById("token")
+          .value = "";
+
+
+        if (data.ok === true) {
+
+          risultato.innerHTML =
+            "<strong>TOKEN VALIDO</strong>";
+
+        } else {
+
+          risultato.innerHTML =
+            "<strong>TOKEN NON VALIDO</strong>";
+        }
+      })
+
+      .catch(function(error) {
+
+        document
+          .getElementById("token")
+          .value = "";
+
+        risultato.innerHTML =
+          "<strong>ERRORE DI COLLEGAMENTO</strong>";
+      });
+    }
+
   </script>
 
 </body>
