@@ -99,29 +99,32 @@ opacity: 0.65;
     z-index: 3;
   }
 
-    .sigillo {
+ .sigillo {
   position: absolute;
   left: 50%;
-  top: 111px;
-  transform: translateX(-50%);
+  top: 108px;
+  transform: translateX(-50%) rotate(-2deg);
 
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 54px;
+  height: 52px;
+
+  border-radius:
+    48% 52% 46% 54% /
+    52% 47% 53% 48%;
 
   background:
     radial-gradient(
       circle at 32% 28%,
-      #fffaf0 0%,
-      #eadfc8 48%,
-      #cdbb99 100%
+      #a76458 0%,
+      #87483f 38%,
+      #70372f 70%,
+      #5d2d28 100%
     );
 
-  border: 1px solid rgba(125, 99, 65, 0.30);
-
   box-shadow:
-    4px 6px 9px rgba(70, 58, 42, 0.20),
-    inset 1px 1px 2px rgba(255,255,255,0.85);
+    4px 6px 9px rgba(60, 35, 30, 0.30),
+    inset 2px 2px 3px rgba(255,255,255,0.13),
+    inset -3px -3px 4px rgba(60,20,20,0.22);
 
   display: flex;
   align-items: center;
@@ -129,10 +132,41 @@ opacity: 0.65;
 
   z-index: 5;
 
-  color: #8a7251;
-  font-size: 18px;
+  color: rgba(245,220,200,0.78);
+  font-size: 20px;
+
+  border: 1px solid rgba(80,35,30,0.35);
 }
 
+    .sigillo::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+
+  border-radius:
+    52% 48% 54% 46% /
+    47% 53% 48% 52%;
+
+  border: 1px solid rgba(255,225,205,0.24);
+
+  box-shadow:
+    inset 1px 1px 2px rgba(255,255,255,0.12),
+    inset -1px -1px 2px rgba(70,20,20,0.18);
+}
+.sigillo::after {
+  content: "";
+  position: absolute;
+
+  width: 44px;
+  height: 42px;
+
+  border-radius:
+    46% 54% 49% 51% /
+    54% 46% 52% 48%;
+
+  box-shadow:
+    0 0 0 1px rgba(80,30,25,0.16);
+}
 .sigillo span {
   transform: translateY(-1px);
 }
