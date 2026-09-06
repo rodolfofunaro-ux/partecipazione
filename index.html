@@ -344,7 +344,7 @@ if (data.ok === true) {
     '<div class="scena-busta">' +
       '<div id="bustaTest" class="busta" onclick="apriBusta()">' +
   '<div class="aletta"></div>' +
-  '<div class="sigillo"><span>✦</span></div>' +
+  '<div class="sigillo"><span>A</span></div>' +
   '<div class="fronte-busta">' +
           '<div class="per">Per</div>' +
           '<div class="nome-invitato">' +
@@ -379,7 +379,22 @@ function apriBusta() {
 
   busta.style.cursor = "default";
 }
-    
+    .sigillo span {
+  position: relative;
+  z-index: 2;
+
+  font-family: "Parisienne", "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 400;
+
+  color: rgba(120, 58, 50, 0.88);
+
+  text-shadow:
+    1px 1px 1px rgba(255,255,255,0.18),
+    -1px -1px 1px rgba(55,20,18,0.28);
+
+  transform: translateY(-1px);
+}
   </script>
 
 </body>
