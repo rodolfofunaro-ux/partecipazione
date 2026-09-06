@@ -181,17 +181,20 @@ if (TOKEN) {
 
       .then(function(data) {
        
- if (data.ok === true) {
+if (data.ok === true) {
+
   risultato.innerHTML =
-    '<div id="bustaTest" onclick="apriBusta()" ' +
-    'style="max-width:420px;margin:40px auto;padding:50px 20px;' +
-    'border:1px solid #bbb;text-align:center;cursor:pointer;' +
-    'font-family:Georgia,serif;">' +
-      '<div style="font-size:18px;margin-bottom:15px;">Per</div>' +
-      '<div style="font-size:28px;font-weight:bold;">' +
-        (data.intestazione || "") +
+    '<div class="scena-busta">' +
+      '<div id="bustaTest" class="busta" onclick="apriBusta()">' +
+        '<div class="aletta"></div>' +
+        '<div class="fronte-busta">' +
+          '<div class="per">Per</div>' +
+          '<div class="nome-invitato">' +
+            (data.intestazione || "") +
+          '</div>' +
+        '</div>' +
       '</div>' +
-      '<div style="margin-top:30px;font-size:14px;">Tocca per aprire</div>' +
+      '<div class="tocca">TOCCA PER APRIRE</div>' +
     '</div>';
 }
         else {
