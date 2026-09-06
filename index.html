@@ -42,6 +42,32 @@
 
   <script>
 
+    var TOKEN = "";
+
+window.onload = function() {
+
+  var parametri =
+    new URLSearchParams(
+      window.location.hash.substring(1)
+    );
+
+  TOKEN =
+    String(
+      parametri.get("t") || ""
+    ).trim();
+
+  if (TOKEN) {
+
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname
+    );
+
+  }
+
+};
+
     function verificaToken() {
 
       var token =
