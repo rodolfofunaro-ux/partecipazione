@@ -87,12 +87,12 @@ if (TOKEN) {
 
       .then(function(data) {
        
-        if (data.ok === true) {
-
-          risultato.innerHTML =
-            "<strong>TOKEN VALIDO</strong>";
-
-        } else {
+     if (data.ok === true) {
+  risultato.innerHTML =
+    "<strong>TOKEN VALIDO</strong><br>" +
+    (data.intestazione || "");
+}  
+        else {
 
           risultato.innerHTML =
             "<strong>TOKEN NON VALIDO</strong>";
