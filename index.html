@@ -99,6 +99,43 @@ opacity: 0.65;
     z-index: 3;
   }
 
+    .sigillo {
+  position: absolute;
+  left: 50%;
+  top: 111px;
+  transform: translateX(-50%);
+
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 32% 28%,
+      #fffaf0 0%,
+      #eadfc8 48%,
+      #cdbb99 100%
+    );
+
+  border: 1px solid rgba(125, 99, 65, 0.30);
+
+  box-shadow:
+    4px 6px 9px rgba(70, 58, 42, 0.20),
+    inset 1px 1px 2px rgba(255,255,255,0.85);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 5;
+
+  color: #8a7251;
+  font-size: 18px;
+}
+
+.sigillo span {
+  transform: translateY(-1px);
+}
   .fronte-busta {
     position: absolute;
     inset: 0;
@@ -108,7 +145,7 @@ opacity: 0.65;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding-top: 38px;
+    padding-top: 78px;
     box-sizing: border-box;
   }
 
@@ -255,8 +292,9 @@ if (data.ok === true) {
   risultato.innerHTML =
     '<div class="scena-busta">' +
       '<div id="bustaTest" class="busta" onclick="apriBusta()">' +
-        '<div class="aletta"></div>' +
-        '<div class="fronte-busta">' +
+        ''<div class="aletta"></div>' +
+'<div class="sigillo"><span>✦</span></div>' +
+'<div class="fronte-busta">' +
           '<div class="per">Per</div>' +
           '<div class="nome-invitato">' +
             (data.intestazione || "") +
