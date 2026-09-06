@@ -108,9 +108,9 @@ opacity: 0.65;
   width: 54px;
   height: 52px;
 
-  border-radius:
-    48% 52% 46% 54% /
-    52% 47% 53% 48%;
+border-radius:
+  58% 42% 63% 37% /
+  46% 61% 39% 54%;
 
   background:
     radial-gradient(
@@ -136,6 +136,23 @@ opacity: 0.65;
   font-size: 20px;
 
   border: 1px solid rgba(80,35,30,0.35);
+}
+
+    .sigillo::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+
+  border-radius:
+    41% 59% 48% 52% /
+    57% 43% 62% 38%;
+
+  background: #7a3e36;
+
+  z-index: -1;
+
+  box-shadow:
+    2px 3px 4px rgba(55, 25, 22, 0.20);
 }
 
     .sigillo::before {
