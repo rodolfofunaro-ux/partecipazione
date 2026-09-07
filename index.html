@@ -186,7 +186,7 @@
       transition:
         transform 1s ease;
 
-      z-index: 3;
+      z-index: 6;
     }
 
 
@@ -513,7 +513,8 @@
        FUTURA APERTURA
        ========================= */
 
- .busta.aperta .aletta {
+/* aletta aperta — VERSIONE 1.2 — scende dietro dopo la rotazione */
+.busta.aperta .aletta {
   background:
     linear-gradient(
       135deg,
@@ -522,10 +523,26 @@
       #cfc0aa 100%
     );
 
-  filter: none;
-
   animation:
-    aperturaAletta 1s ease forwards;
+    apriAletta 1s ease forwards;
+}
+    /* apriAletta — VERSIONE 1.0 */
+@keyframes apriAletta {
+
+  0% {
+    transform: rotateX(0deg);
+    z-index: 6;
+  }
+
+  99% {
+    transform: rotateX(180deg);
+    z-index: 6;
+  }
+
+  100% {
+    transform: rotateX(180deg);
+    z-index: 3;
+  }
 }
     @keyframes aperturaAletta {
 
