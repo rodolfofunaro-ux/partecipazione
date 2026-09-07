@@ -653,25 +653,36 @@ height: 285px;
 
     }
 
-    /* Pulsante musica — VERSIONE 1.1 */
+ /* Pulsante musica — VERSIONE 1.2 — icona + testo */
 #btnMusica {
   position: fixed;
   right: 16px;
   bottom: 16px;
   z-index: 5000;
 
-  width: 44px;
-  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 12px;
 
   border: 1px solid rgba(0,0,0,0.15);
-  border-radius: 50%;
+  border-radius: 20px;
+
   background: rgba(255,255,255,0.88);
 
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
+  color: #555;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 11px;
+  letter-spacing: 0.7px;
 
+  cursor: pointer;
   box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
+
+#iconaMusica {
+  font-size: 17px;
+  line-height: 1;
 }
   </style>
 </head>
@@ -686,13 +697,14 @@ height: 285px;
     loop>
   </audio>
 
-  <!-- Controllo musica — VERSIONE 1.0 -->
+<!-- Controllo musica — VERSIONE 1.1 -->
 <button
   id="btnMusica"
   type="button"
   onclick="toggleMusica()"
-  aria-label="Attiva o disattiva la musica">
-  🔊
+  aria-label="Ferma o riattiva la musica">
+  <span id="iconaMusica">🔊</span>
+  <span id="testoMusica">AUDIO OFF</span>
 </button>
 
   <div id="risultato"></div>
@@ -1005,31 +1017,39 @@ height: 285px;
     /* =========================
        APERTURA - TEMPORANEA
        ========================= */
-// toggleMusica() — VERSIONE 1.0 — pausa/riprendi musica
+// toggleMusica() — VERSIONE 1.1 — AUDIO OFF / AUDIO ON
 function toggleMusica() {
 
   var musica =
     document.getElementById("musicaFondo");
 
-  var bottone =
-    document.getElementById("btnMusica");
+  var icona =
+    document.getElementById("iconaMusica");
 
-  if (!musica || !bottone) {
+  var testo =
+    document.getElementById("testoMusica");
+
+  if (!musica || !icona || !testo) {
     return;
   }
 
   if (musica.paused) {
 
     musica.play().then(function() {
-      bottone.textContent = "🔊";
+
+      icona.textContent = "🔊";
+      testo.textContent = "AUDIO OFF";
+
     }).catch(function() {
-      // Nessuna interferenza con il resto della pagina
+      // Non interferisce con il resto della pagina.
     });
 
   } else {
 
     musica.pause();
-    bottone.textContent = "🔇";
+
+    icona.textContent = "🔇";
+    testo.textContent = "AUDIO ON";
 
   }
 }
