@@ -481,17 +481,16 @@
       color: #8a8175;
     }
 
- .busta.cartoncino-finale .cartoncino {
-  z-index: 10;
+.busta.cartoncino-finale .cartoncino {
+  z-index: 20;
 
   transform:
     translate3d(0, -285px, 0)
-    scale(1.42);
+    scale(var(--scala-finale, 1.42));
 
   transition:
-    transform 1.15s
-    cubic-bezier(0.22, 0.61, 0.36, 1),
-    z-index 0s;
+    transform 1.2s
+    cubic-bezier(0.22, 0.61, 0.36, 1);
 
   transition-delay: 0s;
 }
@@ -824,26 +823,47 @@
 function apriBusta() {
 
   var busta =
-    document.getElementById(
-      "bustaTest"
-    );
+    document.getElementById("bustaTest");
 
   if (!busta) {
     return;
   }
 
-  busta.classList.add(
-    "aperta"
-  );
+  busta.classList.add("aperta");
 
-  setTimeout(
-    function() {
-      busta.classList.add(
-        "cartoncino-finale"
+  setTimeout(function() {
+
+    var cartoncino =
+      busta.querySelector(".cartoncino");
+
+    if (!cartoncino) {
+      return;
+    }
+
+    /* larghezza finale:
+       quasi tutto lo spazio disponibile */
+    var larghezzaAttuale =
+      cartoncino.getBoundingClientRect().width;
+
+    var larghezzaFinale =
+      Math.min(
+        window.innerWidth * 0.94,
+        1100
       );
-    },
-    3100
-  );
+
+    var scala =
+      larghezzaFinale / larghezzaAttuale;
+
+    cartoncino.style.setProperty(
+      "--scala-finale",
+      scala
+    );
+
+    busta.classList.add(
+      "cartoncino-finale"
+    );
+
+  }, 3100);
 }
     /* =========================
        SICUREZZA TESTO
