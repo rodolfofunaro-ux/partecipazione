@@ -658,6 +658,13 @@ height: 285px;
 
 
 <body>
+    <!-- Musica di fondo — VERSIONE 1.0 -->
+  <audio
+    id="musicaFondo"
+    src="musica_fondo.mp3"
+    preload="auto"
+    loop>
+  </audio>
 
   <div id="risultato"></div>
 
@@ -970,7 +977,7 @@ height: 285px;
        APERTURA - TEMPORANEA
        ========================= */
 
-// apriBusta() — VERSIONE 1.6 — sincronizzata con apertura completa dell'aletta
+// apriBusta() — VERSIONE 1.7 — avvio musica + animazione invariata
 function apriBusta() {
 
   var busta =
@@ -980,6 +987,36 @@ function apriBusta() {
     return;
   }
 
+  /*
+    MUSICA DI SOTTOFONDO
+    Parte sul gesto dell'utente che apre la busta.
+  */
+  var musica =
+    document.getElementById("musicaFondo");
+
+  if (musica) {
+
+    musica.volume = 0.55;
+
+    var avvio =
+      musica.play();
+
+    if (avvio !== undefined) {
+
+      avvio.catch(function() {
+        /*
+          Se il browser impedisce l'avvio,
+          l'animazione continua normalmente.
+        */
+      });
+
+    }
+  }
+
+  /*
+    DA QUI IN POI:
+    ANIMAZIONE ORIGINALE INVARIATA.
+  */
   busta.classList.add("aperta");
 
   /*
