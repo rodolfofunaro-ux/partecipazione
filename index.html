@@ -485,8 +485,12 @@
   z-index: 20;
 
   transform:
-    translate3d(0, -285px, 0)
-    scale(var(--scala-finale, 1.42));
+    translate3d(
+      var(--sposta-x, 0px),
+      var(--sposta-y, -255px),
+      0
+    )
+    scale(var(--scala-finale, 1));
 
   transition:
     transform 1.2s
@@ -494,8 +498,6 @@
 
   transition-delay: 0s;
 }
-
-
     /* =========================
        FUTURA APERTURA
        ========================= */
@@ -840,10 +842,8 @@ function apriBusta() {
       return;
     }
 
-    /* larghezza finale:
-       quasi tutto lo spazio disponibile */
-    var larghezzaAttuale =
-      cartoncino.getBoundingClientRect().width;
+    var rect =
+      cartoncino.getBoundingClientRect();
 
     var larghezzaFinale =
       Math.min(
@@ -852,11 +852,45 @@ function apriBusta() {
       );
 
     var scala =
-      larghezzaFinale / larghezzaAttuale;
+      larghezzaFinale / rect.width;
+
+    /*
+      Centro attuale del cartoncino
+    */
+    var centroX =
+      rect.left + rect.width / 2;
+
+    var centroY =
+      rect.top + rect.height / 2;
+
+    /*
+      Centro della finestra
+    */
+    var targetX =
+      window.innerWidth / 2;
+
+    var targetY =
+      window.innerHeight / 2;
+
+    var spostaX =
+      targetX - centroX;
+
+    var spostaY =
+      targetY - centroY;
 
     cartoncino.style.setProperty(
       "--scala-finale",
       scala
+    );
+
+    cartoncino.style.setProperty(
+      "--sposta-x",
+      spostaX + "px"
+    );
+
+    cartoncino.style.setProperty(
+      "--sposta-y",
+      spostaY + "px"
     );
 
     busta.classList.add(
