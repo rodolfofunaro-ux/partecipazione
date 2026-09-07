@@ -814,7 +814,49 @@ function verificaToken() {
   );
 
 }
+    
+    // creaCartoncinoCompleto() — VERSIONE 1.0 — costruzione protetta post-token
+    
+function creaCartoncinoCompleto(evento) {
 
+  evento = evento || {};
+
+  var contenitore =
+    document.createElement("div");
+
+  contenitore.className =
+    "cartoncino-completo";
+
+  contenitore.innerHTML =
+
+    '<img ' +
+      'class="cartoncino-sfondo" ' +
+      'src="cartoncino_base_web_q84.jpg" ' +
+      'alt=""' +
+    '>' +
+
+    '<div class="dati-shabbat">' +
+
+      '<div class="shabbat-data">' +
+        escapeHtml(
+          evento.shabbatData || ""
+        ) +
+      '</div>' +
+
+      '<div class="shabbat-luogo">' +
+        escapeHtml(
+          evento.shabbatLuogo || ""
+        ) +
+        ' - ore ' +
+        escapeHtml(
+          evento.shabbatOra || ""
+        ) +
+      '</div>' +
+
+    '</div>';
+
+  return contenitore;
+}
     /* =========================
        CREA BUSTA
        ========================= */
