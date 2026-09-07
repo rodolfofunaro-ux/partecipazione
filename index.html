@@ -412,7 +412,6 @@
 
 transition:
   transform 1.4s ease,
-  z-index 0s linear 0.85s;
 
   pointer-events: none;
 }
@@ -460,11 +459,7 @@ transition:
   transform:
     translateY(-175px);
 
-  z-index: 6;
-
-  transition-delay:
-    0.75s,
-    0.85s;
+  transition-delay: 0.9s;
 }
 
     .tocca {
@@ -488,9 +483,7 @@ transition:
        FUTURA APERTURA
        ========================= */
 
-  .busta.aperta .aletta {
-  transform: rotateX(180deg);
-
+ .busta.aperta .aletta {
   background:
     linear-gradient(
       135deg,
@@ -500,8 +493,27 @@ transition:
     );
 
   filter: none;
+
+  animation:
+    aperturaAletta 1s ease forwards;
 }
- 
+    @keyframes aperturaAletta {
+
+  0% {
+    transform: rotateX(0deg);
+    z-index: 3;
+  }
+
+  99% {
+    transform: rotateX(180deg);
+    z-index: 3;
+  }
+
+  100% {
+    transform: rotateX(180deg);
+    z-index: 0;
+  }
+}
     /* =========================
        MOBILE
        ========================= */
