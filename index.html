@@ -438,6 +438,37 @@ height: 285px;
 
   pointer-events: none;
 }
+
+/* dati-shabbat — VERSIONE 1.0 — sovrapposizione dati protetti */
+.dati-shabbat {
+  position: absolute;
+
+  /* posizione proporzionale rispetto al cartoncino originale */
+  left: 3.5%;
+  top: 49.5%;
+  width: 39%;
+
+  text-align: center;
+  color: #111;
+
+  z-index: 2;
+  pointer-events: none;
+
+  font-family: "Parisienne", cursive;
+}
+
+.shabbat-data {
+  font-size: clamp(7px, 2.15vw, 21px);
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.shabbat-luogo {
+  margin-top: 2.5%;
+  font-size: clamp(7px, 2.15vw, 21px);
+  line-height: 1.15;
+  white-space: nowrap;
+}    
     
 /* tasca-busta — VERSIONE 2.3 — crop esattamente sul bordo */
 .tasca-busta {
@@ -813,11 +844,33 @@ function mostraBusta(
 
            '<div class="aletta"></div>' +
 '<div class="cartoncino">' +
+
   '<img ' +
     'class="cartoncino-sfondo" ' +
     'src="cartoncino_base_web_q84.jpg" ' +
     'alt=""' +
   '>' +
+
+  '<div class="dati-shabbat">' +
+
+    '<div class="shabbat-data">' +
+      escapeHtml(
+        evento.shabbatData || ""
+      ) +
+    '</div>' +
+
+    '<div class="shabbat-luogo">' +
+      escapeHtml(
+        evento.shabbatLuogo || ""
+      ) +
+      ' - ore ' +
+      escapeHtml(
+        evento.shabbatOra || ""
+      ) +
+    '</div>' +
+
+  '</div>' +
+
 '</div>' +
 '<div class="tasca-busta"></div>' +
 
