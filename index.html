@@ -27,14 +27,6 @@
       font-style: normal;
       font-display: swap;
     }
-    /* Caveat Brush — VERSIONE 1.0 */
-    @font-face {
-    font-family: "CaveatBrush";
-    src: url("fonts/CaveatBrush-Regular.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
     /* Almendra Regular — VERSIONE 1.0 */
 @font-face {
   font-family: "Almendra";
@@ -406,158 +398,108 @@ height: 285px;
         0 24px;
     }
 
-    /* cartoncino-completo — VERSIONE 1.0 — tavola logica 1748x1240 */
-.cartoncino-completo {
-  position: relative;
 
-  width: 1748px;
-  height: 1240px;
+    /* =========================
+       CARTONCINO COMPLETO
+       VERSIONE 3.0
+       Un solo SVG 1748x1240: sfondo + dati protetti.
+       Tutto scala come un unico oggetto.
+       ========================= */
 
-  overflow: hidden;
+    .cartoncino {
+      position: absolute;
+      left: 11%;
+      bottom: 0;
+      width: 78%;
+      aspect-ratio: 1748 / 1240;
+      height: auto;
+      background: #f8f5ee;
+      border-radius: 2px;
+      box-shadow: 8px 10px 18px rgba(70,58,42,0.18);
+      z-index: 4;
+      transform: translate3d(0,0,0);
+      transition: transform 2.2s cubic-bezier(0.22,0.61,0.36,1);
+      will-change: transform;
+      pointer-events: none;
+      overflow: hidden;
+    }
 
-  flex: none;
-  transform-origin: top left;
-}
+    .cartoncino-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
 
-.cartoncino-completo .cartoncino-sfondo {
-  position: absolute;
+    /* Tutti i dati sono dentro il viewBox fisso 1748x1240. */
+    .dati-svg {
+      box-sizing: border-box;
+      color: #111;
+      text-align: center;
+      font-family: "Almendra", serif;
+      line-height: 1.12;
+    }
 
-  left: 0;
-  top: 0;
+    /* Shabbat — VERSIONE 1.4 BLOCCATA */
+    .dati-shabbat-svg {
+      width: 690px;
+      font-size: 43px;
+    }
 
-  width: 1748px;
-  height: 1240px;
+    .dati-shabbat-svg .riga2 {
+      margin-top: 12px;
+    }
 
-  display: block;
+    /* Party — VERSIONE 1.0, da rifinire con anteprima */
+    .dati-party-svg {
+      width: 850px;
+      font-size: 43px;
+      line-height: 1.18;
+    }
 
-  object-fit: cover;
+    .dati-party-svg .location {
+      margin-top: 10px;
+      font-family: "Parisienne", cursive;
+      font-size: 68px;
+      line-height: 1;
+      color: #d99a32;
+    }
 
-  pointer-events: none;
+    .dati-party-svg .indirizzo {
+      margin-top: 10px;
+      font-family: "Almendra", serif;
+      font-size: 37px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
 
-  z-index: 1;
-}
-/* Shabbat placeholder — VERSIONE 1.2 — ingrandito e centrato sul titolo */
+    /* Contributo / pagamento — VERSIONE 1.0, da rifinire */
+    .dati-pagamento-svg {
+      width: 1500px;
+      font-family: "Almendra", serif;
+      font-size: 34px;
+      line-height: 1.15;
+    }
 
-.cartoncino-completo .dati-shabbat {
-  position: absolute;
+    .dati-pagamento-svg .paypal {
+      margin-top: 10px;
+    }
 
-  left: 28px;
-  top: 635px;
-  width: 690px;
+    /* Anteprima statica: usa lo stesso identico SVG della busta. */
+    .anteprima-cartoncino {
+      width: min(94vw, calc(88vh * 1748 / 1240));
+      aspect-ratio: 1748 / 1240;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #f8f5ee;
+      border-radius: 2px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+    }
 
-  text-align: center;
-  color: #111;
+    .anteprima-cartoncino .cartoncino-svg {
+      width: 100%;
+      height: 100%;
+    }
 
-  font-family: "Almendra", serif;
-
-  z-index: 2;
-  pointer-events: none;
-}
-
-.cartoncino-completo .shabbat-data {
-  font-size: 43px;
-  line-height: 1.12;
-  white-space: nowrap;
-}
-
-.cartoncino-completo .shabbat-luogo {
-  margin-top: 12px;
-  font-size: 43px;
-  line-height: 1.12;
-  white-space: nowrap;
-}
-.cartoncino-completo .shabbat-data {
-  font-size: 37px;
-  line-height: 1.12;
-  white-space: nowrap;
-}
-
-.cartoncino-completo .shabbat-luogo {
-  margin-top: 14px;
-  font-size: 37px;
-  line-height: 1.12;
-  white-space: nowrap;
-}
-
-/* cartoncino — VERSIONE 2.0 — profondità corretta nella busta */
-.cartoncino {
-  position: absolute;
-
-  left: 11%;
-  bottom: 0;
-
-  width: 78%;
-
-  aspect-ratio: 1748 / 1240;
-  height: auto;
-
-  background: #f8f5ee;
-
-  border-radius: 2px;
-
-  box-shadow:
-    8px 10px 18px
-    rgba(70, 58, 42, 0.18);
-
-  z-index: 4;
-
-  transform:
-    translate3d(0, 0, 0);
-
-  transition:
-    transform 2.2s
-    cubic-bezier(0.22, 0.61, 0.36, 1);
-
-  will-change: transform;
-
-  pointer-events: none;
-}
-
-    /* cartoncino-sfondo — VERSIONE 1.0 — base grafica pubblica */
-.cartoncino-sfondo {
-  display: block;
-
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-
-  border-radius: 2px;
-
-  pointer-events: none;
-}
-
-/* dati-shabbat — VERSIONE 1.0 — sovrapposizione dati protetti */
-.dati-shabbat {
-  position: absolute;
-
-  /* posizione proporzionale rispetto al cartoncino originale */
-  left: 3.5%;
-  top: 49.5%;
-  width: 39%;
-
-  text-align: center;
-  color: #111;
-
-  z-index: 2;
-  pointer-events: none;
-
-  font-family: "Parisienne", cursive;
-}
-
-.shabbat-data {
-  font-size: clamp(7px, 2.15vw, 21px);
-  line-height: 1.15;
-  white-space: nowrap;
-}
-
-.shabbat-luogo {
-  margin-top: 2.5%;
-  font-size: clamp(7px, 2.15vw, 21px);
-  line-height: 1.15;
-  white-space: nowrap;
-}    
-    
 /* tasca-busta — VERSIONE 2.3 — crop esattamente sul bordo */
 .tasca-busta {
   position: absolute;
@@ -812,308 +754,189 @@ height: 285px;
     };
 
 
- /* =========================
-   VERIFICA TOKEN
-   ========================= */
 
-// verificaToken() — VERSIONE 2.0 — riceve intestazione + dati evento protetti
-function verificaToken() {
 
-  var risultato =
-    document.getElementById(
-      "risultato"
-    );
+  /* =========================
+     VERIFICA TOKEN
+     ========================= */
 
-  risultato.textContent =
-    "Verifica in corso...";
+  // verificaToken() — VERSIONE 3.0 — dati evento solo dopo token valido
+  function verificaToken() {
+    var risultato = document.getElementById("risultato");
+    risultato.textContent = "Verifica in corso...";
 
-  fetch(
-    "https://partecipazione-test.rodolfo-funaro.workers.dev/",
-    {
-
-      method:
-        "POST",
-
-      headers: {
-        "Content-Type":
-          "application/json"
-      },
-
-      body:
-        JSON.stringify({
-          token: TOKEN
-        }),
-
-      cache:
-        "no-store"
-
-    }
-  )
-
-  .then(
-    function(response) {
-
-      if (!response.ok) {
-
-        throw new Error(
-          "Errore HTTP"
-        );
-
+    fetch(
+      "https://partecipazione-test.rodolfo-funaro.workers.dev/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: TOKEN }),
+        cache: "no-store"
       }
-
+    )
+    .then(function(response) {
+      if (!response.ok) throw new Error("Errore HTTP");
       return response.json();
-
-    }
-  )
-
-  .then(
-    function(data) {
-
-      /* TOKEN VALIDO */
-
-      if (data.ok === true) {
-
-mostraAnteprimaCartoncino(
-  data.evento || {}
-);
-
+    })
+    .then(function(data) {
+      if (data.ok !== true) {
+        risultato.innerHTML = "<strong>TOKEN NON VALIDO</strong>";
+        return;
       }
 
-      /* TOKEN NON VALIDO */
+      var evento = data.evento || {};
 
-      else {
+      /*
+        Anteprima solo se nella query c'è preview=1.
+        Il link normale continua a mostrare la busta.
+      */
+      var query = new URLSearchParams(window.location.search);
 
-        risultato.innerHTML =
-          "<strong>TOKEN NON VALIDO</strong>";
-
+      if (query.get("preview") === "1") {
+        mostraAnteprimaCartoncino(evento);
+      } else {
+        mostraBusta(data.intestazione || "", evento);
       }
+    })
+    .catch(function() {
+      risultato.innerHTML = "<strong>ERRORE DI COLLEGAMENTO</strong>";
+    });
+  }
 
+  /* =========================
+     CARTONCINO COMPLETO PROTETTO
+     ========================= */
+
+  // creaCartoncinoCompleto() — VERSIONE 3.0 — SVG unico 1748x1240
+  function creaCartoncinoCompleto(evento) {
+    evento = evento || {};
+
+    var NS = "http://www.w3.org/2000/svg";
+    var XHTML = "http://www.w3.org/1999/xhtml";
+
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("class", "cartoncino-svg");
+    svg.setAttribute("viewBox", "0 0 1748 1240");
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    svg.setAttribute("aria-label", "Partecipazione");
+
+    var sfondo = document.createElementNS(NS, "image");
+    sfondo.setAttribute("href", "cartoncino_base_web_q84.jpg");
+    sfondo.setAttribute("x", "0");
+    sfondo.setAttribute("y", "0");
+    sfondo.setAttribute("width", "1748");
+    sfondo.setAttribute("height", "1240");
+    sfondo.setAttribute("preserveAspectRatio", "none");
+    svg.appendChild(sfondo);
+
+    function aggiungiBlocco(x, y, w, h, className, costruttore) {
+      var fo = document.createElementNS(NS, "foreignObject");
+      fo.setAttribute("x", String(x));
+      fo.setAttribute("y", String(y));
+      fo.setAttribute("width", String(w));
+      fo.setAttribute("height", String(h));
+
+      var div = document.createElementNS(XHTML, "div");
+      div.setAttribute("class", "dati-svg " + className);
+      costruttore(div);
+
+      fo.appendChild(div);
+      svg.appendChild(fo);
     }
-  )
 
-  .catch(
-    function(error) {
+    /* Shabbat: coordinate già approvate. */
+    aggiungiBlocco(28, 635, 690, 150, "dati-shabbat-svg", function(div) {
+      var r1 = document.createElementNS(XHTML, "div");
+      r1.textContent = evento.shabbatData || "";
 
-      risultato.innerHTML =
-        "<strong>ERRORE DI COLLEGAMENTO</strong>";
+      var r2 = document.createElementNS(XHTML, "div");
+      r2.setAttribute("class", "riga2");
+      r2.textContent =
+        (evento.shabbatLuogo || "") +
+        ((evento.shabbatLuogo || evento.shabbatOra) ? " - ore " : "") +
+        (evento.shabbatOra || "");
 
-    }
-  );
+      div.appendChild(r1);
+      div.appendChild(r2);
+    });
 
-}
-    
-    // creaCartoncinoCompleto() — VERSIONE 1.0 — costruzione protetta post-token
-    
-function creaCartoncinoCompleto(evento) {
+    /* Party: tutti i dati arrivano dal backend dopo la validazione. */
+    aggiungiBlocco(820, 625, 870, 285, "dati-party-svg", function(div) {
+      var intro = document.createElementNS(XHTML, "div");
+      intro.textContent = evento.partyTesto || "";
 
-  evento = evento || {};
+      var location = document.createElementNS(XHTML, "div");
+      location.setAttribute("class", "location");
+      location.textContent = evento.partyLocation || "";
 
-  var contenitore =
-    document.createElement("div");
+      var indirizzo = document.createElementNS(XHTML, "div");
+      indirizzo.setAttribute("class", "indirizzo");
+      indirizzo.textContent =
+        (evento.partyIndirizzo || "") +
+        ((evento.partyIndirizzo || evento.partyOra) ? " - ore " : "") +
+        (evento.partyOra || "");
 
-  contenitore.className =
-    "cartoncino-completo";
+      div.appendChild(intro);
+      div.appendChild(location);
+      div.appendChild(indirizzo);
+    });
 
-  contenitore.innerHTML =
+    /* IBAN + PayPal: restano assenti dal repository, vengono creati qui in memoria. */
+    aggiungiBlocco(124, 1035, 1500, 125, "dati-pagamento-svg", function(div) {
+      var iban = document.createElementNS(XHTML, "div");
+      iban.textContent = evento.ibanTesto || "";
 
-    '<img ' +
-      'class="cartoncino-sfondo" ' +
-      'src="cartoncino_base_web_q84.jpg" ' +
-      'alt=""' +
-    '>' +
+      var paypal = document.createElementNS(XHTML, "div");
+      paypal.setAttribute("class", "paypal");
+      paypal.textContent = evento.paypalTesto || "";
 
-    '<div class="dati-shabbat">' +
+      div.appendChild(iban);
+      div.appendChild(paypal);
+    });
 
-      '<div class="shabbat-data">' +
-        escapeHtml(
-          evento.shabbatData || ""
-        ) +
-      '</div>' +
+    return svg;
+  }
 
-      '<div class="shabbat-luogo">' +
-        escapeHtml(
-          evento.shabbatLuogo || ""
-        ) +
-        ' - ore ' +
-        escapeHtml(
-          evento.shabbatOra || ""
-        ) +
-      '</div>' +
+  // mostraAnteprimaCartoncino() — VERSIONE 2.0 — stesso oggetto della busta
+  function mostraAnteprimaCartoncino(evento) {
+    var risultato = document.getElementById("risultato");
+    risultato.innerHTML = "";
 
-    '</div>'+
+    var contenitore = document.createElement("div");
+    contenitore.className = "anteprima-cartoncino";
+    contenitore.appendChild(creaCartoncinoCompleto(evento));
 
-    /* Party placeholder — VERSIONE 1.0 — coordinate fisse 1748x1240 */
+    risultato.appendChild(contenitore);
+  }
 
-.cartoncino-completo .dati-party {
-  position: absolute;
+  /* =========================
+     CREA BUSTA
+     ========================= */
 
-  left: 825px;
-  top: 630px;
-  width: 850px;
+  // mostraBusta() — VERSIONE 3.0 — inserisce il cartoncino completo già composto
+  function mostraBusta(intestazione, evento) {
+    var risultato = document.getElementById("risultato");
 
-  text-align: center;
-  color: #111;
-
-  font-family: "Almendra", serif;
-
-  z-index: 2;
-  pointer-events: none;
-}
-
-.cartoncino-completo .party-testo {
-  font-size: 43px;
-  line-height: 1.18;
-}
-
-.cartoncino-completo .party-location {
-  margin-top: 13px;
-
-  font-family: "Parisienne", cursive;
-  font-size: 62px;
-  line-height: 1;
-
-  color: #d99a32;
-}
-
-.cartoncino-completo .party-indirizzo {
-  margin-top: 14px;
-
-  font-family: "Almendra", serif;
-  font-size: 37px;
-  line-height: 1.1;
-
-  white-space: nowrap;
-}
-
-  return contenitore;
-}
-
-    // mostraAnteprimaCartoncino() — VERSIONE 1.0 — test placeholder statico
-function mostraAnteprimaCartoncino(evento) {
-
-  var risultato =
-    document.getElementById(
-      "risultato"
-    );
-
-  risultato.innerHTML = "";
-
-  var cartoncino =
-    creaCartoncinoCompleto(
-      evento
-    );
-
-  /*
-    La tavola interna resta sempre
-    1748 x 1240.
-
-    Qui la riduciamo soltanto per
-    poterla vedere nello schermo.
-  */
-
-  var scala =
-    Math.min(
-      (window.innerWidth * 0.94) / 1748,
-      (window.innerHeight * 0.88) / 1240
-    );
-
-  cartoncino.style.transform =
-    "scale(" + scala + ")";
-
-  cartoncino.style.margin =
-    "20px auto";
-
-  risultato.appendChild(
-    cartoncino
-  );
-}
-    /* =========================
-       CREA BUSTA
-       ========================= */
-
-  // mostraBusta() — VERSIONE 2.0 — riceve intestazione + dati evento
-function mostraBusta(
-  intestazione,
-  evento
-) {
-
-  evento = evento || {};
-
-      var risultato =
-        document.getElementById(
-          "risultato"
-        );
-
-
-      risultato.innerHTML =
-
-        '<div class="scena-busta">' +
-
-          '<div ' +
-            'id="bustaTest" ' +
-            'class="busta" ' +
-            'onclick="apriBusta()">' +
-
-           '<div class="aletta"></div>' +
-'<div class="cartoncino">' +
-
-  '<img ' +
-    'class="cartoncino-sfondo" ' +
-    'src="cartoncino_base_web_q84.jpg" ' +
-    'alt=""' +
-  '>' +
-
-  '<div class="dati-shabbat">' +
-
-    '<div class="shabbat-data">' +
-      escapeHtml(
-        evento.shabbatData || ""
-      ) +
-    '</div>' +
-
-    '<div class="shabbat-luogo">' +
-      escapeHtml(
-        evento.shabbatLuogo || ""
-      ) +
-      ' - ore ' +
-      escapeHtml(
-        evento.shabbatOra || ""
-      ) +
-    '</div>' +
-
-  '</div>' +
-
-'</div>' +
-'<div class="tasca-busta"></div>' +
-
-'<div class="sigillo">' +
-              '<span>A</span>' +
-            '</div>' +
-
-            '<div class="fronte-busta">' +
-
-              '<div class="per">' +
-                'Per' +
-              '</div>' +
-
-              '<div class="nome-invitato">' +
-                escapeHtml(
-                  intestazione
-                ) +
-              '</div>' +
-
-            '</div>' +
-
+    risultato.innerHTML =
+      '<div class="scena-busta">' +
+        '<div id="bustaTest" class="busta" onclick="apriBusta()">' +
+          '<div class="aletta"></div>' +
+          '<div id="cartoncinoHost" class="cartoncino"></div>' +
+          '<div class="tasca-busta"></div>' +
+          '<div class="sigillo"><span>A</span></div>' +
+          '<div class="fronte-busta">' +
+            '<div class="per">Per</div>' +
+            '<div class="nome-invitato">' + escapeHtml(intestazione) + '</div>' +
           '</div>' +
+        '</div>' +
+        '<div class="tocca">TOCCA PER APRIRE</div>' +
+      '</div>';
 
-          '<div class="tocca">' +
-            'TOCCA PER APRIRE' +
-          '</div>' +
-
-        '</div>';
-
+    var host = document.getElementById("cartoncinoHost");
+    if (host) {
+      host.appendChild(creaCartoncinoCompleto(evento));
     }
-
+  }
 
     /* =========================
        APERTURA - TEMPORANEA
@@ -1283,6 +1106,7 @@ function apriBusta() {
       );
 
     }
+
 
   </script>
 
