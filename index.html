@@ -482,19 +482,26 @@
     }
 
 .busta.cartoncino-finale .cartoncino {
-  z-index: 20;
+  z-index: 50;
 
   transform:
     translate3d(
       var(--sposta-x, 0px),
-      var(--sposta-y, -255px),
+      var(--sposta-y, 0px),
       0
     )
-    scale(var(--scala-finale, 1));
+    scale(
+      var(--scala-finale, 1)
+    );
 
   transition:
-    transform 1.2s
-    cubic-bezier(0.22, 0.61, 0.36, 1);
+    transform 1.25s
+    cubic-bezier(
+      0.22,
+      0.61,
+      0.36,
+      1
+    );
 
   transition-delay: 0s;
 }
@@ -845,17 +852,36 @@ function apriBusta() {
     var rect =
       cartoncino.getBoundingClientRect();
 
-    var larghezzaFinale =
-      Math.min(
-        window.innerWidth * 0.94,
-        1100
-      );
+    /*
+      Spazio massimo disponibile
+      nella finestra
+    */
+    var maxWidth =
+      window.innerWidth * 0.94;
 
-    var scala =
-      larghezzaFinale / rect.width;
+    var maxHeight =
+      window.innerHeight * 0.88;
 
     /*
-      Centro attuale del cartoncino
+      Scala necessaria per larghezza
+      e per altezza
+    */
+    var scalaX =
+      maxWidth / rect.width;
+
+    var scalaY =
+      maxHeight / rect.height;
+
+    /*
+      Usiamo la più piccola:
+      il cartoncino resta sempre
+      completamente visibile.
+    */
+    var scala =
+      Math.min(scalaX, scalaY);
+
+    /*
+      Centro attuale
     */
     var centroX =
       rect.left + rect.width / 2;
@@ -864,7 +890,7 @@ function apriBusta() {
       rect.top + rect.height / 2;
 
     /*
-      Centro della finestra
+      Centro della viewport
     */
     var targetX =
       window.innerWidth / 2;
