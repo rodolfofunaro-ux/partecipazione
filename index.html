@@ -940,7 +940,50 @@ function creaCartoncinoCompleto(evento) {
         ) +
       '</div>' +
 
-    '</div>';
+    '</div>'+
+
+    /* Party placeholder — VERSIONE 1.0 — coordinate fisse 1748x1240 */
+
+.cartoncino-completo .dati-party {
+  position: absolute;
+
+  left: 825px;
+  top: 630px;
+  width: 850px;
+
+  text-align: center;
+  color: #111;
+
+  font-family: "Almendra", serif;
+
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cartoncino-completo .party-testo {
+  font-size: 43px;
+  line-height: 1.18;
+}
+
+.cartoncino-completo .party-location {
+  margin-top: 13px;
+
+  font-family: "Parisienne", cursive;
+  font-size: 62px;
+  line-height: 1;
+
+  color: #d99a32;
+}
+
+.cartoncino-completo .party-indirizzo {
+  margin-top: 14px;
+
+  font-family: "Almendra", serif;
+  font-size: 37px;
+  line-height: 1.1;
+
+  white-space: nowrap;
+}
 
   return contenitore;
 }
