@@ -424,9 +424,14 @@ height: 285px;
 
   pointer-events: none;
 }
-    .tasca-busta {
+ /* tasca-busta — VERSIONE 2.2 — linea di crop abbassata */
+.tasca-busta {
   position: absolute;
-  inset: 0;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 12px;
 
   background:
     linear-gradient(
@@ -443,7 +448,6 @@ height: 285px;
 
   pointer-events: none;
 }
-
 .tasca-busta::after {
   content: "";
   position: absolute;
