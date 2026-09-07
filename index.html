@@ -1071,24 +1071,42 @@ function apriBusta() {
   var musica =
     document.getElementById("musicaFondo");
 
-  if (musica) {
+if (musica) {
 
-    musica.volume = 0.55;
+  // Musica — VERSIONE 1.1 — fade-in dolce
+  musica.volume = 0;
 
-    var avvio =
-      musica.play();
+  var avvio = musica.play();
 
-    if (avvio !== undefined) {
+  if (avvio !== undefined) {
 
-      avvio.catch(function() {
-        /*
-          Se il browser impedisce l'avvio,
-          l'animazione continua normalmente.
-        */
-      });
+    avvio.then(function() {
 
-    }
+      var volumeFinale = 0.55;
+      var durataFade = 2500;
+      var intervallo = 50;
+      var passi = durataFade / intervallo;
+      var incremento = volumeFinale / passi;
+
+      var fadeIn = setInterval(function() {
+
+        var nuovoVolume =
+          Math.min(volumeFinale, musica.volume + incremento);
+
+        musica.volume = nuovoVolume;
+
+        if (nuovoVolume >= volumeFinale) {
+          clearInterval(fadeIn);
+        }
+
+      }, intervallo);
+
+    }).catch(function() {
+      // L'animazione continua anche se l'audio viene bloccato.
+    });
+
   }
+}
 
   /*
     DA QUI IN POI:
