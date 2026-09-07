@@ -846,10 +846,9 @@ function verificaToken() {
 
       if (data.ok === true) {
 
-        mostraBusta(
-          data.intestazione || "",
-          data.evento || {}
-        );
+mostraAnteprimaCartoncino(
+  data.evento || {}
+);
 
       }
 
@@ -917,6 +916,46 @@ function creaCartoncinoCompleto(evento) {
     '</div>';
 
   return contenitore;
+}
+
+    // mostraAnteprimaCartoncino() — VERSIONE 1.0 — test placeholder statico
+function mostraAnteprimaCartoncino(evento) {
+
+  var risultato =
+    document.getElementById(
+      "risultato"
+    );
+
+  risultato.innerHTML = "";
+
+  var cartoncino =
+    creaCartoncinoCompleto(
+      evento
+    );
+
+  /*
+    La tavola interna resta sempre
+    1748 x 1240.
+
+    Qui la riduciamo soltanto per
+    poterla vedere nello schermo.
+  */
+
+  var scala =
+    Math.min(
+      (window.innerWidth * 0.94) / 1748,
+      (window.innerHeight * 0.88) / 1240
+    );
+
+  cartoncino.style.transform =
+    "scale(" + scala + ")";
+
+  cartoncino.style.margin =
+    "20px auto";
+
+  risultato.appendChild(
+    cartoncino
+  );
 }
     /* =========================
        CREA BUSTA
