@@ -391,6 +391,37 @@ height: 285px;
         0 24px;
     }
 
+    /* cartoncino-completo — VERSIONE 1.0 — tavola logica 1748x1240 */
+.cartoncino-completo {
+  position: relative;
+
+  width: 1748px;
+  height: 1240px;
+
+  overflow: hidden;
+
+  flex: none;
+  transform-origin: top left;
+}
+
+.cartoncino-completo .cartoncino-sfondo {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  width: 1748px;
+  height: 1240px;
+
+  display: block;
+
+  object-fit: cover;
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
 /* cartoncino — VERSIONE 2.0 — profondità corretta nella busta */
 .cartoncino {
   position: absolute;
