@@ -10,7 +10,28 @@
   >
 
   <title>Partecipazione</title>
+/* Pulsante musica — VERSIONE 1.0 */
+#btnMusica {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 5000;
 
+  width: 44px;
+  height: 44px;
+
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.88);
+
+  font-size: 20px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
   <style>
 
     /* =========================
@@ -666,6 +687,15 @@ height: 285px;
     loop>
   </audio>
 
+  <!-- Controllo musica — VERSIONE 1.0 -->
+<button
+  id="btnMusica"
+  type="button"
+  onclick="toggleMusica()"
+  aria-label="Attiva o disattiva la musica">
+  🔊
+</button>
+
   <div id="risultato"></div>
 
 
@@ -976,7 +1006,35 @@ height: 285px;
     /* =========================
        APERTURA - TEMPORANEA
        ========================= */
+// toggleMusica() — VERSIONE 1.0 — pausa/riprendi musica
+function toggleMusica() {
 
+  var musica =
+    document.getElementById("musicaFondo");
+
+  var bottone =
+    document.getElementById("btnMusica");
+
+  if (!musica || !bottone) {
+    return;
+  }
+
+  if (musica.paused) {
+
+    musica.play().then(function() {
+      bottone.textContent = "🔊";
+    }).catch(function() {
+      // Nessuna interferenza con il resto della pagina
+    });
+
+  } else {
+
+    musica.pause();
+    bottone.textContent = "🔇";
+
+  }
+}
+    
 // apriBusta() — VERSIONE 1.7 — avvio musica + animazione invariata
 function apriBusta() {
 
