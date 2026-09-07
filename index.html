@@ -461,6 +461,9 @@
 
   transition-delay: 0.75s;
 }
+    .busta.cartoncino-sopra .cartoncino {
+  z-index: 6;
+}
     .tocca {
       position: absolute;
 
@@ -785,19 +788,30 @@
        APERTURA - TEMPORANEA
        ========================= */
 
-    function apriBusta() {
+   function apriBusta() {
 
-      var busta =
-        document.getElementById(
-          "bustaTest"
-        );
+  var busta =
+    document.getElementById(
+      "bustaTest"
+    );
 
+  if (!busta) {
+    return;
+  }
 
-      if (!busta) {
+  busta.classList.add(
+    "aperta"
+  );
 
-        return;
-
-      }
+  setTimeout(
+    function() {
+      busta.classList.add(
+        "cartoncino-sopra"
+      );
+    },
+    850
+  );
+}
 
 
       /*
