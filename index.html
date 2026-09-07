@@ -791,7 +791,7 @@ transition:
        APERTURA - TEMPORANEA
        ========================= */
 
-  function apriBusta() {
+function apriBusta() {
 
   var busta =
     document.getElementById(
@@ -806,33 +806,6 @@ transition:
     "aperta"
   );
 }
-  busta.classList.add(
-    "aperta"
-  );
-
-  setTimeout(
-    function() {
-      busta.classList.add(
-        "cartoncino-sopra"
-      );
-    },
-    850
-  );
-}
-
-
-      /*
-        Per ora apriamo solo l'aletta.
-        Nel prossimo passaggio
-        inseriremo il cartoncino.
-      */
-
-      busta.classList.add(
-        "aperta"
-      );
-
-    }
-
 
     /* =========================
        SICUREZZA TESTO
