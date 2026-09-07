@@ -693,110 +693,108 @@ height: 285px;
     };
 
 
-    /* =========================
-       VERIFICA TOKEN
-       ========================= */
+ /* =========================
+   VERIFICA TOKEN
+   ========================= */
 
-    function verificaToken() {
+// verificaToken() — VERSIONE 2.0 — riceve intestazione + dati evento protetti
+function verificaToken() {
 
-      var risultato =
-        document.getElementById(
-          "risultato"
-        );
+  var risultato =
+    document.getElementById(
+      "risultato"
+    );
 
+  risultato.textContent =
+    "Verifica in corso...";
 
-      risultato.textContent =
-        "Verifica in corso...";
+  fetch(
+    "https://partecipazione-test.rodolfo-funaro.workers.dev/",
+    {
 
+      method:
+        "POST",
 
-      fetch(
-        "https://partecipazione-test.rodolfo-funaro.workers.dev/",
-        {
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
 
-          method:
-            "POST",
+      body:
+        JSON.stringify({
+          token: TOKEN
+        }),
 
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              token: TOKEN
-            }),
-
-          cache:
-            "no-store"
-
-        }
-      )
-
-
-      .then(
-        function(response) {
-
-          if (!response.ok) {
-
-            throw new Error(
-              "Errore HTTP"
-            );
-
-          }
-
-          return response.json();
-
-        }
-      )
-
-
-      .then(
-        function(data) {
-
-
-          /* TOKEN VALIDO */
-
-          if (data.ok === true) {
-
-            mostraBusta(
-              data.intestazione || ""
-            );
-
-          }
-
-
-          /* TOKEN NON VALIDO */
-
-          else {
-
-            risultato.innerHTML =
-              "<strong>TOKEN NON VALIDO</strong>";
-
-          }
-
-        }
-      )
-
-
-      .catch(
-        function(error) {
-
-          risultato.innerHTML =
-            "<strong>ERRORE DI COLLEGAMENTO</strong>";
-
-        }
-      );
+      cache:
+        "no-store"
 
     }
+  )
 
+  .then(
+    function(response) {
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Errore HTTP"
+        );
+
+      }
+
+      return response.json();
+
+    }
+  )
+
+  .then(
+    function(data) {
+
+      /* TOKEN VALIDO */
+
+      if (data.ok === true) {
+
+        mostraBusta(
+          data.intestazione || "",
+          data.evento || {}
+        );
+
+      }
+
+      /* TOKEN NON VALIDO */
+
+      else {
+
+        risultato.innerHTML =
+          "<strong>TOKEN NON VALIDO</strong>";
+
+      }
+
+    }
+  )
+
+  .catch(
+    function(error) {
+
+      risultato.innerHTML =
+        "<strong>ERRORE DI COLLEGAMENTO</strong>";
+
+    }
+  );
+
+}
 
     /* =========================
        CREA BUSTA
        ========================= */
 
-    function mostraBusta(
-      intestazione
-    ) {
+  // mostraBusta() — VERSIONE 2.0 — riceve intestazione + dati evento
+function mostraBusta(
+  intestazione,
+  evento
+) {
+
+  evento = evento || {};
 
       var risultato =
         document.getElementById(
