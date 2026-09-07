@@ -410,8 +410,9 @@
   transform:
     translateY(0);
 
-  transition:
-    transform 1.4s ease;
+transition:
+  transform 1.4s ease,
+  z-index 0s linear 0.85s;
 
   pointer-events: none;
 }
@@ -459,11 +460,13 @@
   transform:
     translateY(-175px);
 
-  transition-delay: 0.75s;
-}
-    .busta.cartoncino-sopra .cartoncino {
   z-index: 6;
+
+  transition-delay:
+    0.75s,
+    0.85s;
 }
+
     .tocca {
       position: absolute;
 
@@ -788,7 +791,7 @@
        APERTURA - TEMPORANEA
        ========================= */
 
-   function apriBusta() {
+  function apriBusta() {
 
   var busta =
     document.getElementById(
@@ -799,6 +802,10 @@
     return;
   }
 
+  busta.classList.add(
+    "aperta"
+  );
+}
   busta.classList.add(
     "aperta"
   );
