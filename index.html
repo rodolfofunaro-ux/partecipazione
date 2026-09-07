@@ -424,14 +424,10 @@ height: 285px;
 
   pointer-events: none;
 }
- /* tasca-busta — VERSIONE 2.2 — linea di crop abbassata */
+/* tasca-busta — VERSIONE 2.3 — crop esattamente sul bordo */
 .tasca-busta {
   position: absolute;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 12px;
+  inset: 0;
 
   background:
     linear-gradient(
@@ -472,7 +468,7 @@ height: 285px;
   transform:
     translate3d(0, -290px, 0);
 
-  transition-delay: 0.65s;
+  transition-delay: 1.05s;
 }
 
     .tocca {
@@ -839,7 +835,7 @@ height: 285px;
        APERTURA - TEMPORANEA
        ========================= */
 
-// apriBusta() — VERSIONE 1.5 — cartoncino volante centrato [CONFERMATA]
+// apriBusta() — VERSIONE 1.6 — sincronizzata con apertura completa dell'aletta
 function apriBusta() {
 
   var busta =
@@ -965,7 +961,7 @@ function apriBusta() {
 
     });
 
-  }, 3100);
+  }, 3500);
 }
     /* =========================
        SICUREZZA TESTO
