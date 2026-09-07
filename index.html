@@ -424,6 +424,21 @@ height: 285px;
 
   pointer-events: none;
 }
+
+    /* cartoncino-sfondo — VERSIONE 1.0 — base grafica pubblica */
+.cartoncino-sfondo {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 2px;
+
+  pointer-events: none;
+}
+    
 /* tasca-busta — VERSIONE 2.3 — crop esattamente sul bordo */
 .tasca-busta {
   position: absolute;
@@ -799,7 +814,13 @@ height: 285px;
             'onclick="apriBusta()">' +
 
            '<div class="aletta"></div>' +
-'<div class="cartoncino"></div>' +
+'<div class="cartoncino">' +
+  '<img ' +
+    'class="cartoncino-sfondo" ' +
+    'src="cartoncino_base_web_q84.jpg" ' +
+    'alt=""' +
+  '>' +
+'</div>' +
 '<div class="tasca-busta"></div>' +
 
 '<div class="sigillo">' +
