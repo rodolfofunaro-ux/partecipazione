@@ -412,9 +412,8 @@
        FUTURA APERTURA
        ========================= */
 
-    .busta.aperta .aletta {
-  transform:
-    rotateX(180deg);
+  .busta.aperta .aletta {
+  transform: rotateX(180deg);
 
   background:
     linear-gradient(
@@ -424,16 +423,38 @@
       #cfc0aa 100%
     );
 
-  filter:
-  drop-shadow(
-    10px 14px 9px
-    rgba(70, 58, 42, 0.24)
-  )
-  drop-shadow(
-    3px 5px 3px
-    rgba(70, 58, 42, 0.12)
-  );
+  filter: none;
+}
+    .busta.aperta .aletta::after {
+  content: "";
+  position: absolute;
 
+  left: 7%;
+  top: 12px;
+
+  width: 86%;
+  height: 92%;
+
+  background:
+    rgba(75, 61, 44, 0.28);
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      50% 100%
+    );
+
+  transform:
+    translate(14px, 17px);
+
+  filter:
+    blur(11px);
+
+  z-index: -1;
+
+  pointer-events: none;
+}
 
     /* =========================
        MOBILE
