@@ -408,10 +408,13 @@
   z-index: 4;
 
   transform:
-    translateY(0);
+    translate3d(0, 0, 0);
 
-transition:
-  transform 1.4s ease,
+  transition:
+    transform 2.2s
+    cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  will-change: transform;
 
   pointer-events: none;
 }
@@ -457,9 +460,9 @@ transition:
 
 .busta.aperta .cartoncino {
   transform:
-    translateY(-175px);
+    translate3d(0, -175px, 0);
 
-  transition-delay: 0.9s;
+  transition-delay: 0.65s;
 }
 
     .tocca {
