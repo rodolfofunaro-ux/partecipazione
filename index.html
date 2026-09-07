@@ -395,8 +395,9 @@
   left: 6%;
   bottom: 18px;
   width: 88%;
-  height: 215px;
-
+  /* cartoncino — VERSIONE 1.1 — proporzioni reali 1748x1240 */
+aspect-ratio: 1748 / 1240;
+height: auto;
   background: #f8f5ee;
 
   border-radius: 2px;
@@ -829,6 +830,7 @@
        APERTURA - TEMPORANEA
        ========================= */
 
+// apriBusta() — VERSIONE 1.5 — cartoncino volante centrato
 function apriBusta() {
 
   var busta =
@@ -841,8 +843,7 @@ function apriBusta() {
   busta.classList.add("aperta");
 
   /*
-    Aspettiamo che il cartoncino
-    sia completamente estratto.
+    Aspettiamo la fine dell'estrazione.
   */
   setTimeout(function() {
 
@@ -853,15 +854,12 @@ function apriBusta() {
       return;
     }
 
-    /*
-      Posizione ESATTA del cartoncino
-      al termine dell'estrazione.
-    */
     var rect =
       originale.getBoundingClientRect();
 
     /*
-      Creiamo la copia volante.
+      Creiamo una copia identica
+      esattamente sopra l'originale.
     */
     var volante =
       originale.cloneNode(true);
@@ -882,11 +880,6 @@ function apriBusta() {
     volante.style.height =
       rect.height + "px";
 
-    /*
-      Importantissimo:
-      togliamo eventuali transform
-      ereditati dal cartoncino originale.
-    */
     volante.style.transform =
       "none";
 
@@ -895,24 +888,20 @@ function apriBusta() {
     );
 
     /*
-      Nascondiamo l'originale.
-      Visivamente non cambia nulla
-      perché la copia è esattamente
-      sopra di lui.
+      La copia prende il posto visivo
+      dell'originale senza salto.
     */
     originale.style.visibility =
       "hidden";
 
     /*
-      Dimensioni massime disponibili.
-      Il cartoncino deve stare TUTTO
-      dentro lo schermo.
+      Spazio finale disponibile.
     */
     var maxWidth =
       window.innerWidth * 0.94;
 
     var maxHeight =
-      window.innerHeight * 0.90;
+      window.innerHeight * 0.88;
 
     var rapporto =
       rect.width / rect.height;
@@ -923,10 +912,6 @@ function apriBusta() {
     var finalHeight =
       finalWidth / rapporto;
 
-    /*
-      Se fosse troppo alto,
-      limitiamo usando l'altezza.
-    */
     if (finalHeight > maxHeight) {
 
       finalHeight =
@@ -937,8 +922,7 @@ function apriBusta() {
     }
 
     /*
-      Centratura matematica
-      nella viewport.
+      Centratura nella viewport.
     */
     var finalLeft =
       (window.innerWidth -
@@ -949,9 +933,8 @@ function apriBusta() {
        finalHeight) / 2;
 
     /*
-      Un frame separato è essenziale:
-      permette al browser di vedere
-      prima la posizione iniziale.
+      Due frame separati evitano
+      il salto immediato.
     */
     requestAnimationFrame(function() {
 
