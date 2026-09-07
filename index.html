@@ -449,11 +449,15 @@ height: 285px;
       margin-top: 12px;
     }
 
-    /* Party — VERSIONE 1.0, da rifinire con anteprima */
+    /* Party — VERSIONE 1.2 — allineato a Shabbat e spostato a destra */
     .dati-party-svg {
-      width: 850px;
+      width: 810px;
       font-size: 43px;
-      line-height: 1.18;
+      line-height: 1.12;
+    }
+
+    .dati-party-svg .intro-riga2 {
+      margin-top: 2px;
     }
 
     .dati-party-svg .location {
@@ -472,16 +476,17 @@ height: 285px;
       white-space: nowrap;
     }
 
-    /* Contributo / pagamento — VERSIONE 1.0, da rifinire */
+    /* Contributo / pagamento — VERSIONE 1.1 — abbassato nella zona finale */
     .dati-pagamento-svg {
       width: 1500px;
       font-family: "Almendra", serif;
       font-size: 34px;
-      line-height: 1.15;
+      line-height: 1.12;
+      white-space: nowrap;
     }
 
     .dati-pagamento-svg .paypal {
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     /* Anteprima statica: usa lo stesso identico SVG della busta. */
@@ -860,10 +865,31 @@ height: 285px;
       div.appendChild(r2);
     });
 
-    /* Party: tutti i dati arrivano dal backend dopo la validazione. */
-    aggiungiBlocco(820, 625, 870, 285, "dati-party-svg", function(div) {
-      var intro = document.createElementNS(XHTML, "div");
-      intro.textContent = evento.partyTesto || "";
+    /* Party — VERSIONE 1.2
+       I valori arrivano esclusivamente dal backend dopo token valido.
+       Il testo CONFIG viene diviso graficamente prima di "domenica". */
+    aggiungiBlocco(875, 635, 810, 300, "dati-party-svg", function(div) {
+      var testoParty = String(evento.partyTesto || "").trim();
+      var riga1Testo = testoParty;
+      var riga2Testo = "";
+
+      var puntoDomenica = testoParty.search(/\bdomenica\b/i);
+
+      if (puntoDomenica > 0) {
+        riga1Testo = testoParty.substring(0, puntoDomenica).trim();
+        riga2Testo = testoParty.substring(puntoDomenica).trim();
+      }
+
+      var introRiga1 = document.createElementNS(XHTML, "div");
+      introRiga1.textContent = riga1Testo;
+      div.appendChild(introRiga1);
+
+      if (riga2Testo) {
+        var introRiga2 = document.createElementNS(XHTML, "div");
+        introRiga2.setAttribute("class", "intro-riga2");
+        introRiga2.textContent = riga2Testo;
+        div.appendChild(introRiga2);
+      }
 
       var location = document.createElementNS(XHTML, "div");
       location.setAttribute("class", "location");
@@ -876,13 +902,12 @@ height: 285px;
         ((evento.partyIndirizzo || evento.partyOra) ? " - ore " : "") +
         (evento.partyOra || "");
 
-      div.appendChild(intro);
       div.appendChild(location);
       div.appendChild(indirizzo);
     });
 
     /* IBAN + PayPal: restano assenti dal repository, vengono creati qui in memoria. */
-    aggiungiBlocco(124, 1035, 1500, 125, "dati-pagamento-svg", function(div) {
+    aggiungiBlocco(124, 1090, 1500, 125, "dati-pagamento-svg", function(div) {
       var iban = document.createElementNS(XHTML, "div");
       iban.textContent = evento.ibanTesto || "";
 
