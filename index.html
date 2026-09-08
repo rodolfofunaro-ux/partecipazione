@@ -51,7 +51,6 @@
 
     body {
       margin: 0;
-
       min-height: 100vh;
 
       display: flex;
@@ -59,7 +58,19 @@
       align-items: center;
 
       background:
-        radial-gradient(circle at 50% 38%, #ffffff 0%, #fbfaf7 58%, #f2f0eb 100%);
+        repeating-radial-gradient(
+          circle at 0 0,
+          rgba(95, 88, 78, 0.025) 0,
+          rgba(95, 88, 78, 0.025) 0.7px,
+          transparent 0.9px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at 50% 38%,
+          #ffffff 0%,
+          #faf9f5 58%,
+          #efede7 100%
+        );
 
       font-family:
         Georgia,
@@ -114,17 +125,12 @@ height: 285px;
 
       border-radius: 3px;
 
-      border-top:
-        1px solid
-        rgba(255,255,255,0.75);
-
-      border-left:
-        1px solid
-        rgba(255,255,255,0.55);
+      border: 1px solid rgba(110,100,90,0.10);
 
       box-shadow:
-        20px 26px 38px rgba(60,52,45,0.25),
-        8px 11px 16px rgba(60,52,45,0.13),
+        0 4px 8px rgba(55,48,40,0.08),
+        14px 22px 30px rgba(55,48,40,0.20),
+        24px 34px 46px rgba(55,48,40,0.13),
         0 1px 0 rgba(255,255,255,0.85) inset;
 
       cursor: pointer;
@@ -226,12 +232,12 @@ height: 285px;
         url("sfondo_pulito_1748x1240.png") center center / cover no-repeat,
         #f8f7f3;
 
-      border-top: 1px solid rgba(255,255,255,0.75);
-      border-left: 1px solid rgba(255,255,255,0.55);
+      border: 1px solid rgba(110,100,90,0.10);
 
       box-shadow:
-        20px 26px 38px rgba(60,52,45,0.25),
-        8px 11px 16px rgba(60,52,45,0.13),
+        0 4px 8px rgba(55,48,40,0.08),
+        14px 22px 30px rgba(55,48,40,0.20),
+        24px 34px 46px rgba(55,48,40,0.13),
         0 1px 0 rgba(255,255,255,0.85) inset;
 
       overflow: hidden;
@@ -951,6 +957,235 @@ height: 285px;
     transform: scale(1);
   }
 }
+  
+
+    /* =========================
+       RSVP — VERSIONE 1.0
+       Hotspot sul cartoncino + finestra modale
+       ========================= */
+
+    .anteprima-cartoncino {
+      position: relative;
+    }
+
+    .rsvp-hotspot {
+      position: absolute;
+      left: 1.4%;
+      bottom: 0.8%;
+      width: 16%;
+      height: 11%;
+
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+
+      cursor: pointer;
+      pointer-events: auto;
+
+      opacity: 0;
+      transition:
+        opacity 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+
+      z-index: 20;
+    }
+
+    .rsvp-hotspot:hover,
+    .rsvp-hotspot:focus-visible {
+      opacity: 1;
+      background: rgba(255,255,255,0.16);
+      box-shadow: 0 0 0 1px rgba(94,72,50,0.10) inset;
+      outline: none;
+    }
+
+    .cartoncino-volante.rsvp-attivo {
+      pointer-events: auto;
+    }
+
+    .cartoncino-volante.rsvp-attivo .rsvp-hotspot {
+      pointer-events: auto;
+    }
+
+    .rsvp-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 18px;
+      box-sizing: border-box;
+
+      background: rgba(37,33,30,0.44);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    .rsvp-modale {
+      position: relative;
+
+      width: min(92vw, 470px);
+      max-height: 90vh;
+      overflow-y: auto;
+
+      box-sizing: border-box;
+      padding: 30px 28px 26px;
+
+      border-radius: 18px;
+      border: 1px solid rgba(105,92,80,0.13);
+
+      background:
+        repeating-radial-gradient(
+          circle at 0 0,
+          rgba(95,88,78,0.022) 0,
+          rgba(95,88,78,0.022) 0.7px,
+          transparent 0.9px,
+          transparent 3px
+        ),
+        rgba(255,254,251,0.985);
+
+      box-shadow:
+        0 22px 55px rgba(35,30,25,0.24),
+        0 5px 16px rgba(35,30,25,0.12);
+    }
+
+    .rsvp-chiudi {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: rgba(70,60,50,0.06);
+      color: #65594e;
+
+      font-size: 23px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .rsvp-titolo {
+      margin: 0 34px 6px;
+      text-align: center;
+
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-size: 38px;
+      font-weight: 400;
+      color: #4f443a;
+    }
+
+    .rsvp-sottotitolo {
+      margin: 0 0 22px;
+      text-align: center;
+      color: #75695e;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .rsvp-scelte {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .rsvp-opzione {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 12px 14px;
+
+      border: 1px solid rgba(105,92,80,0.14);
+      border-radius: 12px;
+
+      background: rgba(255,255,255,0.62);
+      color: #4f463e;
+
+      cursor: pointer;
+    }
+
+    .rsvp-opzione input {
+      accent-color: #987c64;
+    }
+
+    .rsvp-contatori {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 6px 0 20px;
+    }
+
+    .rsvp-campo label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #776b60;
+    }
+
+    .rsvp-campo select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 11px;
+
+      border: 1px solid rgba(105,92,80,0.18);
+      border-radius: 10px;
+
+      background: #fff;
+      color: #4c443d;
+      font: inherit;
+    }
+
+    .rsvp-campo select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .rsvp-invia {
+      width: 100%;
+      padding: 12px 16px;
+
+      border: 0;
+      border-radius: 12px;
+
+      background: #6d5c4d;
+      color: #fff;
+
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+
+    .rsvp-invia:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    .rsvp-messaggio {
+      min-height: 20px;
+      margin-top: 12px;
+
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.35;
+      color: #6d6156;
+    }
+
+    @media (max-width: 480px) {
+      .rsvp-modale {
+        padding: 26px 20px 22px;
+      }
+
+      .rsvp-titolo {
+        font-size: 34px;
+      }
+    }
+
   </style>
 </head>
 
@@ -984,6 +1219,11 @@ height: 285px;
        ========================= */
 
     var TOKEN = "";
+
+    // RSVP — VERSIONE 1.0 — stato ricevuto dal backend
+    var STATO_RSVP = "";
+    var PARTECIPANTI_RSVP = 0;
+    var BAMBINI_RSVP = 0;
 
 
     window.onload = function() {
@@ -1113,6 +1353,10 @@ risultato.innerHTML =
       }
 
       var evento = data.evento || {};
+
+      STATO_RSVP = String(data.stato || "").trim();
+      PARTECIPANTI_RSVP = Number(data.partecipanti || 0);
+      BAMBINI_RSVP = Number(data.bambini || 0);
 
       /*
         Anteprima solo se nella query c'è preview=1.
@@ -1245,6 +1489,24 @@ risultato.innerHTML =
     return svg;
   }
 
+  // aggiungiHotspotRSVP() — VERSIONE 1.0 — rende cliccabile la scritta RSVP
+  function aggiungiHotspotRSVP(contenitore) {
+    if (!contenitore) return;
+
+    var pulsante = document.createElement("button");
+    pulsante.type = "button";
+    pulsante.className = "rsvp-hotspot";
+    pulsante.setAttribute("aria-label", "Apri RSVP");
+
+    pulsante.onclick = function(eventoClick) {
+      eventoClick.stopPropagation();
+      apriModuloRSVP();
+    };
+
+    contenitore.appendChild(pulsante);
+  }
+
+
   // mostraAnteprimaCartoncino() — VERSIONE 2.0 — stesso oggetto della busta
   function mostraAnteprimaCartoncino(evento) {
     var risultato = document.getElementById("risultato");
@@ -1253,6 +1515,7 @@ risultato.innerHTML =
     var contenitore = document.createElement("div");
     contenitore.className = "anteprima-cartoncino";
     contenitore.appendChild(creaCartoncinoCompleto(evento));
+    aggiungiHotspotRSVP(contenitore);
 
     risultato.appendChild(contenitore);
   }
@@ -1295,6 +1558,8 @@ risultato.innerHTML =
       host.appendChild(
         creaCartoncinoCompleto(evento)
       );
+
+      aggiungiHotspotRSVP(host);
     }
   }
 
@@ -1587,6 +1852,14 @@ function apriBusta() {
             volante.style.height =
               finalHeight + "px";
 
+            /*
+              RSVP — VERSIONE 1.0
+              Abilitato a ingrandimento concluso.
+            */
+            setTimeout(function() {
+              volante.classList.add("rsvp-attivo");
+            }, 1250);
+
           });
 
         });
@@ -1597,6 +1870,338 @@ function apriBusta() {
 
   }, 1850);
 }
+
+
+    /* =========================
+       RSVP
+       ========================= */
+
+    // apriModuloRSVP() — VERSIONE 1.0 — finestra RSVP completa
+    function apriModuloRSVP() {
+
+      if (document.getElementById("rsvpOverlay")) {
+        return;
+      }
+
+      var overlay = document.createElement("div");
+      overlay.id = "rsvpOverlay";
+      overlay.className = "rsvp-overlay";
+
+      overlay.innerHTML =
+        '<div class="rsvp-modale" role="dialog" aria-modal="true" aria-labelledby="rsvpTitolo">' +
+          '<button type="button" class="rsvp-chiudi" onclick="chiudiModuloRSVP()" aria-label="Chiudi">×</button>' +
+          '<h2 id="rsvpTitolo" class="rsvp-titolo">R.S.V.P.</h2>' +
+          '<p class="rsvp-sottotitolo">Confermateci la vostra partecipazione.</p>' +
+
+          '<div class="rsvp-scelte">' +
+            '<label class="rsvp-opzione">' +
+              '<input type="radio" name="statoRsvp" value="PARTECIPERÒ" onchange="aggiornaCampiRSVP()">' +
+              '<span>Parteciperò</span>' +
+            '</label>' +
+
+            '<label class="rsvp-opzione">' +
+              '<input type="radio" name="statoRsvp" value="NON PARTECIPERÒ" onchange="aggiornaCampiRSVP()">' +
+              '<span>Non parteciperò</span>' +
+            '</label>' +
+
+            '<label class="rsvp-opzione">' +
+              '<input type="radio" name="statoRsvp" value="ANCORA NON LO SO" onchange="aggiornaCampiRSVP()">' +
+              '<span>Ancora non lo so</span>' +
+            '</label>' +
+          '</div>' +
+
+          '<div class="rsvp-contatori">' +
+            '<div class="rsvp-campo">' +
+              '<label for="rsvpPartecipanti">Partecipanti</label>' +
+              '<select id="rsvpPartecipanti" onchange="aggiornaBambiniRSVP()"></select>' +
+            '</div>' +
+
+            '<div class="rsvp-campo">' +
+              '<label for="rsvpBambini">di cui bambini</label>' +
+              '<select id="rsvpBambini"></select>' +
+            '</div>' +
+          '</div>' +
+
+          '<button id="rsvpInvia" type="button" class="rsvp-invia" onclick="inviaRSVP()">INVIA RISPOSTA</button>' +
+          '<div id="rsvpMessaggio" class="rsvp-messaggio"></div>' +
+        '</div>';
+
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener("click", function(e) {
+        if (e.target === overlay) {
+          chiudiModuloRSVP();
+        }
+      });
+
+      preparaContatoriRSVP();
+      preselezionaRSVP();
+      aggiornaCampiRSVP();
+    }
+
+
+    // chiudiModuloRSVP() — VERSIONE 1.0
+    function chiudiModuloRSVP() {
+      var overlay = document.getElementById("rsvpOverlay");
+
+      if (overlay) {
+        overlay.remove();
+      }
+    }
+
+
+    // preparaContatoriRSVP() — VERSIONE 1.0 — massimo 10 invitati
+    function preparaContatoriRSVP() {
+
+      var partecipanti =
+        document.getElementById("rsvpPartecipanti");
+
+      if (!partecipanti) return;
+
+      partecipanti.innerHTML = "";
+
+      for (var i = 1; i <= 10; i++) {
+        var opzione = document.createElement("option");
+        opzione.value = String(i);
+        opzione.textContent = String(i);
+        partecipanti.appendChild(opzione);
+      }
+
+      partecipanti.value =
+        String(
+          PARTECIPANTI_RSVP >= 1 &&
+          PARTECIPANTI_RSVP <= 10
+            ? PARTECIPANTI_RSVP
+            : 1
+        );
+
+      aggiornaBambiniRSVP();
+    }
+
+
+    // aggiornaBambiniRSVP() — VERSIONE 1.0
+    function aggiornaBambiniRSVP() {
+
+      var partecipanti =
+        document.getElementById("rsvpPartecipanti");
+
+      var bambini =
+        document.getElementById("rsvpBambini");
+
+      if (!partecipanti || !bambini) return;
+
+      var totale =
+        Number(partecipanti.value || 1);
+
+      var precedente =
+        Number(bambini.value || BAMBINI_RSVP || 0);
+
+      bambini.innerHTML = "";
+
+      for (var i = 0; i <= totale; i++) {
+        var opzione = document.createElement("option");
+        opzione.value = String(i);
+        opzione.textContent = String(i);
+        bambini.appendChild(opzione);
+      }
+
+      bambini.value =
+        String(
+          Math.min(
+            Math.max(precedente, 0),
+            totale
+          )
+        );
+    }
+
+
+    // preselezionaRSVP() — VERSIONE 1.0
+    function preselezionaRSVP() {
+
+      var radios =
+        document.querySelectorAll(
+          'input[name="statoRsvp"]'
+        );
+
+      for (var i = 0; i < radios.length; i++) {
+        if (radios[i].value === STATO_RSVP) {
+          radios[i].checked = true;
+          break;
+        }
+      }
+    }
+
+
+    // aggiornaCampiRSVP() — VERSIONE 1.0
+    function aggiornaCampiRSVP() {
+
+      var selezionato =
+        document.querySelector(
+          'input[name="statoRsvp"]:checked'
+        );
+
+      var partecipanti =
+        document.getElementById("rsvpPartecipanti");
+
+      var bambini =
+        document.getElementById("rsvpBambini");
+
+      var abilita =
+        selezionato &&
+        selezionato.value === "PARTECIPERÒ";
+
+      if (partecipanti) {
+        partecipanti.disabled = !abilita;
+      }
+
+      if (bambini) {
+        bambini.disabled = !abilita;
+      }
+    }
+
+
+    // inviaRSVP() — VERSIONE 1.0 — frontend pronto per collegamento backend
+    function inviaRSVP() {
+
+      var selezionato =
+        document.querySelector(
+          'input[name="statoRsvp"]:checked'
+        );
+
+      var messaggio =
+        document.getElementById("rsvpMessaggio");
+
+      var pulsante =
+        document.getElementById("rsvpInvia");
+
+      if (!selezionato) {
+        if (messaggio) {
+          messaggio.textContent =
+            "Seleziona una risposta.";
+        }
+        return;
+      }
+
+      var stato =
+        selezionato.value;
+
+      var partecipanti = 0;
+      var bambini = 0;
+
+      if (stato === "PARTECIPERÒ") {
+
+        partecipanti =
+          Number(
+            document.getElementById(
+              "rsvpPartecipanti"
+            ).value || 0
+          );
+
+        bambini =
+          Number(
+            document.getElementById(
+              "rsvpBambini"
+            ).value || 0
+          );
+
+        if (
+          partecipanti < 1 ||
+          partecipanti > 10 ||
+          bambini < 0 ||
+          bambini > partecipanti
+        ) {
+          if (messaggio) {
+            messaggio.textContent =
+              "Controlla il numero di partecipanti.";
+          }
+          return;
+        }
+      }
+
+      if (pulsante) {
+        pulsante.disabled = true;
+      }
+
+      if (messaggio) {
+        messaggio.textContent =
+          "Invio in corso…";
+      }
+
+      fetch(
+        "https://partecipazione-test.rodolfo-funaro.workers.dev/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            azione: "salvaRSVP",
+            token: TOKEN,
+            stato: stato,
+            partecipanti: partecipanti,
+            bambini: bambini
+          }),
+          cache: "no-store"
+        }
+      )
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error("Errore HTTP");
+        }
+
+        return response.json();
+      })
+      .then(function(data) {
+
+        /*
+          Nessun falso positivo:
+          consideriamo salvato solo se il backend
+          conferma esplicitamente rsvpSalvato:true.
+        */
+        if (
+          data.ok !== true ||
+          data.rsvpSalvato !== true
+        ) {
+          throw new Error(
+            "Backend RSVP non ancora collegato"
+          );
+        }
+
+        STATO_RSVP =
+          String(data.stato || stato);
+
+        PARTECIPANTI_RSVP =
+          Number(data.partecipanti || partecipanti);
+
+        BAMBINI_RSVP =
+          Number(data.bambini || bambini);
+
+        if (messaggio) {
+          messaggio.textContent =
+            "Risposta registrata. Grazie!";
+        }
+
+        if (pulsante) {
+          pulsante.disabled = false;
+        }
+
+        setTimeout(function() {
+          chiudiModuloRSVP();
+        }, 1200);
+      })
+      .catch(function() {
+
+        if (messaggio) {
+          messaggio.textContent =
+            "Modulo pronto: collegheremo il salvataggio al backend nel debug.";
+        }
+
+        if (pulsante) {
+          pulsante.disabled = false;
+        }
+      });
+    }
+
 
     /* =========================
        SICUREZZA TESTO
