@@ -58,7 +58,8 @@
       justify-content: center;
       align-items: center;
 
-      background: #faf9f6;
+      background:
+        radial-gradient(circle at 50% 38%, #ffffff 0%, #fbfaf7 58%, #f2f0eb 100%);
 
       font-family:
         Georgia,
@@ -107,13 +108,9 @@
 height: 285px;
 
       background:
-        linear-gradient(
-          135deg,
-          rgba(255,255,255,0.42) 0%,
-          rgba(255,255,255,0.12) 30%,
-          rgba(238,231,218,0) 58%
-        ),
-        #eee7da;
+        linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.10)),
+        url("sfondo_pulito_1748x1240.png") center center / cover no-repeat,
+        #f8f7f3;
 
       border-radius: 3px;
 
@@ -126,11 +123,9 @@ height: 285px;
         rgba(255,255,255,0.55);
 
       box-shadow:
-        18px 24px 34px
-        rgba(70,58,42,0.20),
-
-        7px 10px 14px
-        rgba(70,58,42,0.10);
+        20px 26px 38px rgba(60,52,45,0.25),
+        8px 11px 16px rgba(60,52,45,0.13),
+        0 1px 0 rgba(255,255,255,0.85) inset;
 
       cursor: pointer;
 
@@ -225,18 +220,19 @@ height: 285px;
       background:
         linear-gradient(
           135deg,
-          rgba(255,255,255,0.42) 0%,
-          rgba(255,255,255,0.12) 30%,
-          rgba(238,231,218,0) 58%
+          rgba(255,255,255,0.18),
+          rgba(255,255,255,0.02)
         ),
-        #eee7da;
+        url("sfondo_pulito_1748x1240.png") center center / cover no-repeat,
+        #f8f7f3;
 
       border-top: 1px solid rgba(255,255,255,0.75);
       border-left: 1px solid rgba(255,255,255,0.55);
 
       box-shadow:
-        18px 24px 34px rgba(70,58,42,0.20),
-        7px 10px 14px rgba(70,58,42,0.10);
+        20px 26px 38px rgba(60,52,45,0.25),
+        8px 11px 16px rgba(60,52,45,0.13),
+        0 1px 0 rgba(255,255,255,0.85) inset;
 
       overflow: hidden;
     }
@@ -257,7 +253,7 @@ height: 285px;
           transparent 2.6px
         );
 
-      opacity: 0.65;
+      opacity: 0.82;
       pointer-events: none;
     }
 
@@ -286,7 +282,9 @@ height: 285px;
 
       overflow: visible;
 
-      background: #eee7da;
+      background:
+        url("sfondo_pulito_1748x1240.png") center center / cover no-repeat,
+        #f8f7f3;
     }
 
     /*
@@ -332,7 +330,7 @@ height: 285px;
           transparent 2.6px
         );
 
-      opacity: 0.65;
+      opacity: 0.82;
     }
 
 
@@ -353,8 +351,10 @@ height: 285px;
         linear-gradient(
           135deg,
           rgba(255,255,255,0.30),
-          rgba(248,243,233,0.95)
-        );
+          rgba(255,255,255,0.08)
+        ),
+        url("sfondo_pulito_1748x1240.png") center 22% / cover no-repeat,
+        #f8f7f3;
 
       clip-path:
         polygon(
@@ -370,6 +370,22 @@ height: 285px;
         transform 1s ease;
 
       z-index: 6;
+    }
+
+
+
+    /* Carta coordinata busta — VERSIONE 1.0 */
+    .aletta {
+      filter: saturate(0.92) brightness(1.02);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.70) inset,
+        0 2px 3px rgba(70,58,65,0.07);
+    }
+
+    .tasca-busta {
+      filter: saturate(0.96) brightness(0.99);
+      box-shadow:
+        0 -1px 0 rgba(255,255,255,0.42) inset;
     }
 
 
@@ -641,7 +657,7 @@ height: 285px;
       margin-top: 2px;
     }
 
-   /* Villa Cinardi — VERSIONE 1.5 — bordo nero + ombra più marcata */
+   /* Villa Cinardi — VERSIONE 1.6 — rilievo sottile verso destra */
 .dati-party-svg .location {
   margin-top: 10px;
 
@@ -651,16 +667,23 @@ height: 285px;
   font-weight: 400;
   line-height: 1;
 
-  color: #d99a32;
+  /* Oro più chiaro, vicino ai titoli Shabbat / Party */
+  color: #e5ad43;
 
-  -webkit-text-stroke: 2.2px rgba(0, 0, 0, 0.88);
+  /* Bordo scuro molto più sottile */
+  -webkit-text-stroke: 0.75px rgba(78, 52, 16, 0.92);
   paint-order: stroke fill;
 
+  /*
+    Rilievo spostato a destra:
+    luce sottile sul lato alto/sinistro,
+    ombra oro-bruna sul lato destro/inferiore.
+  */
   text-shadow:
-    1px 1px 0 #fff3c4,
-    2px 2px 0 #b06f13,
-    3px 3px 2px rgba(75, 45, 0, 0.48),
-    5px 5px 6px rgba(45, 30, 5, 0.34);
+    -0.6px -0.6px 0 rgba(255, 245, 190, 0.95),
+     1.2px  0.8px 0 #a86b16,
+     2.2px  1.5px 1px rgba(90, 56, 10, 0.62),
+     3.2px  2.2px 2px rgba(55, 38, 10, 0.28);
 }
 
     .dati-party-svg .indirizzo {
@@ -710,11 +733,11 @@ height: 285px;
   background:
     linear-gradient(
       135deg,
-      rgba(255,255,255,0.42) 0%,
-      rgba(255,255,255,0.12) 30%,
-      rgba(238,231,218,0) 58%
+      rgba(255,255,255,0.08),
+      rgba(238,232,245,0.08)
     ),
-    #eee7da;
+    url("sfondo_pulito_1748x1240.png") center 66% / cover no-repeat,
+    #f8f7f3;
 
   border-radius: 3px;
 
@@ -736,7 +759,7 @@ height: 285px;
       transparent 2.6px
     );
 
-  opacity: 0.65;
+  opacity: 0.82;
 
   pointer-events: none;
 }
@@ -797,11 +820,11 @@ height: 285px;
 .busta.aperta .aletta {
   background:
     linear-gradient(
-      135deg,
-      #e2d8c8 0%,
-      #d8cbb8 55%,
-      #cfc0aa 100%
-    );
+      rgba(215,208,220,0.24),
+      rgba(190,182,198,0.28)
+    ),
+    url("sfondo_pulito_1748x1240.png") center 22% / cover no-repeat,
+    #ece9ed;
 
   animation:
     apriAletta 1s ease forwards;
