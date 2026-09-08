@@ -684,6 +684,56 @@ height: 285px;
   font-size: 17px;
   line-height: 1;
 }
+
+    /* Loader cuore — VERSIONE 1.0 */
+.loader-cuore {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  background: #faf9f6;
+}
+
+.cuore-pulsante {
+  font-size: 58px;
+  line-height: 1;
+
+  color: #c62828;
+
+  animation:
+    battitoCuore 1.05s ease-in-out infinite;
+
+  transform-origin: center;
+}
+
+@keyframes battitoCuore {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  15% {
+    transform: scale(1.18);
+  }
+
+  30% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.12);
+  }
+
+  65% {
+    transform: scale(1);
+  }
+}
   </style>
 </head>
 
@@ -819,7 +869,12 @@ height: 285px;
   // verificaToken() — VERSIONE 3.0 — dati evento solo dopo token valido
   function verificaToken() {
     var risultato = document.getElementById("risultato");
-    risultato.textContent = "Verifica in corso...";
+    
+// Loader verifica token — VERSIONE 1.0
+risultato.innerHTML =
+  '<div class="loader-cuore" aria-label="Caricamento">' +
+    '<div class="cuore-pulsante">♥</div>' +
+  '</div>';
 
     fetch(
       "https://partecipazione-test.rodolfo-funaro.workers.dev/",
