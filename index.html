@@ -140,9 +140,10 @@ height: 285px;
 
     /* =========================
        ROTAZIONE 3D BUSTA
-       VERSIONE 1.0
-       Retro iniziale con intestazione integrata,
-       poi rotazione verso il fronte già esistente.
+       VERSIONE 1.1
+       Retro iniziale con intestazione integrata.
+       A fine rotazione il wrapper 3D viene appiattito
+       prima di avviare l'animazione originale.
        ========================= */
 
     .busta-flip {
@@ -161,10 +162,32 @@ height: 285px;
         transform 1.55s cubic-bezier(0.22, 0.72, 0.24, 1);
 
       will-change: transform;
+
+      cursor: pointer;
+
+      user-select: none;
+      -webkit-user-select: none;
+
+      caret-color: transparent;
+      outline: none;
     }
 
     .busta-flip.in-rotazione {
       transform: rotateY(180deg);
+    }
+
+    /*
+      Dopo il flip la struttura viene resa nuovamente
+      "piatta", senza alcun transform sull'antenato.
+      È fondamentale per conservare identica
+      l'animazione originale del cartoncino.
+    */
+    .busta-flip.rotazione-completata {
+      transform: none !important;
+      transition: none !important;
+      transform-style: flat;
+      -webkit-transform-style: flat;
+      cursor: default;
     }
 
     .faccia-busta {
@@ -181,9 +204,14 @@ height: 285px;
 
       transform-style: preserve-3d;
       -webkit-transform-style: preserve-3d;
+
+      user-select: none;
+      -webkit-user-select: none;
+
+      caret-color: transparent;
     }
 
-    /* RETRO: è la prima faccia visibile */
+    /* RETRO: prima faccia visibile */
     .retro-busta {
       z-index: 2;
 
@@ -209,6 +237,8 @@ height: 285px;
       box-shadow:
         18px 24px 34px rgba(70,58,42,0.20),
         7px 10px 14px rgba(70,58,42,0.10);
+
+      overflow: hidden;
     }
 
     .retro-busta::after {
@@ -241,6 +271,11 @@ height: 285px;
       text-align: center;
 
       transform: translateZ(1px);
+
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      caret-color: transparent;
     }
 
     /* FRONTE: contiene la busta originale completa */
@@ -250,11 +285,23 @@ height: 285px;
       transform: rotateY(180deg);
 
       overflow: visible;
+
+      background: #eee7da;
     }
 
-    /* Leggera ombra durante il movimento, senza alterare la geometria */
-    .busta-flip.in-rotazione {
-      filter: drop-shadow(0 12px 16px rgba(55,45,32,0.16));
+    /*
+      Stato finale istantaneo:
+      retro eliminato dalla scena e fronte riportato
+      a orientamento normale prima dell'apertura.
+    */
+    .busta-flip.rotazione-completata .retro-busta {
+      display: none;
+    }
+
+    .busta-flip.rotazione-completata .fronte-flip {
+      transform: none !important;
+      backface-visibility: visible;
+      -webkit-backface-visibility: visible;
     }
 
 
@@ -1267,7 +1314,7 @@ function toggleMusica() {
   }
 }
     
-// apriBusta() — VERSIONE 2.0 — rotazione retro→fronte, poi animazione originale invariata
+// apriBusta() — VERSIONE 2.1 — flip 3D corretto + ripristino animazione originale
 function apriBusta() {
 
   var flip =
@@ -1282,10 +1329,11 @@ function apriBusta() {
 
   /*
     Evita doppi tocchi durante
-    la rotazione e l'apertura.
+    rotazione e apertura.
   */
   if (
     flip.classList.contains("in-rotazione") ||
+    flip.classList.contains("rotazione-completata") ||
     busta.classList.contains("aperta")
   ) {
     return;
@@ -1294,7 +1342,7 @@ function apriBusta() {
 
   /*
     MUSICA DI SOTTOFONDO
-    Parte subito sul gesto dell'utente.
+    Parte sul primo gesto dell'utente.
   */
   var musica =
     document.getElementById("musicaFondo");
@@ -1349,8 +1397,7 @@ function apriBusta() {
 
   /*
     FASE 1
-    Il retro personalizzato ruota
-    insieme alla busta come unico oggetto.
+    Rotazione 3D retro -> fronte.
   */
   flip.classList.add(
     "in-rotazione"
@@ -1359,151 +1406,172 @@ function apriBusta() {
 
   /*
     FASE 2
-    Terminata la rotazione,
-    breve pausa e poi parte
-    ESATTAMENTE la precedente
-    animazione di apertura.
+    Alla fine esatta del flip:
+    - eliminiamo il retro dalla scena;
+    - togliamo i transform 3D dall'antenato;
+    - lasciamo visibile il fronte normale.
+
+    In questo modo il cartoncino torna nello stesso
+    contesto geometrico della versione approvata.
   */
   setTimeout(function() {
 
-    busta.classList.add(
-      "aperta"
+    flip.classList.remove(
+      "in-rotazione"
+    );
+
+    flip.classList.add(
+      "rotazione-completata"
     );
 
 
     /*
-      Aspettiamo la fine
-      dell'estrazione originale.
+      FASE 3
+      Pausa breve dopo la rotazione.
+      Poi parte l'apertura originale.
     */
     setTimeout(function() {
 
-      var originale =
-        busta.querySelector(
-          ".cartoncino"
+      busta.classList.add(
+        "aperta"
+      );
+
+
+      /*
+        Da qui in poi:
+        animazione originale del cartoncino invariata.
+      */
+      setTimeout(function() {
+
+        var originale =
+          busta.querySelector(
+            ".cartoncino"
+          );
+
+        if (!originale) {
+          return;
+        }
+
+
+        var rect =
+          originale.getBoundingClientRect();
+
+
+        /*
+          Creiamo una copia identica
+          esattamente sopra l'originale.
+        */
+        var volante =
+          originale.cloneNode(true);
+
+        volante.classList.add(
+          "cartoncino-volante"
         );
 
-      if (!originale) {
-        return;
-      }
+        volante.style.left =
+          rect.left + "px";
+
+        volante.style.top =
+          rect.top + "px";
+
+        volante.style.width =
+          rect.width + "px";
+
+        volante.style.height =
+          rect.height + "px";
+
+        volante.style.transform =
+          "none";
+
+        document.body.appendChild(
+          volante
+        );
 
 
-      var rect =
-        originale.getBoundingClientRect();
+        /*
+          La copia prende il posto
+          visivo dell'originale.
+        */
+        originale.style.visibility =
+          "hidden";
 
 
-      /*
-        Creiamo una copia identica
-        esattamente sopra l'originale.
-      */
-      var volante =
-        originale.cloneNode(true);
+        /*
+          Spazio finale disponibile.
+        */
+        var maxWidth =
+          window.innerWidth * 0.94;
 
-      volante.classList.add(
-        "cartoncino-volante"
-      );
+        var maxHeight =
+          window.innerHeight * 0.88;
 
-      volante.style.left =
-        rect.left + "px";
+        var rapporto =
+          rect.width / rect.height;
 
-      volante.style.top =
-        rect.top + "px";
+        var finalWidth =
+          maxWidth;
 
-      volante.style.width =
-        rect.width + "px";
+        var finalHeight =
+          finalWidth / rapporto;
 
-      volante.style.height =
-        rect.height + "px";
+        if (
+          finalHeight >
+          maxHeight
+        ) {
 
-      volante.style.transform =
-        "none";
+          finalHeight =
+            maxHeight;
 
-      document.body.appendChild(
-        volante
-      );
-
-
-      /*
-        La copia prende il posto
-        visivo dell'originale.
-      */
-      originale.style.visibility =
-        "hidden";
+          finalWidth =
+            finalHeight * rapporto;
+        }
 
 
-      /*
-        Spazio finale disponibile.
-      */
-      var maxWidth =
-        window.innerWidth * 0.94;
+        /*
+          Centratura nella viewport.
+        */
+        var finalLeft =
+          (
+            window.innerWidth -
+            finalWidth
+          ) / 2;
 
-      var maxHeight =
-        window.innerHeight * 0.88;
-
-      var rapporto =
-        rect.width / rect.height;
-
-      var finalWidth =
-        maxWidth;
-
-      var finalHeight =
-        finalWidth / rapporto;
-
-      if (
-        finalHeight >
-        maxHeight
-      ) {
-
-        finalHeight =
-          maxHeight;
-
-        finalWidth =
-          finalHeight * rapporto;
-      }
+        var finalTop =
+          (
+            window.innerHeight -
+            finalHeight
+          ) / 2;
 
 
-      /*
-        Centratura nella viewport.
-      */
-      var finalLeft =
-        (
-          window.innerWidth -
-          finalWidth
-        ) / 2;
-
-      var finalTop =
-        (
-          window.innerHeight -
-          finalHeight
-        ) / 2;
-
-
-      /*
-        Due frame separati evitano
-        il salto immediato.
-      */
-      requestAnimationFrame(function() {
-
+        /*
+          Due frame separati evitano
+          il salto immediato.
+        */
         requestAnimationFrame(function() {
 
-          volante.style.left =
-            finalLeft + "px";
+          requestAnimationFrame(function() {
 
-          volante.style.top =
-            finalTop + "px";
+            volante.style.left =
+              finalLeft + "px";
 
-          volante.style.width =
-            finalWidth + "px";
+            volante.style.top =
+              finalTop + "px";
 
-          volante.style.height =
-            finalHeight + "px";
+            volante.style.width =
+              finalWidth + "px";
+
+            volante.style.height =
+              finalHeight + "px";
+
+          });
 
         });
 
-      });
+      }, 3500);
 
-    }, 3500);
+    }, 350);
 
-  }, 1900);
+  }, 1550);
 }
 
     /* =========================
