@@ -140,7 +140,7 @@ height: 285px;
 
     /* =========================
        ROTAZIONE 3D BUSTA
-       VERSIONE 1.1
+       VERSIONE 1.2
        Retro iniziale con intestazione integrata.
        A fine rotazione il wrapper 3D viene appiattito
        prima di avviare l'animazione originale.
@@ -159,7 +159,7 @@ height: 285px;
       transform: rotateY(0deg);
 
       transition:
-        transform 1.55s cubic-bezier(0.22, 0.72, 0.24, 1);
+        transform 1.85s cubic-bezier(0.20, 0.70, 0.20, 1);
 
       will-change: transform;
 
@@ -641,7 +641,7 @@ height: 285px;
       margin-top: 2px;
     }
 
-   /* Villa Cinardi — VERSIONE 1.4 — bordo + ombra stile titoli */
+   /* Villa Cinardi — VERSIONE 1.5 — bordo nero + ombra più marcata */
 .dati-party-svg .location {
   margin-top: 10px;
 
@@ -653,13 +653,14 @@ height: 285px;
 
   color: #d99a32;
 
-  -webkit-text-stroke: 1.6px #7a5415;
+  -webkit-text-stroke: 2.2px rgba(0, 0, 0, 0.88);
   paint-order: stroke fill;
 
   text-shadow:
     1px 1px 0 #fff3c4,
     2px 2px 0 #b06f13,
-    3px 3px 3px rgba(75, 45, 0, 0.35);
+    3px 3px 2px rgba(75, 45, 0, 0.48),
+    5px 5px 6px rgba(45, 30, 5, 0.34);
 }
 
     .dati-party-svg .indirizzo {
@@ -1314,7 +1315,7 @@ function toggleMusica() {
   }
 }
     
-// apriBusta() — VERSIONE 2.1 — flip 3D corretto + ripristino animazione originale
+// apriBusta() — VERSIONE 2.2 — flip 3D più morbido + animazione originale
 function apriBusta() {
 
   var flip =
@@ -1571,7 +1572,7 @@ function apriBusta() {
 
     }, 350);
 
-  }, 1550);
+  }, 1850);
 }
 
     /* =========================
