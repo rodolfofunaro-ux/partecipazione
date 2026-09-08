@@ -138,6 +138,126 @@ height: 285px;
     }
 
 
+    /* =========================
+       ROTAZIONE 3D BUSTA
+       VERSIONE 1.0
+       Retro iniziale con intestazione integrata,
+       poi rotazione verso il fronte già esistente.
+       ========================= */
+
+    .busta-flip {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 285px;
+
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+
+      transform: rotateY(0deg);
+
+      transition:
+        transform 1.55s cubic-bezier(0.22, 0.72, 0.24, 1);
+
+      will-change: transform;
+    }
+
+    .busta-flip.in-rotazione {
+      transform: rotateY(180deg);
+    }
+
+    .faccia-busta {
+      position: absolute;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      border-radius: 3px;
+
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+    }
+
+    /* RETRO: è la prima faccia visibile */
+    .retro-busta {
+      z-index: 2;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      box-sizing: border-box;
+      padding: 28px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,0.42) 0%,
+          rgba(255,255,255,0.12) 30%,
+          rgba(238,231,218,0) 58%
+        ),
+        #eee7da;
+
+      border-top: 1px solid rgba(255,255,255,0.75);
+      border-left: 1px solid rgba(255,255,255,0.55);
+
+      box-shadow:
+        18px 24px 34px rgba(70,58,42,0.20),
+        7px 10px 14px rgba(70,58,42,0.10);
+    }
+
+    .retro-busta::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      border-radius: 3px;
+
+      background-image:
+        repeating-radial-gradient(
+          circle at 0 0,
+          rgba(90,75,55,0.08) 0,
+          rgba(90,75,55,0.08) 0.7px,
+          transparent 0.9px,
+          transparent 2.6px
+        );
+
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .retro-busta .nome-invitato {
+      position: relative;
+      z-index: 2;
+
+      width: 100%;
+      padding: 0 18px;
+
+      text-align: center;
+
+      transform: translateZ(1px);
+    }
+
+    /* FRONTE: contiene la busta originale completa */
+    .fronte-flip {
+      z-index: 1;
+
+      transform: rotateY(180deg);
+
+      overflow: visible;
+    }
+
+    /* Leggera ombra durante il movimento, senza alterare la geometria */
+    .busta-flip.in-rotazione {
+      filter: drop-shadow(0 12px 16px rgba(55,45,32,0.16));
+    }
+
+
     /* Texture carta */
 
     .busta::after {
@@ -1070,28 +1190,40 @@ risultato.innerHTML =
      CREA BUSTA
      ========================= */
 
-  // mostraBusta() — VERSIONE 3.0 — inserisce il cartoncino completo già composto
+  // mostraBusta() — VERSIONE 4.0 — retro personalizzato + fronte originale in flip 3D
   function mostraBusta(intestazione, evento) {
     var risultato = document.getElementById("risultato");
 
     risultato.innerHTML =
       '<div class="scena-busta">' +
-        '<div id="bustaTest" class="busta" onclick="apriBusta()">' +
-          '<div class="aletta"></div>' +
-          '<div id="cartoncinoHost" class="cartoncino"></div>' +
-          '<div class="tasca-busta"></div>' +
-          '<div class="sigillo"><span>A</span></div>' +
-          '<div class="fronte-busta">' +
-            '<div class="per">Per</div>' +
+
+        '<div id="bustaFlip" class="busta-flip">' +
+
+          '<div class="faccia-busta retro-busta" onclick="apriBusta()">' +
             '<div class="nome-invitato">' + escapeHtml(intestazione) + '</div>' +
           '</div>' +
+
+          '<div class="faccia-busta fronte-flip">' +
+            '<div id="bustaTest" class="busta">' +
+              '<div class="aletta"></div>' +
+              '<div id="cartoncinoHost" class="cartoncino"></div>' +
+              '<div class="tasca-busta"></div>' +
+              '<div class="sigillo"><span>A</span></div>' +
+            '</div>' +
+          '</div>' +
+
         '</div>' +
+
         '<div class="tocca">TOCCA PER APRIRE</div>' +
+
       '</div>';
 
     var host = document.getElementById("cartoncinoHost");
+
     if (host) {
-      host.appendChild(creaCartoncinoCompleto(evento));
+      host.appendChild(
+        creaCartoncinoCompleto(evento)
+      );
     }
   }
 
@@ -1135,182 +1267,245 @@ function toggleMusica() {
   }
 }
     
-// apriBusta() — VERSIONE 1.7 — avvio musica + animazione invariata
+// apriBusta() — VERSIONE 2.0 — rotazione retro→fronte, poi animazione originale invariata
 function apriBusta() {
+
+  var flip =
+    document.getElementById("bustaFlip");
 
   var busta =
     document.getElementById("bustaTest");
 
-  if (!busta) {
+  if (!flip || !busta) {
     return;
   }
 
   /*
+    Evita doppi tocchi durante
+    la rotazione e l'apertura.
+  */
+  if (
+    flip.classList.contains("in-rotazione") ||
+    busta.classList.contains("aperta")
+  ) {
+    return;
+  }
+
+
+  /*
     MUSICA DI SOTTOFONDO
-    Parte sul gesto dell'utente che apre la busta.
+    Parte subito sul gesto dell'utente.
   */
   var musica =
     document.getElementById("musicaFondo");
 
-if (musica) {
+  if (musica) {
 
-  // Musica — VERSIONE 1.1 — fade-in dolce
-  musica.volume = 0;
+    // Musica — VERSIONE 1.1 — fade-in dolce
+    musica.volume = 0;
 
-  var avvio = musica.play();
+    var avvio =
+      musica.play();
 
-  if (avvio !== undefined) {
+    if (avvio !== undefined) {
 
-    avvio.then(function() {
+      avvio.then(function() {
 
-      var volumeFinale = 0.55;
-      var durataFade = 2500;
-      var intervallo = 50;
-      var passi = durataFade / intervallo;
-      var incremento = volumeFinale / passi;
+        var volumeFinale = 0.55;
+        var durataFade = 2500;
+        var intervallo = 50;
+        var passi = durataFade / intervallo;
+        var incremento = volumeFinale / passi;
 
-      var fadeIn = setInterval(function() {
+        var fadeIn =
+          setInterval(function() {
 
-        var nuovoVolume =
-          Math.min(volumeFinale, musica.volume + incremento);
+            var nuovoVolume =
+              Math.min(
+                volumeFinale,
+                musica.volume + incremento
+              );
 
-        musica.volume = nuovoVolume;
+            musica.volume =
+              nuovoVolume;
 
-        if (nuovoVolume >= volumeFinale) {
-          clearInterval(fadeIn);
-        }
+            if (
+              nuovoVolume >=
+              volumeFinale
+            ) {
+              clearInterval(fadeIn);
+            }
 
-      }, intervallo);
+          }, intervallo);
 
-    }).catch(function() {
-      // L'animazione continua anche se l'audio viene bloccato.
-    });
+      }).catch(function() {
+        // La sequenza visiva continua anche se l'audio viene bloccato.
+      });
+
+    }
 
   }
-}
+
 
   /*
-    DA QUI IN POI:
-    ANIMAZIONE ORIGINALE INVARIATA.
+    FASE 1
+    Il retro personalizzato ruota
+    insieme alla busta come unico oggetto.
   */
-  busta.classList.add("aperta");
+  flip.classList.add(
+    "in-rotazione"
+  );
+
 
   /*
-    Aspettiamo la fine dell'estrazione.
+    FASE 2
+    Terminata la rotazione,
+    breve pausa e poi parte
+    ESATTAMENTE la precedente
+    animazione di apertura.
   */
   setTimeout(function() {
 
-    var originale =
-      busta.querySelector(".cartoncino");
-
-    if (!originale) {
-      return;
-    }
-
-    var rect =
-      originale.getBoundingClientRect();
-
-    /*
-      Creiamo una copia identica
-      esattamente sopra l'originale.
-    */
-    var volante =
-      originale.cloneNode(true);
-
-    volante.classList.add(
-      "cartoncino-volante"
+    busta.classList.add(
+      "aperta"
     );
 
-    volante.style.left =
-      rect.left + "px";
-
-    volante.style.top =
-      rect.top + "px";
-
-    volante.style.width =
-      rect.width + "px";
-
-    volante.style.height =
-      rect.height + "px";
-
-    volante.style.transform =
-      "none";
-
-    document.body.appendChild(
-      volante
-    );
 
     /*
-      La copia prende il posto visivo
-      dell'originale senza salto.
+      Aspettiamo la fine
+      dell'estrazione originale.
     */
-    originale.style.visibility =
-      "hidden";
+    setTimeout(function() {
 
-    /*
-      Spazio finale disponibile.
-    */
-    var maxWidth =
-      window.innerWidth * 0.94;
+      var originale =
+        busta.querySelector(
+          ".cartoncino"
+        );
 
-    var maxHeight =
-      window.innerHeight * 0.88;
+      if (!originale) {
+        return;
+      }
 
-    var rapporto =
-      rect.width / rect.height;
 
-    var finalWidth =
-      maxWidth;
+      var rect =
+        originale.getBoundingClientRect();
 
-    var finalHeight =
-      finalWidth / rapporto;
 
-    if (finalHeight > maxHeight) {
+      /*
+        Creiamo una copia identica
+        esattamente sopra l'originale.
+      */
+      var volante =
+        originale.cloneNode(true);
 
-      finalHeight =
-        maxHeight;
+      volante.classList.add(
+        "cartoncino-volante"
+      );
 
-      finalWidth =
-        finalHeight * rapporto;
-    }
+      volante.style.left =
+        rect.left + "px";
 
-    /*
-      Centratura nella viewport.
-    */
-    var finalLeft =
-      (window.innerWidth -
-       finalWidth) / 2;
+      volante.style.top =
+        rect.top + "px";
 
-    var finalTop =
-      (window.innerHeight -
-       finalHeight) / 2;
+      volante.style.width =
+        rect.width + "px";
 
-    /*
-      Due frame separati evitano
-      il salto immediato.
-    */
-    requestAnimationFrame(function() {
+      volante.style.height =
+        rect.height + "px";
 
+      volante.style.transform =
+        "none";
+
+      document.body.appendChild(
+        volante
+      );
+
+
+      /*
+        La copia prende il posto
+        visivo dell'originale.
+      */
+      originale.style.visibility =
+        "hidden";
+
+
+      /*
+        Spazio finale disponibile.
+      */
+      var maxWidth =
+        window.innerWidth * 0.94;
+
+      var maxHeight =
+        window.innerHeight * 0.88;
+
+      var rapporto =
+        rect.width / rect.height;
+
+      var finalWidth =
+        maxWidth;
+
+      var finalHeight =
+        finalWidth / rapporto;
+
+      if (
+        finalHeight >
+        maxHeight
+      ) {
+
+        finalHeight =
+          maxHeight;
+
+        finalWidth =
+          finalHeight * rapporto;
+      }
+
+
+      /*
+        Centratura nella viewport.
+      */
+      var finalLeft =
+        (
+          window.innerWidth -
+          finalWidth
+        ) / 2;
+
+      var finalTop =
+        (
+          window.innerHeight -
+          finalHeight
+        ) / 2;
+
+
+      /*
+        Due frame separati evitano
+        il salto immediato.
+      */
       requestAnimationFrame(function() {
 
-        volante.style.left =
-          finalLeft + "px";
+        requestAnimationFrame(function() {
 
-        volante.style.top =
-          finalTop + "px";
+          volante.style.left =
+            finalLeft + "px";
 
-        volante.style.width =
-          finalWidth + "px";
+          volante.style.top =
+            finalTop + "px";
 
-        volante.style.height =
-          finalHeight + "px";
+          volante.style.width =
+            finalWidth + "px";
+
+          volante.style.height =
+            finalHeight + "px";
+
+        });
 
       });
 
-    });
+    }, 3500);
 
-  }, 3500);
+  }, 1900);
 }
+
     /* =========================
        SICUREZZA TESTO
        ========================= */
