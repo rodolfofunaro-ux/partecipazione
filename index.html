@@ -1229,73 +1229,39 @@ height: 285px;
       }
     }
 
-    /* VIDEO PROTETTO — VERSIONE 1.1 — ingresso/uscita animati */
-    .video-invito-overlay {
+    /* VIDEO PROTETTO — VERSIONE 1.2 — estrazione dalla busta */
+    .video-invito-volante {
       position: fixed;
-      inset: 0;
-      z-index: 11000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      padding: 14px;
-
-      background: rgba(250,249,246,0);
+      z-index: 10000;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
       opacity: 0;
-
-      transition:
-        opacity 0.65s ease,
-        background 0.65s ease;
-    }
-
-    .video-invito-overlay.visibile {
-      opacity: 1;
-      background: rgba(250,249,246,0.985);
-    }
-
-    .video-invito-overlay.in-uscita {
-      opacity: 0;
-      background: rgba(250,249,246,0);
-    }
-
-    .video-invito-wrap {
-      position: relative;
-      height: min(92vh, 832px);
-      aspect-ratio: 464 / 832;
-      max-width: 94vw;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      opacity: 0;
-      transform:
-        translateY(105px)
-        scale(0.72);
-
       transform-origin: center center;
+      pointer-events: none;
 
       transition:
-        transform 1.05s cubic-bezier(0.20, 0.72, 0.20, 1),
-        opacity 0.65s ease;
+        left 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
+        top 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
+        width 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
+        height 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
+        opacity 0.35s ease;
     }
 
-    .video-invito-overlay.visibile .video-invito-wrap {
+    .video-invito-volante.visibile {
       opacity: 1;
-      transform:
-        translateY(0)
-        scale(1);
     }
 
-    .video-invito-overlay.in-uscita .video-invito-wrap {
-      opacity: 0;
-      transform:
-        translateY(-45px)
-        scale(0.94);
+    .video-invito-volante.arrivato {
+      pointer-events: auto;
+    }
 
+    .video-invito-volante.in-uscita {
+      opacity: 0;
+      transform: translateY(-35px) scale(0.96);
       transition:
-        transform 0.55s ease,
-        opacity 0.45s ease;
+        opacity 0.45s ease,
+        transform 0.55s ease;
     }
 
     .video-invito {
@@ -1305,34 +1271,64 @@ height: 285px;
       object-fit: contain;
       background: #000;
       border-radius: 12px;
-
       box-shadow:
-        0 22px 54px rgba(0,0,0,0.24),
-        0 6px 18px rgba(0,0,0,0.12);
+        0 22px 54px rgba(0,0,0,0.26),
+        0 6px 18px rgba(0,0,0,0.14);
     }
 
     .video-salta {
       position: absolute;
       right: 10px;
       top: 10px;
-      z-index: 2;
+      z-index: 5;
 
-      border: 1px solid rgba(255,255,255,.65);
-      border-radius: 18px;
-      padding: 7px 11px;
+      min-width: 92px;
+      min-height: 42px;
+      padding: 9px 15px;
 
-      background: rgba(0,0,0,.46);
+      border: 2px solid rgba(255,255,255,0.96);
+      border-radius: 24px;
+
+      background: rgba(22,22,22,0.78);
       color: #fff;
 
-      font: 700 12px Arial,sans-serif;
+      font: 800 13px/1 Arial, sans-serif;
+      letter-spacing: 0.7px;
+
       cursor: pointer;
+      box-shadow:
+        0 4px 15px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.18);
 
       opacity: 0;
-      transition: opacity 0.35s ease 0.75s;
+      transform: scale(0.94);
+
+      transition:
+        opacity 0.30s ease,
+        transform 0.30s ease,
+        background 0.20s ease;
     }
 
-    .video-invito-overlay.visibile .video-salta {
+    .video-invito-volante.arrivato .video-salta {
       opacity: 1;
+      transform: scale(1);
+    }
+
+    .video-salta:hover,
+    .video-salta:focus-visible {
+      background: rgba(0,0,0,0.94);
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    @media (max-width: 480px) {
+      .video-salta {
+        right: 8px;
+        top: 8px;
+        min-width: 96px;
+        min-height: 44px;
+        font-size: 13px;
+      }
     }
 
 </style>
@@ -1574,18 +1570,49 @@ risultato.innerHTML =
   }
 
 
-  // mostraVideoInvito() — VERSIONE 1.1 — ingresso elegante dal basso, uscita morbida
+  // mostraVideoInvito() — VERSIONE 1.2 — il video emerge fisicamente dalla busta
   function mostraVideoInvito(videoUrl, alTermine) {
     if (!videoUrl) {
       alTermine();
       return;
     }
 
-    var overlay = document.createElement("div");
-    overlay.className = "video-invito-overlay";
+    var busta = document.querySelector(".busta");
+    var cartoncino = busta ? busta.querySelector(".cartoncino") : null;
 
-    var wrap = document.createElement("div");
-    wrap.className = "video-invito-wrap";
+    if (!busta || !cartoncino) {
+      alTermine();
+      return;
+    }
+
+    /*
+      Punto di partenza: centro del cartoncino ancora dentro la busta.
+      Il video nasce piccolo, come se fosse realmente contenuto lì.
+    */
+    var rectBusta = busta.getBoundingClientRect();
+    var rectCarta = cartoncino.getBoundingClientRect();
+
+    var rapportoVideo = 464 / 832;
+
+    var startHeight = Math.max(90, Math.min(rectBusta.height * 0.62, 175));
+    var startWidth = startHeight * rapportoVideo;
+
+    var startLeft =
+      rectCarta.left +
+      (rectCarta.width - startWidth) / 2;
+
+    var startTop =
+      rectBusta.top +
+      rectBusta.height -
+      startHeight * 0.72;
+
+    var volante = document.createElement("div");
+    volante.className = "video-invito-volante";
+
+    volante.style.left = startLeft + "px";
+    volante.style.top = startTop + "px";
+    volante.style.width = startWidth + "px";
+    volante.style.height = startHeight + "px";
 
     var video = document.createElement("video");
     video.className = "video-invito";
@@ -1598,31 +1625,82 @@ risultato.innerHTML =
     var salta = document.createElement("button");
     salta.type = "button";
     salta.className = "video-salta";
-    salta.textContent = "SALTA";
+    salta.textContent = "SALTA VIDEO";
 
-    wrap.appendChild(video);
-    wrap.appendChild(salta);
-    overlay.appendChild(wrap);
-    document.body.appendChild(overlay);
+    volante.appendChild(video);
+    volante.appendChild(salta);
+    document.body.appendChild(volante);
 
     /*
-      Due frame separati:
-      il video non compare di colpo ma "sale" elegantemente
-      nella scena mentre lo sfondo perla entra in dissolvenza.
+      Destinazione: video verticale centrato, senza alcuna rotazione.
     */
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        overlay.classList.add("visibile");
-      });
-    });
+    var finalHeight = Math.min(
+      window.innerHeight * 0.92,
+      832
+    );
+
+    var finalWidth =
+      finalHeight * rapportoVideo;
+
+    if (finalWidth > window.innerWidth * 0.94) {
+      finalWidth = window.innerWidth * 0.94;
+      finalHeight = finalWidth / rapportoVideo;
+    }
+
+    var finalLeft =
+      (window.innerWidth - finalWidth) / 2;
+
+    var finalTop =
+      (window.innerHeight - finalHeight) / 2;
 
     var musica = document.getElementById("musicaFondo");
-    var volumePrima = musica ? musica.volume : VOLUME_MUSICA_NORMALE;
     var concluso = false;
 
+    /*
+      Durante il video la musica resta appena percepibile.
+      Prima era 0.10: ora scende a 0.035.
+    */
     if (musica && !musica.paused) {
-      musica.volume = Math.min(0.10, volumePrima);
+      musica.volume = 0.035;
     }
+
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+
+        volante.classList.add("visibile");
+
+        /*
+          Prima fase: il video sale fuori dalla busta.
+          Poi si espande verso il centro.
+        */
+        volante.style.top =
+          Math.max(8, rectBusta.top - startHeight * 0.72) + "px";
+
+        setTimeout(function() {
+          volante.style.left = finalLeft + "px";
+          volante.style.top = finalTop + "px";
+          volante.style.width = finalWidth + "px";
+          volante.style.height = finalHeight + "px";
+        }, 260);
+
+        setTimeout(function() {
+          volante.classList.add("arrivato");
+
+          /*
+            Il filmato parte solo quando l'estrazione è praticamente
+            conclusa, così non "corre" mentre sta uscendo dalla busta.
+          */
+          var avvio = video.play();
+
+          if (
+            avvio &&
+            typeof avvio.catch === "function"
+          ) {
+            avvio.catch(function() {});
+          }
+        }, 1650);
+      });
+    });
 
     function chiudiVideo() {
       if (concluso) return;
@@ -1630,19 +1708,15 @@ risultato.innerHTML =
 
       try { video.pause(); } catch (e) {}
 
-      /*
-        Prima animiamo l'uscita del video.
-        Solo dopo parte il cartoncino finale.
-      */
-      overlay.classList.remove("visibile");
-      overlay.classList.add("in-uscita");
+      volante.classList.remove("arrivato");
+      volante.classList.add("in-uscita");
 
       setTimeout(function() {
         video.removeAttribute("src");
         video.load();
 
-        if (overlay.parentNode) {
-          overlay.parentNode.removeChild(overlay);
+        if (volante.parentNode) {
+          volante.parentNode.removeChild(volante);
         }
 
         if (musica && !musica.paused) {
@@ -1650,27 +1724,12 @@ risultato.innerHTML =
         }
 
         alTermine();
-      }, 560);
+      }, 570);
     }
 
     video.addEventListener("ended", chiudiVideo);
     video.addEventListener("error", chiudiVideo);
     salta.addEventListener("click", chiudiVideo);
-
-    /*
-      Proviamo l'avvio automatico.
-      Su iPhone, se Safari lo blocca, i controlli restano disponibili.
-    */
-    setTimeout(function() {
-      var avvio = video.play();
-
-      if (
-        avvio &&
-        typeof avvio.catch === "function"
-      ) {
-        avvio.catch(function() {});
-      }
-    }, 350);
   }
 
 
