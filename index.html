@@ -663,7 +663,7 @@ height: 285px;
       margin-top: 2px;
     }
 
-   /* Villa Cinardi — VERSIONE 1.6 — rilievo sottile verso destra */
+   /* Villa Cinardi — VERSIONE 1.7 — bordo e rilievo rinforzati */
 .dati-party-svg .location {
   margin-top: 10px;
 
@@ -673,23 +673,17 @@ height: 285px;
   font-weight: 400;
   line-height: 1;
 
-  /* Oro più chiaro, vicino ai titoli Shabbat / Party */
   color: #e5ad43;
 
-  /* Bordo scuro molto più sottile */
-  -webkit-text-stroke: 0.75px rgba(78, 52, 16, 0.92);
+  /* Più vicino alla presenza grafica del titolo Party */
+  -webkit-text-stroke: 1.35px rgba(72, 47, 13, 0.96);
   paint-order: stroke fill;
 
-  /*
-    Rilievo spostato a destra:
-    luce sottile sul lato alto/sinistro,
-    ombra oro-bruna sul lato destro/inferiore.
-  */
   text-shadow:
-    -0.6px -0.6px 0 rgba(255, 245, 190, 0.95),
-     1.2px  0.8px 0 #a86b16,
-     2.2px  1.5px 1px rgba(90, 56, 10, 0.62),
-     3.2px  2.2px 2px rgba(55, 38, 10, 0.28);
+    -0.9px -0.9px 0 rgba(255, 247, 196, 0.98),
+     1.5px  1.0px 0 #a46813,
+     2.8px  1.9px 1px rgba(86, 52, 8, 0.72),
+     4.0px  2.8px 2px rgba(52, 34, 7, 0.42);
 }
 
     .dati-party-svg .indirizzo {
@@ -960,7 +954,7 @@ height: 285px;
   
 
     /* =========================
-       RSVP — VERSIONE 1.2
+       RSVP — VERSIONE 1.3
        Hotspot invisibile + modale ottimizzata smartphone
        ========================= */
 
@@ -1209,7 +1203,80 @@ height: 285px;
       }
     }
 
-  </style>
+  
+    /* RSVP — VERSIONE 1.3 — bold completo + correzione iPhone */
+    .rsvp-modale,
+    .rsvp-modale * {
+      font-weight: 700;
+    }
+
+    .rsvp-titolo {
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+      .rsvp-contatori {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .rsvp-campo,
+      .rsvp-campo label,
+      .rsvp-campo select {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+    }
+
+    /* VIDEO PROTETTO — VERSIONE 1.0 */
+    .video-invito-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 11000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 14px;
+      background: rgba(250,249,246,0.985);
+    }
+
+    .video-invito-wrap {
+      position: relative;
+      height: min(92vh, 832px);
+      aspect-ratio: 464 / 832;
+      max-width: 94vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-invito {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      border-radius: 12px;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.22);
+    }
+
+    .video-salta {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 2;
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: 18px;
+      padding: 7px 11px;
+      background: rgba(0,0,0,.46);
+      color: #fff;
+      font: 700 12px Arial,sans-serif;
+      cursor: pointer;
+    }
+
+</style>
 </head>
 
 
@@ -1247,6 +1314,10 @@ height: 285px;
     var STATO_RSVP = "";
     var PARTECIPANTI_RSVP = 0;
     var BAMBINI_RSVP = 0;
+    var VIDEO_URL_TEMPORANEO = "";
+    var VIDEO_AUTH_PROMISE = null;
+    var VOLUME_MUSICA_NORMALE = 0.55;
+
 
 
     window.onload = function() {
@@ -1382,6 +1453,14 @@ risultato.innerHTML =
       BAMBINI_RSVP = Number(data.bambini || 0);
 
       /*
+        VIDEO — VERSIONE 1.0
+        Chiediamo al Worker se questa famiglia ha la versione video.
+        Per una famiglia standard il 403 è previsto e viene trattato
+        semplicemente come "nessun video".
+      */
+      VIDEO_AUTH_PROMISE = autorizzaVideoInvito();
+
+      /*
         Anteprima solo se nella query c'è preview=1.
         Il link normale continua a mostrare la busta.
       */
@@ -1397,6 +1476,117 @@ risultato.innerHTML =
       risultato.innerHTML = "<strong>ERRORE DI COLLEGAMENTO</strong>";
     });
   }
+
+
+  // autorizzaVideoInvito() — VERSIONE 1.0 — ottiene solo URL temporaneo firmato
+  function autorizzaVideoInvito() {
+    return fetch(
+      "https://partecipazione-test.rodolfo-funaro.workers.dev/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          azione: "autorizzaVideo",
+          token: TOKEN
+        }),
+        cache: "no-store"
+      }
+    )
+    .then(function(response) {
+      if (!response.ok) return null;
+      return response.json();
+    })
+    .then(function(data) {
+      if (
+        data &&
+        data.ok === true &&
+        data.videoAutorizzato === true &&
+        data.videoUrl
+      ) {
+        VIDEO_URL_TEMPORANEO = String(data.videoUrl);
+        return VIDEO_URL_TEMPORANEO;
+      }
+
+      return null;
+    })
+    .catch(function() {
+      return null;
+    });
+  }
+
+
+  // mostraVideoInvito() — VERSIONE 1.0 — verticale, mai ruotato
+  function mostraVideoInvito(videoUrl, alTermine) {
+    if (!videoUrl) {
+      alTermine();
+      return;
+    }
+
+    var overlay = document.createElement("div");
+    overlay.className = "video-invito-overlay";
+
+    var wrap = document.createElement("div");
+    wrap.className = "video-invito-wrap";
+
+    var video = document.createElement("video");
+    video.className = "video-invito";
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.setAttribute("controls", "");
+    video.preload = "auto";
+    video.src = videoUrl;
+
+    var salta = document.createElement("button");
+    salta.type = "button";
+    salta.className = "video-salta";
+    salta.textContent = "SALTA";
+
+    wrap.appendChild(video);
+    wrap.appendChild(salta);
+    overlay.appendChild(wrap);
+    document.body.appendChild(overlay);
+
+    var musica = document.getElementById("musicaFondo");
+    var volumePrima = musica ? musica.volume : VOLUME_MUSICA_NORMALE;
+    var concluso = false;
+
+    if (musica && !musica.paused) {
+      musica.volume = Math.min(0.10, volumePrima);
+    }
+
+    function chiudiVideo() {
+      if (concluso) return;
+      concluso = true;
+
+      try { video.pause(); } catch (e) {}
+      video.removeAttribute("src");
+      video.load();
+
+      if (overlay.parentNode) {
+        overlay.parentNode.removeChild(overlay);
+      }
+
+      if (musica && !musica.paused) {
+        musica.volume = VOLUME_MUSICA_NORMALE;
+      }
+
+      alTermine();
+    }
+
+    video.addEventListener("ended", chiudiVideo);
+    video.addEventListener("error", chiudiVideo);
+    salta.addEventListener("click", chiudiVideo);
+
+    /*
+      Il gesto iniziale sulla busta può consentire l'autoplay.
+      Se iPhone lo blocca, i controlli restano visibili e basta PLAY.
+    */
+    var avvio = video.play();
+    if (avvio && typeof avvio.catch === "function") {
+      avvio.catch(function() {});
+    }
+  }
+
 
   /* =========================
      CARTONCINO COMPLETO PROTETTO
@@ -1758,149 +1948,136 @@ function apriBusta() {
 
 
       /*
-        Da qui in poi:
-        animazione originale del cartoncino invariata.
+        VIDEO — VERSIONE 1.0
+        Aspettiamo l'esito già avviato durante la verifica token.
+        Standard -> cartoncino normale.
+        Video -> filmato verticale, poi cartoncino.
       */
       setTimeout(function() {
+        var promessa = VIDEO_AUTH_PROMISE || Promise.resolve(null);
 
-        var originale =
-          busta.querySelector(
-            ".cartoncino"
-          );
-
-        if (!originale) {
-          return;
-        }
-
-
-        var rect =
-          originale.getBoundingClientRect();
-
-
-        /*
-          Creiamo una copia identica
-          esattamente sopra l'originale.
-        */
-        var volante =
-          originale.cloneNode(true);
-
-        volante.classList.add(
-          "cartoncino-volante"
-        );
-
-        volante.style.left =
-          rect.left + "px";
-
-        volante.style.top =
-          rect.top + "px";
-
-        volante.style.width =
-          rect.width + "px";
-
-        volante.style.height =
-          rect.height + "px";
-
-        volante.style.transform =
-          "none";
-
-        document.body.appendChild(
-          volante
-        );
-
-
-        /*
-          La copia prende il posto
-          visivo dell'originale.
-        */
-        originale.style.visibility =
-          "hidden";
-
-
-        /*
-          Spazio finale disponibile.
-        */
-        var maxWidth =
-          window.innerWidth * 0.94;
-
-        var maxHeight =
-          window.innerHeight * 0.88;
-
-        var rapporto =
-          rect.width / rect.height;
-
-        var finalWidth =
-          maxWidth;
-
-        var finalHeight =
-          finalWidth / rapporto;
-
-        if (
-          finalHeight >
-          maxHeight
-        ) {
-
-          finalHeight =
-            maxHeight;
-
-          finalWidth =
-            finalHeight * rapporto;
-        }
-
-
-        /*
-          Centratura nella viewport.
-        */
-        var finalLeft =
-          (
-            window.innerWidth -
-            finalWidth
-          ) / 2;
-
-        var finalTop =
-          (
-            window.innerHeight -
-            finalHeight
-          ) / 2;
-
-
-        /*
-          Due frame separati evitano
-          il salto immediato.
-        */
-        requestAnimationFrame(function() {
-
-          requestAnimationFrame(function() {
-
-            volante.style.left =
-              finalLeft + "px";
-
-            volante.style.top =
-              finalTop + "px";
-
-            volante.style.width =
-              finalWidth + "px";
-
-            volante.style.height =
-              finalHeight + "px";
-
-            /*
-              RSVP — VERSIONE 1.0
-              Abilitato a ingrandimento concluso.
-            */
-            setTimeout(function() {
-              volante.classList.add("rsvp-attivo");
-            }, 1250);
-
-          });
-
+        promessa.then(function(videoUrl) {
+          if (videoUrl) {
+            mostraVideoInvito(videoUrl, function() {
+              estraiCartoncinoFinale(busta);
+            });
+          } else {
+            estraiCartoncinoFinale(busta);
+          }
         });
-
       }, 3500);
 
     }, 350);
 
   }, 1850);
 }
+
+// estraiCartoncinoFinale() — VERSIONE 1.0 — animazione approvata preservata
+function estraiCartoncinoFinale(busta) {
+
+  var originale =
+    busta.querySelector(
+      ".cartoncino"
+    );
+
+  if (!originale) {
+    return;
+  }
+
+  var rect =
+    originale.getBoundingClientRect();
+
+  var volante =
+    originale.cloneNode(true);
+
+  volante.classList.add(
+    "cartoncino-volante"
+  );
+
+  volante.style.left =
+    rect.left + "px";
+
+  volante.style.top =
+    rect.top + "px";
+
+  volante.style.width =
+    rect.width + "px";
+
+  volante.style.height =
+    rect.height + "px";
+
+  volante.style.transform =
+    "none";
+
+  document.body.appendChild(
+    volante
+  );
+
+  originale.style.visibility =
+    "hidden";
+
+  var maxWidth =
+    window.innerWidth * 0.94;
+
+  var maxHeight =
+    window.innerHeight * 0.88;
+
+  var rapporto =
+    rect.width / rect.height;
+
+  var finalWidth =
+    maxWidth;
+
+  var finalHeight =
+    finalWidth / rapporto;
+
+  if (
+    finalHeight >
+    maxHeight
+  ) {
+    finalHeight =
+      maxHeight;
+
+    finalWidth =
+      finalHeight * rapporto;
+  }
+
+  var finalLeft =
+    (
+      window.innerWidth -
+      finalWidth
+    ) / 2;
+
+  var finalTop =
+    (
+      window.innerHeight -
+      finalHeight
+    ) / 2;
+
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+
+      volante.style.left =
+        finalLeft + "px";
+
+      volante.style.top =
+        finalTop + "px";
+
+      volante.style.width =
+        finalWidth + "px";
+
+      volante.style.height =
+        finalHeight + "px";
+
+      setTimeout(function() {
+        volante.classList.add("rsvp-attivo");
+      }, 1250);
+
+    });
+  });
+}
+
+
 
 
     /* =========================
