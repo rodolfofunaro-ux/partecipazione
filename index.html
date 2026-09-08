@@ -960,8 +960,8 @@ height: 285px;
   
 
     /* =========================
-       RSVP — VERSIONE 1.0
-       Hotspot sul cartoncino + finestra modale
+       RSVP — VERSIONE 1.1
+       Pulsante RSVP azzurro visibile + finestra modale
        ========================= */
 
     .anteprima-cartoncino {
@@ -970,33 +970,94 @@ height: 285px;
 
     .rsvp-hotspot {
       position: absolute;
-      left: 1.4%;
+      left: 1.25%;
       bottom: 0.8%;
-      width: 16%;
-      height: 11%;
+      width: 17.5%;
+      height: 11.5%;
 
-      border: 0;
-      border-radius: 10px;
-      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+
+      box-sizing: border-box;
+      padding: 4px 8px;
+
+      border: 1px solid rgba(72, 143, 157, 0.38);
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,0.62),
+          rgba(183,239,243,0.52) 42%,
+          rgba(176,220,246,0.48) 72%,
+          rgba(229,205,244,0.36)
+        );
+
+      box-shadow:
+        0 3px 7px rgba(53,105,116,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.82);
+
+      color: #405f67;
 
       cursor: pointer;
       pointer-events: auto;
-
-      opacity: 0;
-      transition:
-        opacity 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+      opacity: 1;
 
       z-index: 20;
+
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+    }
+
+    .rsvp-hotspot::before {
+      content: "R.S.V.P.";
+
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-size: clamp(10px, 1.35vw, 18px);
+      font-weight: 400;
+      line-height: 1;
+
+      color: #334f57;
+    }
+
+    .rsvp-hotspot::after {
+      content: "clicca qui";
+
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(5px, 0.58vw, 8px);
+      font-style: italic;
+      line-height: 1;
+
+      color: rgba(55, 91, 100, 0.82);
     }
 
     .rsvp-hotspot:hover,
     .rsvp-hotspot:focus-visible {
-      opacity: 1;
-      background: rgba(255,255,255,0.16);
-      box-shadow: 0 0 0 1px rgba(94,72,50,0.10) inset;
+      transform: translateY(-1px);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,0.74),
+          rgba(166,235,241,0.66) 42%,
+          rgba(160,211,244,0.60) 72%,
+          rgba(224,196,243,0.44)
+        );
+
+      box-shadow:
+        0 5px 11px rgba(53,105,116,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.90);
+
       outline: none;
+    }
+
+    .rsvp-hotspot:active {
+      transform: translateY(0) scale(0.98);
     }
 
     .cartoncino-volante.rsvp-attivo {
@@ -1489,7 +1550,7 @@ risultato.innerHTML =
     return svg;
   }
 
-  // aggiungiHotspotRSVP() — VERSIONE 1.0 — rende cliccabile la scritta RSVP
+  // aggiungiHotspotRSVP() — VERSIONE 1.2 — pulsante RSVP visibile e compatibile con cloneNode
   function aggiungiHotspotRSVP(contenitore) {
     if (!contenitore) return;
 
@@ -1498,10 +1559,18 @@ risultato.innerHTML =
     pulsante.className = "rsvp-hotspot";
     pulsante.setAttribute("aria-label", "Apri RSVP");
 
-    pulsante.onclick = function(eventoClick) {
-      eventoClick.stopPropagation();
-      apriModuloRSVP();
-    };
+    /*
+      VERSIONE 1.1
+      Usiamo un attributo onclick invece di una funzione assegnata
+      come proprietà: cloneNode(true) copia gli attributi, ma NON
+      copia gli event listener/proprietà JavaScript.
+      In questo modo l'hotspot continua a funzionare anche sul
+      cartoncino volante clonato.
+    */
+    pulsante.setAttribute(
+      "onclick",
+      "event.stopPropagation(); apriModuloRSVP(); return false;"
+    );
 
     contenitore.appendChild(pulsante);
   }
