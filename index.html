@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.4 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.5 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -968,18 +968,14 @@ height: 285px;
 
     .rsvp-svg-shadow {
       fill: rgba(132, 82, 20, 0.42);
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: pulsaRSVPEvidente 1.35s ease-in-out infinite, pulsaOmbraRSVP 1.35s ease-in-out infinite;
+      animation: pulsaOmbraRSVP 1.35s ease-in-out infinite;
     }
 
     .rsvp-svg-base {
       fill: url(#rsvpMetalGradient);
       stroke: rgba(126, 82, 21, 0.92);
       stroke-width: 4;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: pulsaRSVPEvidente 1.35s ease-in-out infinite, pulsaBaseRSVP 1.35s ease-in-out infinite;
+      animation: pulsaBaseRSVP 1.35s ease-in-out infinite;
     }
 
     .rsvp-svg-inner {
@@ -987,9 +983,6 @@ height: 285px;
       stroke: rgba(255,255,255,.46);
       stroke-width: 2.4;
       pointer-events: none;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: pulsaRSVPEvidente 1.35s ease-in-out infinite;
     }
 
     .rsvp-svg-text {
@@ -1001,9 +994,6 @@ height: 285px;
       text-anchor: middle;
       dominant-baseline: middle;
       pointer-events: none;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: pulsaTestoRSVP 1.35s ease-in-out infinite;
     }
 
     /*
@@ -1014,16 +1004,6 @@ height: 285px;
       fill: url(#rsvpShineGradient);
       opacity: 0;
       pointer-events: none;
-    }
-
-    @keyframes pulsaRSVPEvidente {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.09); }
-    }
-
-    @keyframes pulsaTestoRSVP {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
     }
 
     @keyframes pulsaBaseRSVP {
@@ -1829,7 +1809,7 @@ risultato.innerHTML =
      CARTONCINO COMPLETO PROTETTO
      ========================= */
 
-  // creaCartoncinoCompleto() — VERSIONE 3.5 — RSVP centrato più in basso + pulsazione forte
+  // creaCartoncinoCompleto() — VERSIONE 3.6 — pulsazione SVG stabile iPhone
   function creaCartoncinoCompleto(evento) {
     evento = evento || {};
 
@@ -2021,6 +2001,35 @@ risultato.innerHTML =
     shadow.setAttribute("height", "88");
     shadow.setAttribute("rx", "42");
     shadow.setAttribute("ry", "42");
+
+    var shadowX = document.createElementNS(NS, "animate");
+    shadowX.setAttribute("attributeName", "x");
+    shadowX.setAttribute("values", "78;69;78");
+    shadowX.setAttribute("dur", "1.35s");
+    shadowX.setAttribute("repeatCount", "indefinite");
+    shadow.appendChild(shadowX);
+
+    var shadowY = document.createElementNS(NS, "animate");
+    shadowY.setAttribute("attributeName", "y");
+    shadowY.setAttribute("values", "1039;1035;1039");
+    shadowY.setAttribute("dur", "1.35s");
+    shadowY.setAttribute("repeatCount", "indefinite");
+    shadow.appendChild(shadowY);
+
+    var shadowW = document.createElementNS(NS, "animate");
+    shadowW.setAttribute("attributeName", "width");
+    shadowW.setAttribute("values", "198;216;198");
+    shadowW.setAttribute("dur", "1.35s");
+    shadowW.setAttribute("repeatCount", "indefinite");
+    shadow.appendChild(shadowW);
+
+    var shadowH = document.createElementNS(NS, "animate");
+    shadowH.setAttribute("attributeName", "height");
+    shadowH.setAttribute("values", "88;96;88");
+    shadowH.setAttribute("dur", "1.35s");
+    shadowH.setAttribute("repeatCount", "indefinite");
+    shadow.appendChild(shadowH);
+
     g.appendChild(shadow);
 
     var base = document.createElementNS(NS, "rect");
@@ -2031,6 +2040,35 @@ risultato.innerHTML =
     base.setAttribute("height", "88");
     base.setAttribute("rx", "42");
     base.setAttribute("ry", "42");
+
+    var baseX = document.createElementNS(NS, "animate");
+    baseX.setAttribute("attributeName", "x");
+    baseX.setAttribute("values", "78;69;78");
+    baseX.setAttribute("dur", "1.35s");
+    baseX.setAttribute("repeatCount", "indefinite");
+    base.appendChild(baseX);
+
+    var baseY = document.createElementNS(NS, "animate");
+    baseY.setAttribute("attributeName", "y");
+    baseY.setAttribute("values", "1031;1027;1031");
+    baseY.setAttribute("dur", "1.35s");
+    baseY.setAttribute("repeatCount", "indefinite");
+    base.appendChild(baseY);
+
+    var baseW = document.createElementNS(NS, "animate");
+    baseW.setAttribute("attributeName", "width");
+    baseW.setAttribute("values", "198;216;198");
+    baseW.setAttribute("dur", "1.35s");
+    baseW.setAttribute("repeatCount", "indefinite");
+    base.appendChild(baseW);
+
+    var baseH = document.createElementNS(NS, "animate");
+    baseH.setAttribute("attributeName", "height");
+    baseH.setAttribute("values", "88;96;88");
+    baseH.setAttribute("dur", "1.35s");
+    baseH.setAttribute("repeatCount", "indefinite");
+    base.appendChild(baseH);
+
     g.appendChild(base);
 
     var inner = document.createElementNS(NS, "rect");
@@ -2041,6 +2079,35 @@ risultato.innerHTML =
     inner.setAttribute("height", "75");
     inner.setAttribute("rx", "36");
     inner.setAttribute("ry", "36");
+
+    var innerX = document.createElementNS(NS, "animate");
+    innerX.setAttribute("attributeName", "x");
+    innerX.setAttribute("values", "84;76;84");
+    innerX.setAttribute("dur", "1.35s");
+    innerX.setAttribute("repeatCount", "indefinite");
+    inner.appendChild(innerX);
+
+    var innerY = document.createElementNS(NS, "animate");
+    innerY.setAttribute("attributeName", "y");
+    innerY.setAttribute("values", "1037;1033;1037");
+    innerY.setAttribute("dur", "1.35s");
+    innerY.setAttribute("repeatCount", "indefinite");
+    inner.appendChild(innerY);
+
+    var innerW = document.createElementNS(NS, "animate");
+    innerW.setAttribute("attributeName", "width");
+    innerW.setAttribute("values", "186;202;186");
+    innerW.setAttribute("dur", "1.35s");
+    innerW.setAttribute("repeatCount", "indefinite");
+    inner.appendChild(innerW);
+
+    var innerH = document.createElementNS(NS, "animate");
+    innerH.setAttribute("attributeName", "height");
+    innerH.setAttribute("values", "75;83;75");
+    innerH.setAttribute("dur", "1.35s");
+    innerH.setAttribute("repeatCount", "indefinite");
+    inner.appendChild(innerH);
+
     g.appendChild(inner);
 
     var shine = document.createElementNS(NS, "rect");
