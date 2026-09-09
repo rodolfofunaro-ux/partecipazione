@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.8 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.9 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -2411,58 +2411,55 @@ function estraiCartoncinoFinale(busta) {
   originale.style.visibility =
     "hidden";
 
-  var maxWidth =
-    window.innerWidth * 0.94;
+  // CARTONCINO FINALE — VERSIONE 1.4 — responsive a rotazione reale smartphone
+  var rapporto = 1748 / 1240;
 
-  var maxHeight =
-    window.innerHeight * 0.88;
+  function dimensionaCartoncinoFinale() {
+    var viewport = window.visualViewport;
+    var viewportWidth = viewport ? viewport.width : window.innerWidth;
+    var viewportHeight = viewport ? viewport.height : window.innerHeight;
+    var viewportLeft = viewport ? viewport.offsetLeft : 0;
+    var viewportTop = viewport ? viewport.offsetTop : 0;
 
-  var rapporto =
-    rect.width / rect.height;
+    var maxWidth = viewportWidth * 0.94;
+    var maxHeight = viewportHeight * 0.88;
+    var finalWidth = maxWidth;
+    var finalHeight = finalWidth / rapporto;
 
-  var finalWidth =
-    maxWidth;
+    if (finalHeight > maxHeight) {
+      finalHeight = maxHeight;
+      finalWidth = finalHeight * rapporto;
+    }
 
-  var finalHeight =
-    finalWidth / rapporto;
-
-  if (
-    finalHeight >
-    maxHeight
-  ) {
-    finalHeight =
-      maxHeight;
-
-    finalWidth =
-      finalHeight * rapporto;
+    volante.style.left =
+      (viewportLeft + (viewportWidth - finalWidth) / 2) + "px";
+    volante.style.top =
+      (viewportTop + (viewportHeight - finalHeight) / 2) + "px";
+    volante.style.width = finalWidth + "px";
+    volante.style.height = finalHeight + "px";
   }
-
-  var finalLeft =
-    (
-      window.innerWidth -
-      finalWidth
-    ) / 2;
-
-  var finalTop =
-    (
-      window.innerHeight -
-      finalHeight
-    ) / 2;
 
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
 
-      volante.style.left =
-        finalLeft + "px";
+      dimensionaCartoncinoFinale();
 
-      volante.style.top =
-        finalTop + "px";
+      // Dopo l'estrazione, ogni rotazione/ridimensionamento reale del viewport
+      // ricalcola dimensione e centratura senza applicare alcuna rotazione CSS.
+      var resizeTimerCartoncino = null;
+      function aggiornaCartoncinoDopoResize() {
+        if (resizeTimerCartoncino) clearTimeout(resizeTimerCartoncino);
+        resizeTimerCartoncino = setTimeout(function() {
+          if (volante && volante.isConnected) dimensionaCartoncinoFinale();
+        }, 80);
+      }
 
-      volante.style.width =
-        finalWidth + "px";
-
-      volante.style.height =
-        finalHeight + "px";
+      window.addEventListener("resize", aggiornaCartoncinoDopoResize, { passive: true });
+      window.addEventListener("orientationchange", aggiornaCartoncinoDopoResize, { passive: true });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", aggiornaCartoncinoDopoResize, { passive: true });
+        window.visualViewport.addEventListener("scroll", aggiornaCartoncinoDopoResize, { passive: true });
+      }
 
       /* RSVP è già parte del cartoncino: abilitiamo solo l'interazione finale. */
       setTimeout(function() {
