@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.9 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.0 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -955,39 +955,35 @@ height: 285px;
       position: relative;
     }
 
-    /* RSVP dinamico — VERSIONE 2.1 — compare solo a cartoncino fermo */
+    /* RSVP dinamico — VERSIONE 3.0 — elemento interno al SVG del cartoncino */
+    .rsvp-svg-fo {
+      overflow: visible;
+      pointer-events: none;
+    }
+
     .rsvp-hotspot {
-      position: absolute;
-      left: 2.2%;
-      bottom: 4.7%;
-      width: 11.8%;
-      min-width: 58px;
-      height: 8.1%;
-      min-height: 32px;
-      border: 1.5px solid rgba(126, 82, 21, 0.80);
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border: 4px solid rgba(126, 82, 21, 0.86);
       border-radius: 999px;
       background:
         linear-gradient(180deg, #f4cf72 0%, #e5ad43 52%, #c98925 100%);
       color: #4b3214;
       font-family: "AmerigoMdBT", Georgia, serif;
-      font-size: clamp(12px, 2.1vw, 26px);
+      font-size: 42px;
       font-weight: 700;
       letter-spacing: 0.06em;
       cursor: pointer;
-      pointer-events: none;
-      opacity: 0;
-      z-index: 20;
+      pointer-events: auto;
       outline: none;
       -webkit-tap-highlight-color: transparent;
       box-shadow:
-        0 7px 0 rgba(132, 82, 20, 0.72),
-        0 11px 18px rgba(67, 43, 17, 0.28),
-        inset 0 2px 2px rgba(255,255,255,.72),
-        inset 0 -3px 5px rgba(121,72,16,.22);
+        0 12px 0 rgba(132, 82, 20, 0.72),
+        0 18px 28px rgba(67, 43, 17, 0.25),
+        inset 0 3px 3px rgba(255,255,255,.72),
+        inset 0 -5px 7px rgba(121,72,16,.22);
       transform-origin: center;
-      transform: scale(.94);
-      animation: none;
-      transition: opacity .28s ease, transform .28s ease;
     }
 
     .rsvp-hotspot::before { content: "RSVP"; }
@@ -1000,40 +996,21 @@ height: 285px;
     .rsvp-hotspot:hover,
     .rsvp-hotspot:focus-visible {
       background: linear-gradient(180deg, #f9da85 0%, #ebb64e 52%, #d3912c 100%);
-      box-shadow:
-        0 7px 0 rgba(132,82,20,.72),
-        0 12px 20px rgba(67,43,17,.32),
-        inset 0 2px 2px rgba(255,255,255,.78),
-        inset 0 -3px 5px rgba(121,72,16,.22);
     }
 
     @keyframes pulsaRSVP {
       0%, 100% { transform: scale(1) translateY(0); }
-      50% { transform: scale(1.055) translateY(-1px); }
-    }
-
-    .cartoncino-volante.rsvp-attivo { pointer-events: auto; }
-    .cartoncino-volante.rsvp-attivo .rsvp-hotspot {
-      pointer-events: auto;
-      opacity: 1;
-      transform: scale(1);
-      animation: pulsaRSVP 1.65s ease-in-out .28s infinite;
+      50% { transform: scale(1.035) translateY(-1px); }
     }
 
     /*
-      Smartphone: il blocco pagamento/IBAN occupa la fascia inferiore.
-      Spostiamo il pulsante sopra quella fascia, mantenendo dimensioni touch.
+      Il pulsante viene creato insieme a sfondo e dati nel medesimo SVG.
+      Quindi durante busta, estrazione, clone e ingrandimento scala sempre
+      con il cartoncino: nessun min-width/min-height e nessun media query.
     */
-    @media (max-width: 600px) {
-      .cartoncino-volante.rsvp-attivo .rsvp-hotspot {
-        left: 2.2%;
-        bottom: 13.2%;
-        width: 12.2%;
-        min-width: 46px;
-        height: 7.0%;
-        min-height: 30px;
-        font-size: clamp(11px, 3.1vw, 15px);
-      }
+    .cartoncino-volante.rsvp-attivo { pointer-events: auto; }
+    .cartoncino-volante.rsvp-attivo .rsvp-hotspot {
+      animation: pulsaRSVP 1.65s ease-in-out infinite;
     }
 
     .rsvp-overlay {
@@ -1827,7 +1804,7 @@ risultato.innerHTML =
      CARTONCINO COMPLETO PROTETTO
      ========================= */
 
-  // creaCartoncinoCompleto() — VERSIONE 3.0 — SVG unico 1748x1240
+  // creaCartoncinoCompleto() — VERSIONE 3.1 — dati + RSVP nello stesso SVG 1748x1240
   function creaCartoncinoCompleto(evento) {
     evento = evento || {};
 
@@ -1934,34 +1911,33 @@ risultato.innerHTML =
       div.appendChild(paypal);
     });
 
-    return svg;
-  }
-
-  // aggiungiHotspotRSVP() — VERSIONE 1.3 — hotspot invisibile compatibile con cloneNode
-  function aggiungiHotspotRSVP(contenitore) {
-    if (!contenitore) return;
-
-    var pulsante = document.createElement("button");
-    pulsante.type = "button";
-    pulsante.className = "rsvp-hotspot";
-    pulsante.setAttribute("aria-label", "Apri RSVP");
-
     /*
-      VERSIONE 1.1
-      Usiamo un attributo onclick invece di una funzione assegnata
-      come proprietà: cloneNode(true) copia gli attributi, ma NON
-      copia gli event listener/proprietà JavaScript.
-      In questo modo l'hotspot continua a funzionare anche sul
-      cartoncino volante clonato.
+      RSVP — VERSIONE 3.0
+      È parte integrante del cartoncino nello stesso sistema 1748x1240.
+      Posizione scelta nella fascia libera a sinistra, SOPRA il blocco
+      pagamento (che inizia a y=1125), quindi non può coprire IBAN/PayPal.
     */
-    pulsante.setAttribute(
+    var rsvpFO = document.createElementNS(NS, "foreignObject");
+    rsvpFO.setAttribute("x", "70");
+    rsvpFO.setAttribute("y", "965");
+    rsvpFO.setAttribute("width", "225");
+    rsvpFO.setAttribute("height", "105");
+    rsvpFO.setAttribute("class", "rsvp-svg-fo");
+
+    var rsvpButton = document.createElementNS(XHTML, "button");
+    rsvpButton.setAttribute("type", "button");
+    rsvpButton.setAttribute("class", "rsvp-hotspot");
+    rsvpButton.setAttribute("aria-label", "Apri RSVP");
+    rsvpButton.setAttribute(
       "onclick",
       "event.stopPropagation(); this.classList.add('rsvp-premuto'); apriModuloRSVP(); return false;"
     );
 
-    contenitore.appendChild(pulsante);
-  }
+    rsvpFO.appendChild(rsvpButton);
+    svg.appendChild(rsvpFO);
 
+    return svg;
+  }
 
   // mostraAnteprimaCartoncino() — VERSIONE 2.0 — stesso oggetto della busta
   function mostraAnteprimaCartoncino(evento) {
@@ -1971,7 +1947,6 @@ risultato.innerHTML =
     var contenitore = document.createElement("div");
     contenitore.className = "anteprima-cartoncino";
     contenitore.appendChild(creaCartoncinoCompleto(evento));
-    aggiungiHotspotRSVP(contenitore);
 
     risultato.appendChild(contenitore);
   }
@@ -2014,8 +1989,6 @@ risultato.innerHTML =
       host.appendChild(
         creaCartoncinoCompleto(evento)
       );
-
-      aggiungiHotspotRSVP(host);
     }
   }
 
@@ -2182,7 +2155,7 @@ function apriBusta() {
   }, 1850);
 }
 
-// estraiCartoncinoFinale() — VERSIONE 1.1 — RSVP attivo solo a fine animazione
+// estraiCartoncinoFinale() — VERSIONE 1.2 — RSVP già incorporato nel cartoncino
 function estraiCartoncinoFinale(busta) {
 
   var originale =
