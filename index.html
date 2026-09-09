@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.2 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.3 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -968,14 +968,18 @@ height: 285px;
 
     .rsvp-svg-shadow {
       fill: rgba(132, 82, 20, 0.42);
-      animation: pulsaOmbraRSVP 1.75s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulsaRSVPEvidente 1.55s ease-in-out infinite, pulsaOmbraRSVP 1.55s ease-in-out infinite;
     }
 
     .rsvp-svg-base {
       fill: url(#rsvpMetalGradient);
       stroke: rgba(126, 82, 21, 0.92);
       stroke-width: 4;
-      animation: pulsaBaseRSVP 1.75s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulsaRSVPEvidente 1.55s ease-in-out infinite, pulsaBaseRSVP 1.55s ease-in-out infinite;
     }
 
     .rsvp-svg-inner {
@@ -983,6 +987,9 @@ height: 285px;
       stroke: rgba(255,255,255,.46);
       stroke-width: 2.4;
       pointer-events: none;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulsaRSVPEvidente 1.55s ease-in-out infinite;
     }
 
     .rsvp-svg-text {
@@ -994,6 +1001,9 @@ height: 285px;
       text-anchor: middle;
       dominant-baseline: middle;
       pointer-events: none;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulsaTestoRSVP 1.55s ease-in-out infinite;
     }
 
     /*
@@ -1006,14 +1016,24 @@ height: 285px;
       pointer-events: none;
     }
 
+    @keyframes pulsaRSVPEvidente {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.055); }
+    }
+
+    @keyframes pulsaTestoRSVP {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.035); }
+    }
+
     @keyframes pulsaBaseRSVP {
       0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.08); }
+      50% { filter: brightness(1.12); }
     }
 
     @keyframes pulsaOmbraRSVP {
       0%, 100% { opacity: .78; }
-      50% { opacity: .52; }
+      50% { opacity: .44; }
     }
 
     .cartoncino-volante.rsvp-attivo { pointer-events: auto; }
@@ -1809,7 +1829,7 @@ risultato.innerHTML =
      CARTONCINO COMPLETO PROTETTO
      ========================= */
 
-  // creaCartoncinoCompleto() — VERSIONE 3.3 — RSVP fermo + riflesso SVG compatibile
+  // creaCartoncinoCompleto() — VERSIONE 3.4 — RSVP più basso + pulsazione evidente
   function creaCartoncinoCompleto(evento) {
     evento = evento || {};
 
@@ -1975,7 +1995,7 @@ risultato.innerHTML =
     clip.setAttribute("id", "rsvpClip");
     var clipRect = document.createElementNS(NS, "rect");
     clipRect.setAttribute("x", "78");
-    clipRect.setAttribute("y", "1005");
+    clipRect.setAttribute("y", "1021");
     clipRect.setAttribute("width", "198");
     clipRect.setAttribute("height", "88");
     clipRect.setAttribute("rx", "42");
@@ -1996,7 +2016,7 @@ risultato.innerHTML =
     var shadow = document.createElementNS(NS, "rect");
     shadow.setAttribute("class", "rsvp-svg-shadow");
     shadow.setAttribute("x", "78");
-    shadow.setAttribute("y", "1013");
+    shadow.setAttribute("y", "1029");
     shadow.setAttribute("width", "198");
     shadow.setAttribute("height", "88");
     shadow.setAttribute("rx", "42");
@@ -2006,7 +2026,7 @@ risultato.innerHTML =
     var base = document.createElementNS(NS, "rect");
     base.setAttribute("class", "rsvp-svg-base");
     base.setAttribute("x", "78");
-    base.setAttribute("y", "1005");
+    base.setAttribute("y", "1021");
     base.setAttribute("width", "198");
     base.setAttribute("height", "88");
     base.setAttribute("rx", "42");
@@ -2016,7 +2036,7 @@ risultato.innerHTML =
     var inner = document.createElementNS(NS, "rect");
     inner.setAttribute("class", "rsvp-svg-inner");
     inner.setAttribute("x", "84");
-    inner.setAttribute("y", "1011");
+    inner.setAttribute("y", "1027");
     inner.setAttribute("width", "186");
     inner.setAttribute("height", "75");
     inner.setAttribute("rx", "36");
@@ -2026,7 +2046,7 @@ risultato.innerHTML =
     var shine = document.createElementNS(NS, "rect");
     shine.setAttribute("class", "rsvp-svg-shine");
     shine.setAttribute("x", "18");
-    shine.setAttribute("y", "992");
+    shine.setAttribute("y", "1008");
     shine.setAttribute("width", "72");
     shine.setAttribute("height", "116");
     shine.setAttribute("clip-path", "url(#rsvpClip)");
@@ -2055,7 +2075,7 @@ risultato.innerHTML =
     var txt = document.createElementNS(NS, "text");
     txt.setAttribute("class", "rsvp-svg-text");
     txt.setAttribute("x", "177");
-    txt.setAttribute("y", "1049");
+    txt.setAttribute("y", "1065");
     txt.textContent = "RSVP";
     g.appendChild(txt);
 
