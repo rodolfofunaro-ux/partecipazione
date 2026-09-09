@@ -1,3 +1,4 @@
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.3 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -921,13 +922,14 @@ height: 285px;
 }
 
 .clessidra-animata {
-  width: 58px;
-  height: 72px;
+  width: 76px;
+  height: 94px;
   animation: giraClessidra 1.55s cubic-bezier(.45,.05,.55,.95) infinite;
   filter: drop-shadow(0 5px 7px rgba(76,58,35,.18));
   transform-origin: 50% 50%;
 }
 .clessidra-animata svg { display:block; width:100%; height:100%; }
+.loader-testo { margin-top:14px; font:700 14px/1.2 Georgia,serif; color:#66513a; letter-spacing:.04em; }
 
 @keyframes giraClessidra {
   0%, 38% { transform: rotate(0deg); }
@@ -946,12 +948,12 @@ height: 285px;
     /* RSVP dinamico — VERSIONE 2.0 — visibile, pulsante e touch-friendly */
     .rsvp-hotspot {
       position: absolute;
-      left: 2.0%;
-      bottom: 3.2%;
-      width: 14.2%;
-      min-width: 68px;
-      height: 9.6%;
-      min-height: 38px;
+      left: 2.2%;
+      bottom: 4.7%;
+      width: 11.8%;
+      min-width: 58px;
+      height: 8.1%;
+      min-height: 32px;
       border: 1.5px solid rgba(126, 82, 21, 0.80);
       border-radius: 999px;
       background:
@@ -1242,26 +1244,27 @@ height: 285px;
     /* Cartoncino dopo il video — VERSIONE 1.0 — ripristina l'uscita fisica, senza attese morte */
     .busta.aperta.post-video-estrazione .cartoncino {
       transform: translate3d(0, -290px, 0) !important;
-      transition: transform 1.18s cubic-bezier(0.22,0.61,0.36,1) !important;
-      transition-delay: .06s !important;
+       transition: transform .78s cubic-bezier(0.22,0.61,0.36,1) !important;
+      transition-delay: 0s !important;
       z-index: 4;
     }
 
     .video-emergente-stage {
       position: absolute;
       left: 50%;
-      bottom: 24px;
-      width: 92px;
-      height: 165px;
+      bottom: 18px;
+      width: 31%;
+      aspect-ratio: 464 / 832;
+      height: auto;
       transform: translate3d(-50%, 0, 0);
       z-index: 4;
-      opacity: 0;
+      opacity: 1;
       pointer-events: none;
-      transition: transform .66s cubic-bezier(.20,.72,.20,1), opacity .10s ease;
-      will-change: transform, opacity;
+      transition: transform .52s cubic-bezier(.18,.78,.22,1);
+      will-change: transform;
     }
     .video-emergente-stage.visibile { opacity: 1; }
-    .video-emergente-stage.estratto { transform: translate3d(-50%, -205px, 0); }
+    .video-emergente-stage.estratto { transform: translate3d(-50%, -188px, 0); }
     .video-emergente-stage .video-invito { border-radius: 7px; }
 
     .video-invito-volante {
@@ -1274,10 +1277,10 @@ height: 285px;
       transform-origin: center center;
       pointer-events: none;
       transition:
-        left .72s cubic-bezier(.20,.72,.20,1),
-        top .72s cubic-bezier(.20,.72,.20,1),
-        width .72s cubic-bezier(.20,.72,.20,1),
-        height .72s cubic-bezier(.20,.72,.20,1),
+        left .58s cubic-bezier(.20,.72,.20,1),
+        top .58s cubic-bezier(.20,.72,.20,1),
+        width .58s cubic-bezier(.20,.72,.20,1),
+        height .58s cubic-bezier(.20,.72,.20,1),
         opacity .35s ease;
     }
     .video-invito-volante.arrivato { pointer-events: auto; }
@@ -1305,7 +1308,7 @@ height: 285px;
     .video-salta:hover, .video-salta:focus-visible { background: rgba(0,0,0,.94); transform: scale(1.05); outline: none; }
     @media (max-width:480px) {
       .video-salta { right:8px; top:8px; min-width:96px; min-height:44px; font-size:13px; }
-      .video-emergente-stage { width: 82px; height: 147px; }
+      .video-emergente-stage { width: 30%; }
     }
 
 </style>
@@ -1453,6 +1456,42 @@ height: 285px;
 
 
   /* =========================
+     RETE ROBUSTA — VERSIONE 1.0
+     Timeout + retry per WebView/iPhone/WhatsApp
+     ========================= */
+  function fetchJsonRobusto(url, opzioni, tentativi, timeoutMs) {
+    tentativi = tentativi || 3;
+    timeoutMs = timeoutMs || 6500;
+
+    function prova(numero) {
+      var controller = (typeof AbortController !== "undefined") ? new AbortController() : null;
+      var timer = null;
+      var opts = Object.assign({}, opzioni || {});
+      if (controller) opts.signal = controller.signal;
+
+      if (controller) {
+        timer = setTimeout(function() { controller.abort(); }, timeoutMs);
+      }
+
+      return fetch(url, opts)
+        .then(function(response) {
+          if (timer) clearTimeout(timer);
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.json();
+        })
+        .catch(function(err) {
+          if (timer) clearTimeout(timer);
+          if (numero >= tentativi) throw err;
+          return new Promise(function(resolve) {
+            setTimeout(resolve, 350 * numero);
+          }).then(function() { return prova(numero + 1); });
+        });
+    }
+
+    return prova(1);
+  }
+
+  /* =========================
      VERIFICA TOKEN
      ========================= */
 
@@ -1463,30 +1502,31 @@ height: 285px;
 // Loader verifica token — VERSIONE 1.0
 risultato.innerHTML =
   '<div class="loader-clessidra" aria-label="Caricamento">' +
-    '<div class="clessidra-animata" aria-hidden="true">' +
-      '<svg viewBox="0 0 64 80" xmlns="http://www.w3.org/2000/svg">' +
-        '<path d="M13 7H51M13 73H51" stroke="#80684b" stroke-width="5" stroke-linecap="round"/>' +
-        '<path d="M17 12C18 27 27 31 32 40C37 31 46 27 47 12M17 68C18 53 27 49 32 40C37 49 46 53 47 68" fill="none" stroke="#9a805c" stroke-width="3.2" stroke-linecap="round"/>' +
-        '<path d="M22 17H42C40 26 35 31 32 35C29 31 24 26 22 17Z" fill="#d4a64f"/>' +
-        '<path d="M22 63H42C40 54 35 49 32 45C29 49 24 54 22 63Z" fill="#d4a64f"/>' +
-        '<path d="M31 34H33V47H31Z" fill="#d4a64f"/>' +
-      '</svg>' +
+    '<div style="display:flex;flex-direction:column;align-items:center">' +
+      '<div class="clessidra-animata" aria-hidden="true">' +
+        '<svg viewBox="0 0 64 80" xmlns="http://www.w3.org/2000/svg">' +
+          '<path d="M10 6H54M10 74H54" stroke="#5f4630" stroke-width="6" stroke-linecap="round"/>' +
+          '<path d="M15 12C16 27 26 31 32 40C38 31 48 27 49 12M15 68C16 53 26 49 32 40C38 49 48 53 49 68" fill="#fffaf0" stroke="#7b6043" stroke-width="3.8" stroke-linecap="round"/>' +
+          '<path d="M21 17H43C41 27 36 32 32 36C28 32 23 27 21 17Z" fill="#d59b2c"/>' +
+          '<path d="M21 63H43C41 53 36 48 32 44C28 48 23 53 21 63Z" fill="#d59b2c"/>' +
+          '<path d="M30.5 34H33.5V48H30.5Z" fill="#d59b2c"/>' +
+        '</svg>' +
+      '</div>' +
+      '<div class="loader-testo">CARICAMENTO...</div>' +
     '</div>' +
   '</div>';
 
-    fetch(
+    fetchJsonRobusto(
       "https://partecipazione-test.rodolfo-funaro.workers.dev/",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: TOKEN }),
         cache: "no-store"
-      }
+      },
+      3,
+      6500
     )
-    .then(function(response) {
-      if (!response.ok) throw new Error("Errore HTTP");
-      return response.json();
-    })
     .then(function(data) {
       if (data.ok !== true) {
         risultato.innerHTML = "<strong>TOKEN NON VALIDO</strong>";
@@ -1520,14 +1560,18 @@ risultato.innerHTML =
       }
     })
     .catch(function() {
-      risultato.innerHTML = "<strong>ERRORE DI COLLEGAMENTO</strong>";
+      risultato.innerHTML =
+        '<div style="text-align:center;padding:28px 18px;font-family:Georgia,serif">' +
+          '<strong>CONNESSIONE TEMPORANEAMENTE NON DISPONIBILE</strong><br>' +
+          '<button type="button" onclick="verificaToken()" style="margin-top:18px;padding:11px 20px;border-radius:22px;border:1px solid #8a6a42;background:#fff8ec;font-weight:700;cursor:pointer">RIPROVA</button>' +
+        '</div>';
     });
   }
 
 
   // autorizzaVideoInvito() — VERSIONE 1.0 — ottiene solo URL temporaneo firmato
   function autorizzaVideoInvito() {
-    return fetch(
+    return fetchJsonRobusto(
       "https://partecipazione-test.rodolfo-funaro.workers.dev/",
       {
         method: "POST",
@@ -1537,12 +1581,10 @@ risultato.innerHTML =
           token: TOKEN
         }),
         cache: "no-store"
-      }
+      },
+      2,
+      5500
     )
-    .then(function(response) {
-      if (!response.ok) return null;
-      return response.json();
-    })
     .then(function(data) {
       if (
         data &&
@@ -1649,7 +1691,7 @@ risultato.innerHTML =
             video.setAttribute("controls", "");
           });
         }
-      }, 690);
+      }, 560);
 
       function chiudiVideo() {
         if (concluso) return;
@@ -1673,14 +1715,14 @@ risultato.innerHTML =
           setTimeout(function() {
             alTermine();
             busta.classList.remove("post-video-estrazione");
-          }, 1280);
-        }, 260);
+          }, 620);
+        }, 140);
       }
 
       video.addEventListener("ended", chiudiVideo);
       video.addEventListener("error", chiudiVideo);
       salta.addEventListener("click", function(ev) { ev.stopPropagation(); chiudiVideo(); });
-    }, 700);
+    }, 540);
   }
 
 
@@ -2070,7 +2112,7 @@ function apriBusta() {
             estraiCartoncinoFinale(busta);
           }
         });
-      }, 220);
+      }, 120);
 
     }, 350);
 
