@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.6 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.7 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -821,7 +821,7 @@ height: 285px;
     height;
 }
 
-    /* CARTONCINO SMARTPHONE — VERSIONE 1.0 — rotazione grafica finale */
+    /* CARTONCINO SMARTPHONE — VERSIONE 1.1 — Android grafico, iPhone orientamento fisico */
     .cartoncino-volante.rotazione-smartphone {
       transform-origin: center center;
       transition:
@@ -831,6 +831,30 @@ height: 285px;
         height .8s cubic-bezier(0.22,0.61,0.36,1),
         transform .8s cubic-bezier(0.22,0.61,0.36,1);
       will-change: left, top, width, height, transform;
+    }
+
+
+    .iphone-orienta-messaggio {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      z-index: 15000;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(25,25,28,.78);
+      color: #fff;
+      font: 700 13px/1.2 Arial, sans-serif;
+      letter-spacing: .02em;
+      box-shadow: 0 6px 18px rgba(0,0,0,.22);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .25s ease;
+      white-space: nowrap;
+    }
+
+    .iphone-orienta-messaggio.visibile {
+      opacity: 1;
     }
 
     /* =========================
@@ -2381,39 +2405,123 @@ function apriBusta() {
 }
 
 
-// ruotaCartoncinoSmartphone() — VERSIONE 1.0 — solo smartphone verticale
+// ruotaCartoncinoSmartphone() — VERSIONE 1.1 — Android ruota, iPhone usa orientamento fisico
+var CARTONCINO_VOLANTE_ATTIVO = null;
+
+function dispositivoIOS() {
+  var ua = navigator.userAgent || "";
+  var iOSClassico = /iPad|iPhone|iPod/.test(ua);
+  var iPadOS =
+    navigator.platform === "MacIntel" &&
+    navigator.maxTouchPoints > 1;
+
+  return iOSClassico || iPadOS;
+}
+
+function mostraMessaggioOrientamentoIPhone(mostra) {
+  var id = "iphoneOrientaMessaggio";
+  var msg = document.getElementById(id);
+
+  if (mostra) {
+    if (!msg) {
+      msg = document.createElement("div");
+      msg.id = id;
+      msg.className = "iphone-orienta-messaggio";
+      msg.textContent = "Ruota il telefono in orizzontale";
+      document.body.appendChild(msg);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          msg.classList.add("visibile");
+        });
+      });
+    } else {
+      msg.classList.add("visibile");
+    }
+  } else if (msg) {
+    msg.classList.remove("visibile");
+    setTimeout(function() {
+      if (msg && msg.parentNode) msg.parentNode.removeChild(msg);
+    }, 280);
+  }
+}
+
+function adattaCartoncinoIPhone(volante) {
+  if (!volante) return;
+
+  var vw = window.innerWidth || document.documentElement.clientWidth || 0;
+  var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+  var rapporto = 1748 / 1240;
+  var margine = 10;
+
+  /*
+    Su iPhone NON ruotiamo graficamente il cartoncino.
+    Se il telefono è verticale mostriamo il cartoncino normale e
+    suggeriamo di ruotare fisicamente il dispositivo.
+    In orizzontale lo ridimensioniamo per sfruttare tutto lo schermo.
+  */
+  var landscape = vw > vh;
+
+  var maxW = vw - (margine * 2);
+  var maxH = vh - (margine * 2);
+
+  var w = maxW;
+  var h = w / rapporto;
+
+  if (h > maxH) {
+    h = maxH;
+    w = h * rapporto;
+  }
+
+  volante.classList.add("rotazione-smartphone");
+  volante.style.transform = "none";
+  volante.style.width = w + "px";
+  volante.style.height = h + "px";
+  volante.style.left = ((vw - w) / 2) + "px";
+  volante.style.top = ((vh - h) / 2) + "px";
+
+  mostraMessaggioOrientamentoIPhone(!landscape);
+}
+
 function ruotaCartoncinoSmartphone(volante) {
   if (!volante) return;
+
+  CARTONCINO_VOLANTE_ATTIVO = volante;
 
   var larghezzaViewport = window.innerWidth || document.documentElement.clientWidth || 0;
   var altezzaViewport = window.innerHeight || document.documentElement.clientHeight || 0;
 
-  /*
-    Applichiamo la rotazione SOLO quando:
-    - siamo su schermo smartphone;
-    - il dispositivo è in verticale.
-    Desktop e tablet larghi restano invariati.
-  */
   var smartphone =
     Math.min(larghezzaViewport, altezzaViewport) <= 600;
 
+  if (!smartphone) {
+    return;
+  }
+
+  /*
+    iPhone/iPadOS:
+    niente rotazione grafica. Lasciamo che sia il dispositivo a ruotare
+    fisicamente e adattiamo il cartoncino alla nuova viewport.
+    Evitiamo così la "doppia rotazione" vista su iPhone.
+  */
+  if (dispositivoIOS()) {
+    setTimeout(function() {
+      adattaCartoncinoIPhone(volante);
+    }, 120);
+    return;
+  }
+
+  /*
+    Android:
+    manteniamo la soluzione 6.10.6, già risultata perfetta.
+  */
   var verticale =
     altezzaViewport > larghezzaViewport;
 
-  if (!smartphone || !verticale) {
+  if (!verticale) {
     return;
   }
 
   var margine = 12;
-
-  /*
-    Dopo rotazione di 90°:
-    - la larghezza visiva corrisponde all'altezza geometrica;
-    - l'altezza visiva corrisponde alla larghezza geometrica.
-
-    Manteniamo il rapporto originale del cartoncino e calcoliamo
-    una dimensione che sfrutti quasi tutto lo schermo senza tagli.
-  */
   var rapportoCartoncino = 1748 / 1240;
 
   var maxLarghezzaVisiva =
@@ -2422,11 +2530,6 @@ function ruotaCartoncinoSmartphone(volante) {
   var maxAltezzaVisiva =
     altezzaViewport - (margine * 2);
 
-  /*
-    Geometria prima della rotazione:
-    visualWidth  = geometricHeight
-    visualHeight = geometricWidth
-  */
   var geometricWidth =
     Math.min(
       maxAltezzaVisiva,
@@ -2449,10 +2552,6 @@ function ruotaCartoncinoSmartphone(volante) {
 
   volante.classList.add("rotazione-smartphone");
 
-  /*
-    Piccola pausa: prima termina l'ingrandimento originale,
-    poi parte chiaramente la rotazione.
-  */
   setTimeout(function() {
     volante.style.left = left + "px";
     volante.style.top = top + "px";
@@ -2462,7 +2561,31 @@ function ruotaCartoncinoSmartphone(volante) {
   }, 120);
 }
 
-// estraiCartoncinoFinale() — VERSIONE 1.4 — rotazione smartphone finale
+/*
+  iPhone: quando Safari cambia orientamento/viewport,
+  riadattiamo il cartoncino senza applicare alcuna rotazione CSS.
+*/
+window.addEventListener("resize", function() {
+  if (
+    CARTONCINO_VOLANTE_ATTIVO &&
+    dispositivoIOS()
+  ) {
+    adattaCartoncinoIPhone(CARTONCINO_VOLANTE_ATTIVO);
+  }
+});
+
+window.addEventListener("orientationchange", function() {
+  if (
+    CARTONCINO_VOLANTE_ATTIVO &&
+    dispositivoIOS()
+  ) {
+    setTimeout(function() {
+      adattaCartoncinoIPhone(CARTONCINO_VOLANTE_ATTIVO);
+    }, 180);
+  }
+});
+
+// estraiCartoncinoFinale() — VERSIONE 1.5 — gestione separata Android/iPhone
 function estraiCartoncinoFinale(busta) {
 
   var originale =
