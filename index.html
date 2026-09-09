@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.3 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.4 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1350,10 +1350,9 @@ height: 285px;
     var PARTECIPANTI_RSVP = 0;
     var BAMBINI_RSVP = 0;
     var VIDEO_URL_TEMPORANEO = "";
-    var VIDEO_AUTH_PROMISE = null;
     var VOLUME_MUSICA_NORMALE = 0.55;
     var VOLUME_MUSICA_VIDEO = 0.065;
-    var VIDEO_AUTH_TIMEOUT_MS = 5500;
+    var TIMER_VOLUME_MUSICA = null;
 
 
 
@@ -1524,8 +1523,8 @@ risultato.innerHTML =
         body: JSON.stringify({ token: TOKEN }),
         cache: "no-store"
       },
-      3,
-      6500
+      2,
+      9000
     )
     .then(function(data) {
       if (data.ok !== true) {
@@ -1540,12 +1539,14 @@ risultato.innerHTML =
       BAMBINI_RSVP = Number(data.bambini || 0);
 
       /*
-        VIDEO — VERSIONE 1.0
-        Chiediamo al Worker se questa famiglia ha la versione video.
-        Per una famiglia standard il 403 è previsto e viene trattato
-        semplicemente come "nessun video".
+        VIDEO — VERSIONE 3.0
+        Il Worker 3.1 restituisce il ticket video già nella verifica iniziale.
+        Nessuna seconda chiamata ad Apps Script/Worker.
       */
-      VIDEO_AUTH_PROMISE = autorizzaVideoInvito();
+      VIDEO_URL_TEMPORANEO =
+        (data.videoAutorizzato === true && data.videoUrl)
+          ? String(data.videoUrl)
+          : "";
 
       /*
         Anteprima solo se nella query c'è preview=1.
@@ -1569,40 +1570,36 @@ risultato.innerHTML =
   }
 
 
-  // autorizzaVideoInvito() — VERSIONE 1.0 — ottiene solo URL temporaneo firmato
-  function autorizzaVideoInvito() {
-    return fetchJsonRobusto(
-      "https://partecipazione-test.rodolfo-funaro.workers.dev/",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          azione: "autorizzaVideo",
-          token: TOKEN
-        }),
-        cache: "no-store"
-      },
-      2,
-      5500
-    )
-    .then(function(data) {
-      if (
-        data &&
-        data.ok === true &&
-        data.videoAutorizzato === true &&
-        data.videoUrl
-      ) {
-        VIDEO_URL_TEMPORANEO = String(data.videoUrl);
-        return VIDEO_URL_TEMPORANEO;
+  // portaVolumeMusica() — VERSIONE 1.0 — unico controller per fade-in e ducking
+  function portaVolumeMusica(volumeDestinazione, durataMs) {
+    var musica = document.getElementById("musicaFondo");
+    if (!musica) return;
+
+    if (TIMER_VOLUME_MUSICA) {
+      clearInterval(TIMER_VOLUME_MUSICA);
+      TIMER_VOLUME_MUSICA = null;
+    }
+
+    var partenza = Number(musica.volume || 0);
+    var destinazione = Math.max(0, Math.min(1, Number(volumeDestinazione)));
+    var durata = Math.max(0, Number(durataMs || 0));
+
+    if (durata === 0 || Math.abs(destinazione - partenza) < 0.002) {
+      musica.volume = destinazione;
+      return;
+    }
+
+    var iniziato = Date.now();
+    TIMER_VOLUME_MUSICA = setInterval(function() {
+      var progresso = Math.min(1, (Date.now() - iniziato) / durata);
+      musica.volume = partenza + (destinazione - partenza) * progresso;
+      if (progresso >= 1) {
+        clearInterval(TIMER_VOLUME_MUSICA);
+        TIMER_VOLUME_MUSICA = null;
+        musica.volume = destinazione;
       }
-
-      return null;
-    })
-    .catch(function() {
-      return null;
-    });
+    }, 40);
   }
-
 
   // mostraVideoInvito() — VERSIONE 2.1 — prima fase realmente dietro la tasca
   function mostraVideoInvito(videoUrl, alTermine) {
@@ -1626,7 +1623,7 @@ risultato.innerHTML =
     busta.appendChild(stage);
 
     var musica = document.getElementById("musicaFondo");
-    if (musica && !musica.paused) musica.volume = VOLUME_MUSICA_VIDEO;
+    if (musica && !musica.paused) portaVolumeMusica(VOLUME_MUSICA_VIDEO, 650);
 
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
@@ -1704,7 +1701,7 @@ risultato.innerHTML =
           video.removeAttribute("src");
           try { video.load(); } catch (e) {}
           if (volante.parentNode) volante.parentNode.removeChild(volante);
-          if (musica && !musica.paused) musica.volume = VOLUME_MUSICA_NORMALE;
+          if (musica && !musica.paused) portaVolumeMusica(VOLUME_MUSICA_NORMALE, 900);
           busta.classList.remove("video-in-corso");
 
           /*
@@ -2006,34 +2003,7 @@ function apriBusta() {
     if (avvio !== undefined) {
 
       avvio.then(function() {
-
-        var volumeFinale = 0.55;
-        var durataFade = 2500;
-        var intervallo = 50;
-        var passi = durataFade / intervallo;
-        var incremento = volumeFinale / passi;
-
-        var fadeIn =
-          setInterval(function() {
-
-            var nuovoVolume =
-              Math.min(
-                volumeFinale,
-                musica.volume + incremento
-              );
-
-            musica.volume =
-              nuovoVolume;
-
-            if (
-              nuovoVolume >=
-              volumeFinale
-            ) {
-              clearInterval(fadeIn);
-            }
-
-          }, intervallo);
-
+        portaVolumeMusica(VOLUME_MUSICA_NORMALE, 2500);
       }).catch(function() {
         // La sequenza visiva continua anche se l'audio viene bloccato.
       });
@@ -2090,28 +2060,20 @@ function apriBusta() {
 
 
       /*
-        VIDEO — VERSIONE 2.0
-        Aspettiamo l'esito già avviato durante la verifica token.
-        Standard -> cartoncino normale.
-        Video -> filmato verticale, poi cartoncino.
+        VIDEO — VERSIONE 3.0
+        Il ticket è già arrivato con la verifica iniziale: nessuna attesa
+        e nessuna seconda richiesta quando l'utente apre la busta.
       */
       setTimeout(function() {
-        var promessa = VIDEO_AUTH_PROMISE || autorizzaVideoInvito();
-        var timeoutVideo = new Promise(function(resolve) {
-          setTimeout(function() { resolve(null); }, VIDEO_AUTH_TIMEOUT_MS);
-        });
-
-        Promise.race([promessa, timeoutVideo]).then(function(videoUrl) {
-          if (videoUrl) {
-            mostraVideoInvito(videoUrl, function() {
-              estraiCartoncinoFinale(busta);
-            });
-          } else {
-            /* Compatibilità/recovery: mai lasciare la pagina bloccata. */
-            busta.classList.remove("video-in-corso");
+        if (VIDEO_URL_TEMPORANEO) {
+          mostraVideoInvito(VIDEO_URL_TEMPORANEO, function() {
             estraiCartoncinoFinale(busta);
-          }
-        });
+          });
+        } else {
+          /* Recovery: un errore video non deve lasciare l'invito bloccato. */
+          busta.classList.remove("video-in-corso");
+          estraiCartoncinoFinale(busta);
+        }
       }, 120);
 
     }, 350);
