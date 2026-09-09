@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.0 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.1 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -955,63 +955,79 @@ height: 285px;
       position: relative;
     }
 
-    /* RSVP dinamico — VERSIONE 3.0 — elemento interno al SVG del cartoncino */
-    .rsvp-svg-fo {
-      overflow: visible;
+    /* RSVP dinamico — VERSIONE 3.1 — SVG nativo, robusto su smartphone */
+    .rsvp-svg-group {
+      cursor: pointer;
+      pointer-events: auto;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulsaRSVPSvg 1.75s ease-in-out infinite;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .rsvp-svg-group:focus {
+      outline: none;
+    }
+
+    .rsvp-svg-shadow {
+      fill: rgba(132, 82, 20, 0.42);
+    }
+
+    .rsvp-svg-base {
+      fill: url(#rsvpMetalGradient);
+      stroke: rgba(126, 82, 21, 0.92);
+      stroke-width: 4;
+    }
+
+    .rsvp-svg-inner {
+      fill: none;
+      stroke: rgba(255,255,255,.44);
+      stroke-width: 2.4;
+    }
+
+    .rsvp-svg-text {
+      fill: #4b3214;
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-anchor: middle;
+      dominant-baseline: middle;
       pointer-events: none;
     }
 
-    .rsvp-hotspot {
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-      border: 4px solid rgba(126, 82, 21, 0.86);
-      border-radius: 999px;
-      background:
-        linear-gradient(180deg, #f4cf72 0%, #e5ad43 52%, #c98925 100%);
-      color: #4b3214;
-      font-family: "AmerigoMdBT", Georgia, serif;
-      font-size: 42px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      pointer-events: auto;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-      box-shadow:
-        0 12px 0 rgba(132, 82, 20, 0.72),
-        0 18px 28px rgba(67, 43, 17, 0.25),
-        inset 0 3px 3px rgba(255,255,255,.72),
-        inset 0 -5px 7px rgba(121,72,16,.22);
+    /*
+      Riflesso metallico: una fascia chiara diagonale attraversa il bottone
+      in loop. È SVG puro, quindi scala insieme al cartoncino e non dipende
+      dai pixel CSS del dispositivo.
+    */
+    .rsvp-svg-shine {
+      fill: url(#rsvpShineGradient);
+      opacity: .88;
+      pointer-events: none;
+      transform-box: fill-box;
       transform-origin: center;
+      animation: riflessoRSVP 2.7s ease-in-out infinite;
     }
 
-    .rsvp-hotspot::before { content: "RSVP"; }
-
-    .rsvp-hotspot.rsvp-premuto {
-      animation: none;
-      transform: none;
+    @keyframes pulsaRSVPSvg {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.035); }
     }
 
-    .rsvp-hotspot:hover,
-    .rsvp-hotspot:focus-visible {
-      background: linear-gradient(180deg, #f9da85 0%, #ebb64e 52%, #d3912c 100%);
-    }
-
-    @keyframes pulsaRSVP {
-      0%, 100% { transform: scale(1) translateY(0); }
-      50% { transform: scale(1.035) translateY(-1px); }
+    @keyframes riflessoRSVP {
+      0%, 18%   { transform: translateX(-260px) skewX(-18deg); opacity: 0; }
+      28%       { opacity: .88; }
+      52%       { opacity: .88; }
+      62%, 100% { transform: translateX(300px) skewX(-18deg); opacity: 0; }
     }
 
     /*
-      Il pulsante viene creato insieme a sfondo e dati nel medesimo SVG.
-      Quindi durante busta, estrazione, clone e ingrandimento scala sempre
-      con il cartoncino: nessun min-width/min-height e nessun media query.
+      Il pulsante è ora SVG nativo dentro lo stesso viewBox 1748x1240:
+      nessun foreignObject, nessun min-width/min-height e nessun media query.
+      Questo evita la scomparsa osservata su Safari/iPhone dopo il resize.
     */
     .cartoncino-volante.rsvp-attivo { pointer-events: auto; }
-    .cartoncino-volante.rsvp-attivo .rsvp-hotspot {
-      animation: pulsaRSVP 1.65s ease-in-out infinite;
-    }
 
     .rsvp-overlay {
       position: fixed;
@@ -1804,7 +1820,7 @@ risultato.innerHTML =
      CARTONCINO COMPLETO PROTETTO
      ========================= */
 
-  // creaCartoncinoCompleto() — VERSIONE 3.1 — dati + RSVP nello stesso SVG 1748x1240
+  // creaCartoncinoCompleto() — VERSIONE 3.2 — RSVP SVG nativo + riflesso metallico
   function creaCartoncinoCompleto(evento) {
     evento = evento || {};
 
@@ -1912,29 +1928,128 @@ risultato.innerHTML =
     });
 
     /*
-      RSVP — VERSIONE 3.0
-      È parte integrante del cartoncino nello stesso sistema 1748x1240.
-      Posizione scelta nella fascia libera a sinistra, SOPRA il blocco
-      pagamento (che inizia a y=1125), quindi non può coprire IBAN/PayPal.
+      RSVP — VERSIONE 3.1
+      SVG nativo nello stesso sistema 1748x1240.
+      Più piccolo e leggermente più basso rispetto alla 6.10.0.
+      Nessun foreignObject: maggiore affidabilità su Safari/iPhone.
     */
-    var rsvpFO = document.createElementNS(NS, "foreignObject");
-    rsvpFO.setAttribute("x", "70");
-    rsvpFO.setAttribute("y", "965");
-    rsvpFO.setAttribute("width", "225");
-    rsvpFO.setAttribute("height", "105");
-    rsvpFO.setAttribute("class", "rsvp-svg-fo");
+    var defs = svg.querySelector("defs");
+    if (!defs) {
+      defs = document.createElementNS(NS, "defs");
+      svg.insertBefore(defs, svg.firstChild);
+    }
 
-    var rsvpButton = document.createElementNS(XHTML, "button");
-    rsvpButton.setAttribute("type", "button");
-    rsvpButton.setAttribute("class", "rsvp-hotspot");
-    rsvpButton.setAttribute("aria-label", "Apri RSVP");
-    rsvpButton.setAttribute(
+    var metalGrad = document.createElementNS(NS, "linearGradient");
+    metalGrad.setAttribute("id", "rsvpMetalGradient");
+    metalGrad.setAttribute("x1", "0");
+    metalGrad.setAttribute("y1", "0");
+    metalGrad.setAttribute("x2", "0");
+    metalGrad.setAttribute("y2", "1");
+
+    [
+      ["0%", "#f8da83"],
+      ["20%", "#efbd4f"],
+      ["52%", "#e1a238"],
+      ["78%", "#c98222"],
+      ["100%", "#f1bf58"]
+    ].forEach(function(s) {
+      var stop = document.createElementNS(NS, "stop");
+      stop.setAttribute("offset", s[0]);
+      stop.setAttribute("stop-color", s[1]);
+      metalGrad.appendChild(stop);
+    });
+    defs.appendChild(metalGrad);
+
+    var shineGrad = document.createElementNS(NS, "linearGradient");
+    shineGrad.setAttribute("id", "rsvpShineGradient");
+    shineGrad.setAttribute("x1", "0");
+    shineGrad.setAttribute("y1", "0");
+    shineGrad.setAttribute("x2", "1");
+    shineGrad.setAttribute("y2", "0");
+
+    [
+      ["0%", "rgba(255,255,255,0)"],
+      ["38%", "rgba(255,255,255,0)"],
+      ["50%", "rgba(255,255,255,.88)"],
+      ["62%", "rgba(255,255,255,0)"],
+      ["100%", "rgba(255,255,255,0)"]
+    ].forEach(function(s) {
+      var stop = document.createElementNS(NS, "stop");
+      stop.setAttribute("offset", s[0]);
+      stop.setAttribute("stop-color", s[1]);
+      shineGrad.appendChild(stop);
+    });
+    defs.appendChild(shineGrad);
+
+    var clip = document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", "rsvpClip");
+    var clipRect = document.createElementNS(NS, "rect");
+    clipRect.setAttribute("x", "78");
+    clipRect.setAttribute("y", "1005");
+    clipRect.setAttribute("width", "198");
+    clipRect.setAttribute("height", "88");
+    clipRect.setAttribute("rx", "42");
+    clipRect.setAttribute("ry", "42");
+    clip.appendChild(clipRect);
+    defs.appendChild(clip);
+
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "rsvp-svg-group");
+    g.setAttribute("role", "button");
+    g.setAttribute("tabindex", "0");
+    g.setAttribute("aria-label", "Apri RSVP");
+    g.setAttribute(
       "onclick",
-      "event.stopPropagation(); this.classList.add('rsvp-premuto'); apriModuloRSVP(); return false;"
+      "event.stopPropagation(); apriModuloRSVP(); return false;"
     );
 
-    rsvpFO.appendChild(rsvpButton);
-    svg.appendChild(rsvpFO);
+    var shadow = document.createElementNS(NS, "rect");
+    shadow.setAttribute("class", "rsvp-svg-shadow");
+    shadow.setAttribute("x", "78");
+    shadow.setAttribute("y", "1013");
+    shadow.setAttribute("width", "198");
+    shadow.setAttribute("height", "88");
+    shadow.setAttribute("rx", "42");
+    shadow.setAttribute("ry", "42");
+    g.appendChild(shadow);
+
+    var base = document.createElementNS(NS, "rect");
+    base.setAttribute("class", "rsvp-svg-base");
+    base.setAttribute("x", "78");
+    base.setAttribute("y", "1005");
+    base.setAttribute("width", "198");
+    base.setAttribute("height", "88");
+    base.setAttribute("rx", "42");
+    base.setAttribute("ry", "42");
+    g.appendChild(base);
+
+    var inner = document.createElementNS(NS, "rect");
+    inner.setAttribute("class", "rsvp-svg-inner");
+    inner.setAttribute("x", "84");
+    inner.setAttribute("y", "1011");
+    inner.setAttribute("width", "186");
+    inner.setAttribute("height", "75");
+    inner.setAttribute("rx", "36");
+    inner.setAttribute("ry", "36");
+    g.appendChild(inner);
+
+    var shine = document.createElementNS(NS, "rect");
+    shine.setAttribute("class", "rsvp-svg-shine");
+    shine.setAttribute("x", "40");
+    shine.setAttribute("y", "995");
+    shine.setAttribute("width", "62");
+    shine.setAttribute("height", "110");
+    shine.setAttribute("clip-path", "url(#rsvpClip)");
+    g.appendChild(shine);
+
+    var txt = document.createElementNS(NS, "text");
+    txt.setAttribute("class", "rsvp-svg-text");
+    txt.setAttribute("x", "177");
+    txt.setAttribute("y", "1049");
+    txt.textContent = "RSVP";
+    g.appendChild(txt);
+
+    svg.appendChild(g);
 
     return svg;
   }
@@ -2155,7 +2270,7 @@ function apriBusta() {
   }, 1850);
 }
 
-// estraiCartoncinoFinale() — VERSIONE 1.2 — RSVP già incorporato nel cartoncino
+// estraiCartoncinoFinale() — VERSIONE 1.3 — RSVP SVG nativo incorporato
 function estraiCartoncinoFinale(busta) {
 
   var originale =
@@ -2252,6 +2367,7 @@ function estraiCartoncinoFinale(busta) {
       volante.style.height =
         finalHeight + "px";
 
+      /* RSVP è già parte del cartoncino: abilitiamo solo l'interazione finale. */
       setTimeout(function() {
         volante.classList.add("rsvp-attivo");
       }, 1250);
