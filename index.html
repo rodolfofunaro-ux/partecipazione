@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.1 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.2 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -955,13 +955,10 @@ height: 285px;
       position: relative;
     }
 
-    /* RSVP dinamico — VERSIONE 3.1 — SVG nativo, robusto su smartphone */
+    /* RSVP dinamico — VERSIONE 3.2 — posizione fissa + riflesso metallico */
     .rsvp-svg-group {
       cursor: pointer;
       pointer-events: auto;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: pulsaRSVPSvg 1.75s ease-in-out infinite;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -971,18 +968,21 @@ height: 285px;
 
     .rsvp-svg-shadow {
       fill: rgba(132, 82, 20, 0.42);
+      animation: pulsaOmbraRSVP 1.75s ease-in-out infinite;
     }
 
     .rsvp-svg-base {
       fill: url(#rsvpMetalGradient);
       stroke: rgba(126, 82, 21, 0.92);
       stroke-width: 4;
+      animation: pulsaBaseRSVP 1.75s ease-in-out infinite;
     }
 
     .rsvp-svg-inner {
       fill: none;
-      stroke: rgba(255,255,255,.44);
+      stroke: rgba(255,255,255,.46);
       stroke-width: 2.4;
+      pointer-events: none;
     }
 
     .rsvp-svg-text {
@@ -997,36 +997,25 @@ height: 285px;
     }
 
     /*
-      Riflesso metallico: una fascia chiara diagonale attraversa il bottone
-      in loop. È SVG puro, quindi scala insieme al cartoncino e non dipende
-      dai pixel CSS del dispositivo.
+      Il riflesso percorre il bottone senza trasformare il gruppo RSVP.
+      Quindi il pulsante rimane perfettamente fermo sul cartoncino.
     */
     .rsvp-svg-shine {
       fill: url(#rsvpShineGradient);
-      opacity: .88;
+      opacity: 0;
       pointer-events: none;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: riflessoRSVP 2.7s ease-in-out infinite;
     }
 
-    @keyframes pulsaRSVPSvg {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.035); }
+    @keyframes pulsaBaseRSVP {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.08); }
     }
 
-    @keyframes riflessoRSVP {
-      0%, 18%   { transform: translateX(-260px) skewX(-18deg); opacity: 0; }
-      28%       { opacity: .88; }
-      52%       { opacity: .88; }
-      62%, 100% { transform: translateX(300px) skewX(-18deg); opacity: 0; }
+    @keyframes pulsaOmbraRSVP {
+      0%, 100% { opacity: .78; }
+      50% { opacity: .52; }
     }
 
-    /*
-      Il pulsante è ora SVG nativo dentro lo stesso viewBox 1748x1240:
-      nessun foreignObject, nessun min-width/min-height e nessun media query.
-      Questo evita la scomparsa osservata su Safari/iPhone dopo il resize.
-    */
     .cartoncino-volante.rsvp-attivo { pointer-events: auto; }
 
     .rsvp-overlay {
@@ -1820,7 +1809,7 @@ risultato.innerHTML =
      CARTONCINO COMPLETO PROTETTO
      ========================= */
 
-  // creaCartoncinoCompleto() — VERSIONE 3.2 — RSVP SVG nativo + riflesso metallico
+  // creaCartoncinoCompleto() — VERSIONE 3.3 — RSVP fermo + riflesso SVG compatibile
   function creaCartoncinoCompleto(evento) {
     evento = evento || {};
 
@@ -1968,15 +1957,16 @@ risultato.innerHTML =
     shineGrad.setAttribute("y2", "0");
 
     [
-      ["0%", "rgba(255,255,255,0)"],
-      ["38%", "rgba(255,255,255,0)"],
-      ["50%", "rgba(255,255,255,.88)"],
-      ["62%", "rgba(255,255,255,0)"],
-      ["100%", "rgba(255,255,255,0)"]
+      ["0%",   "#ffffff", "0"],
+      ["35%",  "#ffffff", "0"],
+      ["50%",  "#ffffff", "0.92"],
+      ["65%",  "#ffffff", "0"],
+      ["100%", "#ffffff", "0"]
     ].forEach(function(s) {
       var stop = document.createElementNS(NS, "stop");
       stop.setAttribute("offset", s[0]);
       stop.setAttribute("stop-color", s[1]);
+      stop.setAttribute("stop-opacity", s[2]);
       shineGrad.appendChild(stop);
     });
     defs.appendChild(shineGrad);
@@ -2035,11 +2025,31 @@ risultato.innerHTML =
 
     var shine = document.createElementNS(NS, "rect");
     shine.setAttribute("class", "rsvp-svg-shine");
-    shine.setAttribute("x", "40");
-    shine.setAttribute("y", "995");
-    shine.setAttribute("width", "62");
-    shine.setAttribute("height", "110");
+    shine.setAttribute("x", "18");
+    shine.setAttribute("y", "992");
+    shine.setAttribute("width", "72");
+    shine.setAttribute("height", "116");
     shine.setAttribute("clip-path", "url(#rsvpClip)");
+    shine.setAttribute("transform", "skewX(-18)");
+
+    var shineOpacity = document.createElementNS(NS, "animate");
+    shineOpacity.setAttribute("attributeName", "opacity");
+    shineOpacity.setAttribute("values", "0;0;0.9;0.9;0;0");
+    shineOpacity.setAttribute("keyTimes", "0;0.18;0.30;0.52;0.64;1");
+    shineOpacity.setAttribute("dur", "2.7s");
+    shineOpacity.setAttribute("repeatCount", "indefinite");
+    shine.appendChild(shineOpacity);
+
+    var shineMove = document.createElementNS(NS, "animateTransform");
+    shineMove.setAttribute("attributeName", "transform");
+    shineMove.setAttribute("type", "translate");
+    shineMove.setAttribute("values", "-110 0; -110 0; 310 0; 310 0");
+    shineMove.setAttribute("keyTimes", "0;0.18;0.64;1");
+    shineMove.setAttribute("dur", "2.7s");
+    shineMove.setAttribute("repeatCount", "indefinite");
+    shineMove.setAttribute("additive", "sum");
+    shine.appendChild(shineMove);
+
     g.appendChild(shine);
 
     var txt = document.createElementNS(NS, "text");
