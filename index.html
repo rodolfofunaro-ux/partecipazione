@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.10 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.9 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1403,7 +1403,6 @@ height: 285px;
     var VOLUME_MUSICA_NORMALE = 0.55;
     var VOLUME_MUSICA_VIDEO = 0.14;
     var TIMER_VOLUME_MUSICA = null;
-    var AUDIO_UTENTE_ATTIVO = true; // VERSIONE 1.0 — distingue pausa utente da pausa imposta da iOS
 
 
 
@@ -1678,23 +1677,7 @@ risultato.innerHTML =
     busta.appendChild(pocketWindow);
 
     var musica = document.getElementById("musicaFondo");
-    var musicaEraAttiva = !!(musica && !musica.paused && AUDIO_UTENTE_ATTIVO);
-
-    // MUSICA DURANTE VIDEO — VERSIONE 1.0 — recupero pausa automatica iOS
-    if (musicaEraAttiva) {
-      portaVolumeMusica(VOLUME_MUSICA_VIDEO, 650);
-    }
-
-    function ripristinaMusicaSottoVideo() {
-      if (!musica || !musicaEraAttiva || !AUDIO_UTENTE_ATTIVO) return;
-      musica.volume = VOLUME_MUSICA_VIDEO;
-      var ripresa = musica.play();
-      if (ripresa && typeof ripresa.catch === "function") {
-        ripresa.catch(function() {
-          // Se iOS rifiuta il primo tentativo, la pagina continua senza errori.
-        });
-      }
-    }
+    if (musica && !musica.paused) portaVolumeMusica(VOLUME_MUSICA_VIDEO, 650);
 
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
@@ -1763,16 +1746,6 @@ risultato.innerHTML =
             video.setAttribute("controls", "");
           });
         }
-
-        /*
-          iPhone/Safari può mettere in pausa l'elemento audio quando parte il video.
-          Tentiamo una ripresa immediata e una seconda dopo l'apertura della sessione media.
-          Nessun ciclo continuo: evitiamo consumo batteria e conflitti con il comando AUDIO OFF.
-        */
-        if (musicaEraAttiva) {
-          setTimeout(ripristinaMusicaSottoVideo, 120);
-          setTimeout(ripristinaMusicaSottoVideo, 650);
-        }
       }, 720);
 
       function chiudiVideo() {
@@ -1787,17 +1760,8 @@ risultato.innerHTML =
           Il video non "scappa" più verso l'alto: resta centrato,
           si riduce appena e scompare in 450 ms.
         */
-        if (musica && musicaEraAttiva && AUDIO_UTENTE_ATTIVO) {
-          if (musica.paused) {
-            var ripresaFinale = musica.play();
-            if (ripresaFinale && typeof ripresaFinale.then === "function") {
-              ripresaFinale.then(function() {
-                portaVolumeMusica(VOLUME_MUSICA_NORMALE, 900);
-              }).catch(function() {});
-            }
-          } else {
-            portaVolumeMusica(VOLUME_MUSICA_NORMALE, 900);
-          }
+        if (musica && !musica.paused) {
+          portaVolumeMusica(VOLUME_MUSICA_NORMALE, 900);
         }
 
         volante.classList.remove("arrivato");
@@ -2263,7 +2227,6 @@ function toggleMusica() {
 
     musica.play().then(function() {
 
-      AUDIO_UTENTE_ATTIVO = true;
       icona.textContent = "🔊";
       testo.textContent = "AUDIO OFF";
 
@@ -2273,7 +2236,6 @@ function toggleMusica() {
 
   } else {
 
-    AUDIO_UTENTE_ATTIVO = false;
     musica.pause();
 
     icona.textContent = "🔇";
@@ -2326,7 +2288,6 @@ function apriBusta() {
     if (avvio !== undefined) {
 
       avvio.then(function() {
-        AUDIO_UTENTE_ATTIVO = true;
         portaVolumeMusica(VOLUME_MUSICA_NORMALE, 2500);
       }).catch(function() {
         // La sequenza visiva continua anche se l'audio viene bloccato.
