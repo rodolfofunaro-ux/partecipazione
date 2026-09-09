@@ -646,6 +646,7 @@ height: 285px;
     .dati-shabbat-svg {
       width: 690px;
       font-size: 43px;
+      font-weight: 700;
     }
 
     .dati-shabbat-svg .riga2 {
@@ -657,6 +658,7 @@ height: 285px;
       width: 810px;
       font-size: 43px;
       line-height: 1.12;
+      font-weight: 700;
     }
 
     .dati-party-svg .intro-riga2 {
@@ -670,7 +672,7 @@ height: 285px;
   font-family: "AmerigoMdBT", Georgia, serif;
   font-style: normal;
   font-size: 68px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1;
 
   color: #e5ad43;
@@ -786,6 +788,11 @@ height: 285px;
       letter-spacing: 0.08em;
 
       color: #8a8175;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      pointer-events: auto;
     }
 
 .cartoncino-volante {
@@ -902,56 +909,43 @@ height: 285px;
   line-height: 1;
 }
 
-    /* Loader cuore — VERSIONE 1.0 */
-.loader-cuore {
+    /* Loader clessidra — VERSIONE 2.0 */
+.loader-clessidra {
   position: fixed;
   inset: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   z-index: 9999;
-
   background: #faf9f6;
 }
 
-.cuore-pulsante {
-  font-size: 72px;
-  line-height: 1;
-
-  color: #c62828;
-
-  animation:
-    battitoCuore 1.05s ease-in-out infinite;
-
-  transform-origin: center;
+.clessidra-animata {
+  position: relative;
+  width: 42px;
+  height: 58px;
+  border-top: 4px solid #8a7962;
+  border-bottom: 4px solid #8a7962;
+  border-radius: 5px;
+  animation: giraClessidra 1.8s ease-in-out infinite;
 }
 
-@keyframes battitoCuore {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  15% {
-    transform: scale(1.18);
-  }
-
-  30% {
-    transform: scale(1);
-  }
-
-  45% {
-    transform: scale(1.12);
-  }
-
-  65% {
-    transform: scale(1);
-  }
+.clessidra-animata::before,
+.clessidra-animata::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  height: 22px;
+  background: linear-gradient(135deg, transparent 48%, #c7a86b 49% 51%, transparent 52%);
 }
-  
+.clessidra-animata::before { top: 4px; }
+.clessidra-animata::after { bottom: 4px; transform: rotate(180deg); }
+
+@keyframes giraClessidra {
+  0%, 42% { transform: rotate(0deg); }
+  58%, 100% { transform: rotate(180deg); }
+}
 
     /* =========================
        RSVP — VERSIONE 1.3
@@ -962,42 +956,54 @@ height: 285px;
       position: relative;
     }
 
+    /* RSVP dinamico — VERSIONE 2.0 — visibile, pulsante e touch-friendly */
     .rsvp-hotspot {
       position: absolute;
       left: 1.4%;
       bottom: 0.8%;
       width: 16.5%;
+      min-width: 76px;
       height: 11.5%;
-
-      border: 0;
-      border-radius: 10px;
-      background: transparent;
-
+      min-height: 42px;
+      border: 1.5px solid rgba(106, 83, 50, 0.72);
+      border-radius: 999px;
+      background: rgba(250, 246, 235, 0.94);
+      color: #574733;
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-size: clamp(12px, 2.1vw, 26px);
+      font-weight: 700;
+      letter-spacing: 0.06em;
       cursor: pointer;
       pointer-events: auto;
-
-      opacity: 0;
+      opacity: 1;
       z-index: 20;
-
       outline: none;
       -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 4px 13px rgba(75, 57, 37, 0.24);
+      transform-origin: center;
+      animation: pulsaRSVP 1.65s ease-in-out infinite;
+    }
+
+    .rsvp-hotspot::before { content: "RSVP"; }
+
+    .rsvp-hotspot.rsvp-premuto {
+      animation: none;
+      transform: none;
     }
 
     .rsvp-hotspot:hover,
-    .rsvp-hotspot:focus,
-    .rsvp-hotspot:active {
-      background: transparent;
-      box-shadow: none;
-      outline: none;
+    .rsvp-hotspot:focus-visible {
+      background: rgba(255, 252, 244, 0.99);
+      box-shadow: 0 5px 18px rgba(75, 57, 37, 0.32);
     }
 
-    .cartoncino-volante.rsvp-attivo {
-      pointer-events: auto;
+    @keyframes pulsaRSVP {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 13px rgba(75,57,37,.22); }
+      50% { transform: scale(1.075); box-shadow: 0 6px 22px rgba(176,132,58,.48); }
     }
 
-    .cartoncino-volante.rsvp-attivo .rsvp-hotspot {
-      pointer-events: auto;
-    }
+    .cartoncino-volante.rsvp-attivo { pointer-events: auto; }
+    .cartoncino-volante.rsvp-attivo .rsvp-hotspot { pointer-events: auto; }
 
     .rsvp-overlay {
       position: fixed;
@@ -1229,106 +1235,72 @@ height: 285px;
       }
     }
 
-    /* VIDEO PROTETTO — VERSIONE 1.2 — estrazione dalla busta */
+    /* VIDEO PROTETTO — VERSIONE 2.0 — vera estrazione da dietro la tasca */
+    .busta.video-in-corso .cartoncino {
+      transform: translate3d(0,0,0) !important;
+      transition-delay: 0s !important;
+      z-index: 3;
+    }
+
+    .video-emergente-stage {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      width: 92px;
+      height: 165px;
+      transform: translate3d(-50%, 0, 0);
+      z-index: 4;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 1.05s cubic-bezier(.20,.72,.20,1), opacity .18s ease;
+      will-change: transform, opacity;
+    }
+    .video-emergente-stage.visibile { opacity: 1; }
+    .video-emergente-stage.estratto { transform: translate3d(-50%, -215px, 0); }
+    .video-emergente-stage .video-invito { border-radius: 7px; }
+
     .video-invito-volante {
       position: fixed;
       z-index: 10000;
       margin: 0;
       padding: 0;
       overflow: visible;
-      opacity: 0;
+      opacity: 1;
       transform-origin: center center;
       pointer-events: none;
-
       transition:
-        left 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
-        top 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
-        width 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
-        height 1.35s cubic-bezier(0.20, 0.72, 0.20, 1),
-        opacity 0.35s ease;
+        left 1.20s cubic-bezier(.20,.72,.20,1),
+        top 1.20s cubic-bezier(.20,.72,.20,1),
+        width 1.20s cubic-bezier(.20,.72,.20,1),
+        height 1.20s cubic-bezier(.20,.72,.20,1),
+        opacity .35s ease;
     }
-
-    .video-invito-volante.visibile {
-      opacity: 1;
-    }
-
-    .video-invito-volante.arrivato {
-      pointer-events: auto;
-    }
-
+    .video-invito-volante.arrivato { pointer-events: auto; }
     .video-invito-volante.in-uscita {
       opacity: 0;
-      transform: translateY(-35px) scale(0.96);
-      transition:
-        opacity 0.45s ease,
-        transform 0.55s ease;
+      transform: translateY(-35px) scale(.96);
+      transition: opacity .45s ease, transform .55s ease;
     }
-
     .video-invito {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #000;
+      display: block; width: 100%; height: 100%; object-fit: contain; background: #000;
       border-radius: 12px;
-      box-shadow:
-        0 22px 54px rgba(0,0,0,0.26),
-        0 6px 18px rgba(0,0,0,0.14);
+      box-shadow: 0 22px 54px rgba(0,0,0,.26), 0 6px 18px rgba(0,0,0,.14);
     }
-
     .video-salta {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      z-index: 5;
-
-      min-width: 92px;
-      min-height: 42px;
-      padding: 9px 15px;
-
-      border: 2px solid rgba(255,255,255,0.96);
-      border-radius: 24px;
-
-      background: rgba(22,22,22,0.78);
-      color: #fff;
-
-      font: 800 13px/1 Arial, sans-serif;
-      letter-spacing: 0.7px;
-
-      cursor: pointer;
-      box-shadow:
-        0 4px 15px rgba(0,0,0,0.38),
-        inset 0 1px 0 rgba(255,255,255,0.18);
-
-      opacity: 0;
-      transform: scale(0.94);
-
-      transition:
-        opacity 0.30s ease,
-        transform 0.30s ease,
-        background 0.20s ease;
+      position: absolute; right: 10px; top: 10px; z-index: 5;
+      min-width: 92px; min-height: 42px; padding: 9px 15px;
+      border: 2px solid rgba(255,255,255,.96); border-radius: 24px;
+      background: rgba(22,22,22,.78); color: #fff;
+      font: 800 13px/1 Arial,sans-serif; letter-spacing: .7px; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.18);
+      opacity: 0; transform: scale(.94);
+      transition: opacity .30s ease, transform .30s ease, background .20s ease;
     }
-
-    .video-invito-volante.arrivato .video-salta {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .video-salta:hover,
-    .video-salta:focus-visible {
-      background: rgba(0,0,0,0.94);
-      transform: scale(1.05);
-      outline: none;
-    }
-
-    @media (max-width: 480px) {
-      .video-salta {
-        right: 8px;
-        top: 8px;
-        min-width: 96px;
-        min-height: 44px;
-        font-size: 13px;
-      }
+    .video-invito-volante.arrivato .video-salta { opacity: 1; transform: scale(1); }
+    .video-salta:hover, .video-salta:focus-visible { background: rgba(0,0,0,.94); transform: scale(1.05); outline: none; }
+    @media (max-width:480px) {
+      .video-salta { right:8px; top:8px; min-width:96px; min-height:44px; font-size:13px; }
+      .video-emergente-stage { width: 82px; height: 147px; }
     }
 
 </style>
@@ -1372,6 +1344,8 @@ height: 285px;
     var VIDEO_URL_TEMPORANEO = "";
     var VIDEO_AUTH_PROMISE = null;
     var VOLUME_MUSICA_NORMALE = 0.55;
+    var VOLUME_MUSICA_VIDEO = 0.065;
+    var VIDEO_AUTH_TIMEOUT_MS = 5500;
 
 
 
@@ -1410,7 +1384,7 @@ height: 285px;
 
 
           history.replaceState(
-            null,
+            { tokenPartecipazione: TOKEN },
             "",
             window.location.pathname +
             window.location.search
@@ -1439,12 +1413,11 @@ height: 285px;
 
         try {
 
-          TOKEN =
-            String(
-              sessionStorage.getItem(
-                "tokenPartecipazione"
-              ) || ""
-            ).trim();
+          TOKEN = String(
+            (history.state && history.state.tokenPartecipazione) ||
+            sessionStorage.getItem("tokenPartecipazione") ||
+            ""
+          ).trim();
 
         }
 
@@ -1478,8 +1451,8 @@ height: 285px;
     
 // Loader verifica token — VERSIONE 1.0
 risultato.innerHTML =
-  '<div class="loader-cuore" aria-label="Caricamento">' +
-    '<div class="cuore-pulsante">♥</div>' +
+  '<div class="loader-clessidra" aria-label="Caricamento">' +
+    '<div class="clessidra-animata" aria-hidden="true"></div>' +
   '</div>';
 
     fetch(
@@ -1570,166 +1543,118 @@ risultato.innerHTML =
   }
 
 
-  // mostraVideoInvito() — VERSIONE 1.2 — il video emerge fisicamente dalla busta
+  // mostraVideoInvito() — VERSIONE 2.0 — prima fase realmente dietro la tasca
   function mostraVideoInvito(videoUrl, alTermine) {
-    if (!videoUrl) {
-      alTermine();
-      return;
-    }
+    if (!videoUrl) { alTermine(); return; }
 
     var busta = document.querySelector(".busta");
-    var cartoncino = busta ? busta.querySelector(".cartoncino") : null;
+    if (!busta) { alTermine(); return; }
 
-    if (!busta || !cartoncino) {
-      alTermine();
-      return;
-    }
+    busta.classList.add("video-in-corso");
 
-    /*
-      Punto di partenza: centro del cartoncino ancora dentro la busta.
-      Il video nasce piccolo, come se fosse realmente contenuto lì.
-    */
-    var rectBusta = busta.getBoundingClientRect();
-    var rectCarta = cartoncino.getBoundingClientRect();
-
-    var rapportoVideo = 464 / 832;
-
-    var startHeight = Math.max(90, Math.min(rectBusta.height * 0.62, 175));
-    var startWidth = startHeight * rapportoVideo;
-
-    var startLeft =
-      rectCarta.left +
-      (rectCarta.width - startWidth) / 2;
-
-    var startTop =
-      rectBusta.top +
-      rectBusta.height -
-      startHeight * 0.72;
-
-    var volante = document.createElement("div");
-    volante.className = "video-invito-volante";
-
-    volante.style.left = startLeft + "px";
-    volante.style.top = startTop + "px";
-    volante.style.width = startWidth + "px";
-    volante.style.height = startHeight + "px";
+    var stage = document.createElement("div");
+    stage.className = "video-emergente-stage";
 
     var video = document.createElement("video");
     video.className = "video-invito";
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
-    video.setAttribute("controls", "");
     video.preload = "auto";
     video.src = videoUrl;
-
-    var salta = document.createElement("button");
-    salta.type = "button";
-    salta.className = "video-salta";
-    salta.textContent = "SALTA VIDEO";
-
-    volante.appendChild(video);
-    volante.appendChild(salta);
-    document.body.appendChild(volante);
-
-    /*
-      Destinazione: video verticale centrato, senza alcuna rotazione.
-    */
-    var finalHeight = Math.min(
-      window.innerHeight * 0.92,
-      832
-    );
-
-    var finalWidth =
-      finalHeight * rapportoVideo;
-
-    if (finalWidth > window.innerWidth * 0.94) {
-      finalWidth = window.innerWidth * 0.94;
-      finalHeight = finalWidth / rapportoVideo;
-    }
-
-    var finalLeft =
-      (window.innerWidth - finalWidth) / 2;
-
-    var finalTop =
-      (window.innerHeight - finalHeight) / 2;
+    stage.appendChild(video);
+    busta.appendChild(stage);
 
     var musica = document.getElementById("musicaFondo");
-    var concluso = false;
-
-    /*
-      Durante il video la musica resta appena percepibile.
-      Prima era 0.10: ora scende a 0.035.
-    */
-    if (musica && !musica.paused) {
-      musica.volume = 0.035;
-    }
+    if (musica && !musica.paused) musica.volume = VOLUME_MUSICA_VIDEO;
 
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
+        stage.classList.add("visibile");
+        stage.classList.add("estratto");
+      });
+    });
 
-        volante.classList.add("visibile");
+    /*
+      Finché stage è figlio della busta ha z-index 4: la tasca (z-index 5)
+      copre la parte ancora interna. Solo quando il video ha superato il
+      bordo superiore viene trasformato nell'elemento fixed volante.
+    */
+    setTimeout(function() {
+      if (!stage.parentNode) return;
 
-        /*
-          Prima fase: il video sale fuori dalla busta.
-          Poi si espande verso il centro.
-        */
-        volante.style.top =
-          Math.max(8, rectBusta.top - startHeight * 0.72) + "px";
+      var rect = stage.getBoundingClientRect();
+      var volante = document.createElement("div");
+      volante.className = "video-invito-volante";
+      volante.style.left = rect.left + "px";
+      volante.style.top = rect.top + "px";
+      volante.style.width = rect.width + "px";
+      volante.style.height = rect.height + "px";
 
-        setTimeout(function() {
+      stage.removeChild(video);
+      stage.parentNode.removeChild(stage);
+      volante.appendChild(video);
+
+      var salta = document.createElement("button");
+      salta.type = "button";
+      salta.className = "video-salta";
+      salta.textContent = "SALTA VIDEO";
+      volante.appendChild(salta);
+      document.body.appendChild(volante);
+
+      var rapportoVideo = 464 / 832;
+      var finalHeight = Math.min(window.innerHeight * .92, 832);
+      var finalWidth = finalHeight * rapportoVideo;
+      if (finalWidth > window.innerWidth * .94) {
+        finalWidth = window.innerWidth * .94;
+        finalHeight = finalWidth / rapportoVideo;
+      }
+      var finalLeft = (window.innerWidth - finalWidth) / 2;
+      var finalTop = (window.innerHeight - finalHeight) / 2;
+      var concluso = false;
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
           volante.style.left = finalLeft + "px";
           volante.style.top = finalTop + "px";
           volante.style.width = finalWidth + "px";
           volante.style.height = finalHeight + "px";
-        }, 260);
-
-        setTimeout(function() {
-          volante.classList.add("arrivato");
-
-          /*
-            Il filmato parte solo quando l'estrazione è praticamente
-            conclusa, così non "corre" mentre sta uscendo dalla busta.
-          */
-          var avvio = video.play();
-
-          if (
-            avvio &&
-            typeof avvio.catch === "function"
-          ) {
-            avvio.catch(function() {});
-          }
-        }, 1650);
+        });
       });
-    });
-
-    function chiudiVideo() {
-      if (concluso) return;
-      concluso = true;
-
-      try { video.pause(); } catch (e) {}
-
-      volante.classList.remove("arrivato");
-      volante.classList.add("in-uscita");
 
       setTimeout(function() {
-        video.removeAttribute("src");
-        video.load();
-
-        if (volante.parentNode) {
-          volante.parentNode.removeChild(volante);
+        volante.classList.add("arrivato");
+        var avvio = video.play();
+        if (avvio && typeof avvio.catch === "function") {
+          avvio.catch(function() {
+            /* Su mobile i controlli restano disponibili per un secondo gesto. */
+            video.setAttribute("controls", "");
+          });
         }
+      }, 1280);
 
-        if (musica && !musica.paused) {
-          musica.volume = VOLUME_MUSICA_NORMALE;
-        }
+      function chiudiVideo() {
+        if (concluso) return;
+        concluso = true;
+        try { video.pause(); } catch (e) {}
+        volante.classList.remove("arrivato");
+        volante.classList.add("in-uscita");
 
-        alTermine();
-      }, 570);
-    }
+        setTimeout(function() {
+          video.removeAttribute("src");
+          try { video.load(); } catch (e) {}
+          if (volante.parentNode) volante.parentNode.removeChild(volante);
+          if (musica && !musica.paused) musica.volume = VOLUME_MUSICA_NORMALE;
+          busta.classList.remove("video-in-corso");
 
-    video.addEventListener("ended", chiudiVideo);
-    video.addEventListener("error", chiudiVideo);
-    salta.addEventListener("click", chiudiVideo);
+          /* Ora, e solo ora, il cartoncino può uscire dalla busta. */
+          setTimeout(function() { alTermine(); }, 1250);
+        }, 520);
+      }
+
+      video.addEventListener("ended", chiudiVideo);
+      video.addEventListener("error", chiudiVideo);
+      salta.addEventListener("click", function(ev) { ev.stopPropagation(); chiudiVideo(); });
+    }, 1120);
   }
 
 
@@ -1866,7 +1791,7 @@ risultato.innerHTML =
     */
     pulsante.setAttribute(
       "onclick",
-      "event.stopPropagation(); apriModuloRSVP(); return false;"
+      "event.stopPropagation(); this.classList.add('rsvp-premuto'); apriModuloRSVP(); return false;"
     );
 
     contenitore.appendChild(pulsante);
@@ -1914,7 +1839,7 @@ risultato.innerHTML =
 
         '</div>' +
 
-        '<div class="tocca">TOCCA PER APRIRE</div>' +
+        '<div class="tocca" role="button" tabindex="0" onclick="apriBusta()" onkeydown="if(event.key===&quot;Enter&quot;||event.key===&quot; &quot;){event.preventDefault();apriBusta();}">TOCCA PER APRIRE</div>' +
 
       '</div>';
 
@@ -2087,30 +2012,39 @@ function apriBusta() {
     */
     setTimeout(function() {
 
+      /* v6.9: tutti gli inviti reali sono previsti con video.
+         Blocchiamo quindi il cartoncino mentre recuperiamo il ticket. */
+      busta.classList.add("video-in-corso");
+
       busta.classList.add(
         "aperta"
       );
 
 
       /*
-        VIDEO — VERSIONE 1.0
+        VIDEO — VERSIONE 2.0
         Aspettiamo l'esito già avviato durante la verifica token.
         Standard -> cartoncino normale.
         Video -> filmato verticale, poi cartoncino.
       */
       setTimeout(function() {
-        var promessa = VIDEO_AUTH_PROMISE || Promise.resolve(null);
+        var promessa = VIDEO_AUTH_PROMISE || autorizzaVideoInvito();
+        var timeoutVideo = new Promise(function(resolve) {
+          setTimeout(function() { resolve(null); }, VIDEO_AUTH_TIMEOUT_MS);
+        });
 
-        promessa.then(function(videoUrl) {
+        Promise.race([promessa, timeoutVideo]).then(function(videoUrl) {
           if (videoUrl) {
             mostraVideoInvito(videoUrl, function() {
               estraiCartoncinoFinale(busta);
             });
           } else {
-            estraiCartoncinoFinale(busta);
+            /* Compatibilità/recovery: mai lasciare la pagina bloccata. */
+            busta.classList.remove("video-in-corso");
+            setTimeout(function() { estraiCartoncinoFinale(busta); }, 1250);
           }
         });
-      }, 3500);
+      }, 1200);
 
     }, 350);
 
