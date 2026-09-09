@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.4 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.5 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1286,8 +1286,10 @@ height: 285px;
     .video-invito-volante.arrivato { pointer-events: auto; }
     .video-invito-volante.in-uscita {
       opacity: 0;
-      transform: translateY(-35px) scale(.96);
-      transition: opacity .24s ease, transform .28s ease;
+      transform: scale(.975);
+      transition:
+        opacity .45s cubic-bezier(.22,.61,.36,1),
+        transform .45s cubic-bezier(.22,.61,.36,1);
     }
     .video-invito {
       display: block; width: 100%; height: 100%; object-fit: contain; background: #000;
@@ -1601,7 +1603,7 @@ risultato.innerHTML =
     }, 40);
   }
 
-  // mostraVideoInvito() — VERSIONE 2.1 — prima fase realmente dietro la tasca
+  // mostraVideoInvito() — VERSIONE 2.2 — uscita morbida video + continuità con cartoncino
   function mostraVideoInvito(videoUrl, alTermine) {
     if (!videoUrl) { alTermine(); return; }
 
@@ -1693,27 +1695,51 @@ risultato.innerHTML =
       function chiudiVideo() {
         if (concluso) return;
         concluso = true;
+
         try { video.pause(); } catch (e) {}
+
+        /*
+          v6.9.5:
+          la musica ricomincia a salire mentre il video sfuma.
+          Il video non "scappa" più verso l'alto: resta centrato,
+          si riduce appena e scompare in 450 ms.
+        */
+        if (musica && !musica.paused) {
+          portaVolumeMusica(VOLUME_MUSICA_NORMALE, 900);
+        }
+
         volante.classList.remove("arrivato");
         volante.classList.add("in-uscita");
 
+        /*
+          Quando il video è ormai quasi completamente scomparso,
+          torniamo alla geometria reale della busta e facciamo uscire
+          fisicamente il cartoncino dalla tasca.
+        */
+        setTimeout(function() {
+          busta.classList.remove("video-in-corso");
+          busta.classList.add("post-video-estrazione");
+        }, 380);
+
+        /*
+          Attendiamo che l'estrazione fisica sia quasi conclusa;
+          poi il cartoncino viene trasformato nel volante usando
+          la stessa animazione finale già approvata.
+        */
         setTimeout(function() {
           video.removeAttribute("src");
           try { video.load(); } catch (e) {}
-          if (volante.parentNode) volante.parentNode.removeChild(volante);
-          if (musica && !musica.paused) portaVolumeMusica(VOLUME_MUSICA_NORMALE, 900);
-          busta.classList.remove("video-in-corso");
 
-          /*
-            v6.9.1: ripristiniamo prima la vera uscita fisica del cartoncino
-            dalla busta; solo dopo lo trasformiamo nel cartoncino volante.
-          */
-          busta.classList.add("post-video-estrazione");
+          if (volante.parentNode) {
+            volante.parentNode.removeChild(volante);
+          }
+
+          alTermine();
+
           setTimeout(function() {
-            alTermine();
             busta.classList.remove("post-video-estrazione");
-          }, 620);
-        }, 140);
+          }, 80);
+        }, 1080);
       }
 
       video.addEventListener("ended", chiudiVideo);
