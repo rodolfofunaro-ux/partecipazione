@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.9 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.11 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1677,7 +1677,15 @@ risultato.innerHTML =
     busta.appendChild(pocketWindow);
 
     var musica = document.getElementById("musicaFondo");
-    if (musica && !musica.paused) portaVolumeMusica(VOLUME_MUSICA_VIDEO, 650);
+
+    // AUDIO VIDEO — VERSIONE 1.1 — ducking sincronizzato con la riproduzione reale
+    // Su iPhone il comando non viene più dato durante l'animazione di estrazione:
+    // abbassiamo la musica solo quando il video entra davvero nello stato "playing".
+    video.addEventListener("playing", function() {
+      if (musica && !musica.paused) {
+        portaVolumeMusica(VOLUME_MUSICA_VIDEO, 650);
+      }
+    }, { once: true });
 
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
