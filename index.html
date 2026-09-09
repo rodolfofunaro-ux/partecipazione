@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.7 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.9.8 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1263,6 +1263,23 @@ height: 285px;
       Partenza più bassa: la parte inferiore resta realmente coperta
       dal fronte della busta mentre il video sale.
     */
+    /*
+      VIDEO POCKET WINDOW — VERSIONE 1.0
+      La finestra si estende sopra la busta, quindi il video può emergere
+      liberamente verso l'alto, ma termina ESATTAMENTE sul bordo inferiore
+      della busta. overflow:hidden impedisce che il video lungo sporga sotto.
+    */
+    .video-pocket-window {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -320px;
+      bottom: 0;
+      z-index: 4;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
     .video-emergente-stage {
       position: absolute;
       left: 50%;
@@ -1271,7 +1288,7 @@ height: 285px;
       aspect-ratio: 464 / 832;
       height: auto;
       transform: translate3d(-50%, 0, 0);
-      z-index: 4;
+      z-index: 1;
       opacity: 1;
       pointer-events: none;
       transition: transform .78s cubic-bezier(.18,.78,.22,1);
@@ -1629,7 +1646,7 @@ risultato.innerHTML =
     }, 40);
   }
 
-  // mostraVideoInvito() — VERSIONE 2.3 — estrazione dalla tasca + rendering alleggerito
+  // mostraVideoInvito() — VERSIONE 2.4 — estrazione dalla tasca + crop inferiore
   function mostraVideoInvito(videoUrl, alTermine) {
     if (!videoUrl) { alTermine(); return; }
 
@@ -1637,6 +1654,9 @@ risultato.innerHTML =
     if (!busta) { alTermine(); return; }
 
     busta.classList.add("video-in-corso");
+
+    var pocketWindow = document.createElement("div");
+    pocketWindow.className = "video-pocket-window";
 
     var stage = document.createElement("div");
     stage.className = "video-emergente-stage";
@@ -1648,7 +1668,8 @@ risultato.innerHTML =
     video.preload = "auto";
     video.src = videoUrl;
     stage.appendChild(video);
-    busta.appendChild(stage);
+    pocketWindow.appendChild(stage);
+    busta.appendChild(pocketWindow);
 
     var musica = document.getElementById("musicaFondo");
     if (musica && !musica.paused) portaVolumeMusica(VOLUME_MUSICA_VIDEO, 650);
@@ -1677,7 +1698,11 @@ risultato.innerHTML =
       volante.style.height = rect.height + "px";
 
       stage.removeChild(video);
-      stage.parentNode.removeChild(stage);
+
+      if (pocketWindow.parentNode) {
+        pocketWindow.parentNode.removeChild(pocketWindow);
+      }
+
       volante.appendChild(video);
 
       var salta = document.createElement("button");
