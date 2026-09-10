@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.3 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.4 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1835,19 +1835,35 @@ risultato.innerHTML =
       }
     }, { once: true });
 
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        stage.classList.add("visibile");
-        stage.classList.add("estratto");
-      });
-    });
+    // PRIMO FRAME VIDEO — VERSIONE 1.0
+    // Non facciamo emergere il video finché il browser non ha realmente
+    // caricato almeno il primo fotogramma. Evita il rettangolo nero
+    // iniziale sia su iOS/Safari sia su Android/Chrome.
+    var estrazioneAvviata = false;
+    var timerPrimoFrame = null;
 
-    /*
-      Finché stage è figlio della busta ha z-index 4: la tasca (z-index 5)
-      copre la parte ancora interna. Solo quando il video ha superato il
-      bordo superiore viene trasformato nell'elemento fixed volante.
-    */
-    setTimeout(function() {
+    function avviaEstrazioneConFramePronto() {
+      if (estrazioneAvviata) return;
+      estrazioneAvviata = true;
+
+      if (timerPrimoFrame) {
+        clearTimeout(timerPrimoFrame);
+        timerPrimoFrame = null;
+      }
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          stage.classList.add("visibile");
+          stage.classList.add("estratto");
+        });
+      });
+
+      /*
+        Finché stage è figlio della busta ha z-index 4: la tasca (z-index 5)
+        copre la parte ancora interna. Solo quando il video ha superato il
+        bordo superiore viene trasformato nell'elemento fixed volante.
+      */
+      setTimeout(function() {
       if (!stage.parentNode) return;
 
       var rect = stage.getBoundingClientRect();
@@ -1957,7 +1973,28 @@ risultato.innerHTML =
       video.addEventListener("ended", chiudiVideo);
       video.addEventListener("error", chiudiVideo);
       salta.addEventListener("click", function(ev) { ev.stopPropagation(); chiudiVideo(); });
-    }, 800);
+      }, 800);
+    }
+
+    // loadeddata significa che il frame relativo alla posizione corrente
+    // è disponibile. canplay è un secondo segnale utile sui browser mobile.
+    video.addEventListener("loadeddata", avviaEstrazioneConFramePronto, { once: true });
+    video.addEventListener("canplay", avviaEstrazioneConFramePronto, { once: true });
+
+    // Se il browser ha già il primo frame in cache quando registriamo
+    // gli eventi, partiamo subito senza aspettare un evento che potrebbe
+    // essere già passato.
+    if (video.readyState >= 2) {
+      avviaEstrazioneConFramePronto();
+    } else {
+      try { video.load(); } catch (e) {}
+
+      // Fallback di sicurezza: non blocchiamo l'invito per una rete lenta
+      // o per un comportamento anomalo del browser.
+      timerPrimoFrame = setTimeout(function() {
+        avviaEstrazioneConFramePronto();
+      }, 5000);
+    }
   }
 
 
@@ -2041,7 +2078,7 @@ risultato.innerHTML =
 
       var introRiga2 = document.createElementNS(XHTML, "div");
       introRiga2.setAttribute("class", "intro-riga2");
-      introRiga2.textContent = "alla festa a";
+      introRiga2.textContent = "alla festa";
 
       var introRiga3 = document.createElementNS(XHTML, "div");
       introRiga3.setAttribute("class", "intro-riga3");
