@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.5 — ANTEPRIMA WHATSAPP -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.6 — PRODUZIONE — CORREZIONE PARTY MOBILE + INDIRIZZO -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -2088,8 +2088,8 @@ risultato.innerHTML =
       div.appendChild(r2);
     });
 
-    /* PARTY — VERSIONE 7.0.3 — stessa metrica di Shabbat e leggermente più a sinistra. */
-    aggiungiBloccoMobile(545, 725, 590, 420, "dati-mobile-party-svg", function(div) {
+    /* PARTY — VERSIONE 7.0.4 — centrato più a destra sotto Party. */
+    aggiungiBloccoMobile(575, 725, 590, 420, "dati-mobile-party-svg", function(div) {
       var introRiga1 = document.createElementNS(XHTML, "div");
       introRiga1.textContent = "Asya è felice di invitarvi";
 
@@ -2107,9 +2107,15 @@ risultato.innerHTML =
 
       var indirizzo = document.createElementNS(XHTML, "div");
       indirizzo.setAttribute("class", "indirizzo");
+
+      var partyIndirizzoPulito =
+        String(evento.partyIndirizzo || "")
+          .replace(/\s*-\s*$/, "")
+          .trim();
+
       indirizzo.textContent =
-        (evento.partyIndirizzo || "") +
-        ((evento.partyIndirizzo || evento.partyOra) ? " - ore " : "") +
+        partyIndirizzoPulito +
+        ((partyIndirizzoPulito || evento.partyOra) ? " - ore " : "") +
         (evento.partyOra || "");
 
       div.appendChild(introRiga1);
@@ -2356,9 +2362,15 @@ risultato.innerHTML =
 
       var indirizzo = document.createElementNS(XHTML, "div");
       indirizzo.setAttribute("class", "indirizzo");
+
+      var partyIndirizzoPulito =
+        String(evento.partyIndirizzo || "")
+          .replace(/\s*-\s*$/, "")
+          .trim();
+
       indirizzo.textContent =
-        (evento.partyIndirizzo || "") +
-        ((evento.partyIndirizzo || evento.partyOra) ? " - ore " : "") +
+        partyIndirizzoPulito +
+        ((partyIndirizzoPulito || evento.partyOra) ? " - ore " : "") +
         (evento.partyOra || "");
 
       div.appendChild(location);
