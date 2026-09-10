@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.1 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.2 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1388,7 +1388,7 @@ height: 285px;
     .dati-mobile-shabbat-svg,
     .dati-mobile-party-svg {
       width: 100%;
-      font-size: 45px;
+      font-size: 48px;
       font-weight: 700;
     }
 
@@ -2012,7 +2012,7 @@ risultato.innerHTML =
     }
 
     /* SHABBAT — pulito, bold, senza icone decorative. */
-    aggiungiBloccoMobile(55, 685, 525, 275, "dati-mobile-shabbat-svg", function(div) {
+    aggiungiBloccoMobile(55, 725, 525, 285, "dati-mobile-shabbat-svg", function(div) {
       var r1 = document.createElementNS(XHTML, "div");
       r1.textContent = evento.shabbatData || "";
 
@@ -2027,44 +2027,18 @@ risultato.innerHTML =
       div.appendChild(r2);
     });
 
-    /* PARTY — VERSIONE 7.0.1 — blocco più basso, più centrato a sinistra e frase su 3 righe. */
-    aggiungiBloccoMobile(620, 685, 560, 390, "dati-mobile-party-svg", function(div) {
-      var testoParty = String(evento.partyTesto || "").replace(/\s+/g, " ").trim();
-      var riga1Testo = testoParty;
-      var riga2Testo = "";
-      var riga3Testo = "";
-      var fraseFesta = "alla festa";
-      var puntoFesta = testoParty.toLowerCase().indexOf(fraseFesta);
-
-      if (puntoFesta > 0) {
-        riga1Testo = testoParty.substring(0, puntoFesta).trim();
-        riga2Testo = testoParty.substring(puntoFesta, puntoFesta + fraseFesta.length).trim();
-        riga3Testo = testoParty.substring(puntoFesta + fraseFesta.length).trim();
-      } else {
-        var puntoDomenica = testoParty.search(/\bdomenica\b/i);
-        if (puntoDomenica > 0) {
-          riga1Testo = testoParty.substring(0, puntoDomenica).trim();
-          riga3Testo = testoParty.substring(puntoDomenica).trim();
-        }
-      }
-
+    /* PARTY — VERSIONE 7.0.2 — righe esplicite e blocco riallineato sotto PARTY. */
+    aggiungiBloccoMobile(570, 725, 590, 420, "dati-mobile-party-svg", function(div) {
       var introRiga1 = document.createElementNS(XHTML, "div");
-      introRiga1.textContent = riga1Testo;
-      div.appendChild(introRiga1);
+      introRiga1.textContent = "Asya è felice di invitarvi";
 
-      if (riga2Testo) {
-        var introRiga2 = document.createElementNS(XHTML, "div");
-        introRiga2.setAttribute("class", "intro-riga2");
-        introRiga2.textContent = riga2Testo;
-        div.appendChild(introRiga2);
-      }
+      var introRiga2 = document.createElementNS(XHTML, "div");
+      introRiga2.setAttribute("class", "intro-riga2");
+      introRiga2.textContent = "alla festa";
 
-      if (riga3Testo) {
-        var introRiga3 = document.createElementNS(XHTML, "div");
-        introRiga3.setAttribute("class", "intro-riga3");
-        introRiga3.textContent = riga3Testo;
-        div.appendChild(introRiga3);
-      }
+      var introRiga3 = document.createElementNS(XHTML, "div");
+      introRiga3.setAttribute("class", "intro-riga3");
+      introRiga3.textContent = evento.partyData || "";
 
       var location = document.createElementNS(XHTML, "div");
       location.setAttribute("class", "location");
@@ -2077,6 +2051,9 @@ risultato.innerHTML =
         ((evento.partyIndirizzo || evento.partyOra) ? " - ore " : "") +
         (evento.partyOra || "");
 
+      div.appendChild(introRiga1);
+      div.appendChild(introRiga2);
+      div.appendChild(introRiga3);
       div.appendChild(location);
       div.appendChild(indirizzo);
     });
