@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 6.10.11 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1361,6 +1361,143 @@ height: 285px;
       .video-emergente-stage { width: 30%; }
     }
 
+
+    /* ======================================================
+       SMARTPHONE — CARTONCINO VERTICALE VERSIONE 7.0
+       Solo telefoni: base 1240x1748, uscita a 90°, rotazione
+       verso verticale, fade-out della busta e zoom utente libero.
+       Desktop invariato.
+       ====================================================== */
+
+    .cartoncino-svg-mobile {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .dati-mobile-svg {
+      box-sizing: border-box;
+      color: #111;
+      text-align: center;
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 1.12;
+    }
+
+    .dati-mobile-shabbat-svg,
+    .dati-mobile-party-svg {
+      width: 100%;
+      font-size: 41px;
+      font-weight: 700;
+    }
+
+    .dati-mobile-shabbat-svg .riga2 {
+      margin-top: 18px;
+    }
+
+    .dati-mobile-party-svg .intro-riga2 {
+      margin-top: 5px;
+    }
+
+    .dati-mobile-party-svg .location {
+      margin-top: 16px;
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-size: 54px;
+      font-weight: 700;
+      line-height: 1;
+      color: #e5ad43;
+      -webkit-text-stroke: 1.1px rgba(72,47,13,.94);
+      paint-order: stroke fill;
+      text-shadow:
+        -0.7px -0.7px 0 rgba(255,247,196,.95),
+         1.2px  1px 0 #a46813,
+         2.2px  1.5px 1px rgba(86,52,8,.60);
+    }
+
+    .dati-mobile-party-svg .indirizzo {
+      margin-top: 14px;
+      font-size: 36px;
+      line-height: 1.10;
+    }
+
+    .dati-mobile-pagamento-svg {
+      width: 100%;
+      font-family: "AmerigoMdBT", Georgia, serif;
+      font-size: 31px;
+      font-weight: 700;
+      line-height: 1.13;
+      white-space: normal;
+    }
+
+    .dati-mobile-pagamento-svg .paypal {
+      margin-top: 10px;
+    }
+
+    .cartoncino-svg-mobile .rsvp-svg-text {
+      font-size: 48px;
+    }
+
+    .anteprima-cartoncino-mobile {
+      width: min(98vw, calc(94vh * 1240 / 1748));
+      aspect-ratio: 1240 / 1748;
+      max-width: 620px;
+    }
+
+    @media (max-width: 767px), (pointer: coarse) {
+      .cartoncino.cartoncino-mobile-host {
+        left: 22.4%;
+        bottom: -29px;
+        width: 55.2%;
+        height: auto;
+        aspect-ratio: 1240 / 1748;
+        transform: rotate(90deg);
+        transform-origin: 50% 50%;
+        transition: transform .78s cubic-bezier(.22,.61,.36,1);
+        overflow: hidden;
+      }
+
+      .busta.video-in-corso .cartoncino.cartoncino-mobile-host,
+      .busta.aperta .cartoncino.cartoncino-mobile-host {
+        transform: rotate(90deg) !important;
+        transition-delay: 0s !important;
+      }
+
+      .busta.aperta.post-video-estrazione .cartoncino.cartoncino-mobile-host {
+        transform: translate3d(0,-255px,0) rotate(90deg) !important;
+        transition: transform .78s cubic-bezier(.22,.61,.36,1) !important;
+        transition-delay: 0s !important;
+        z-index: 4;
+      }
+
+      .cartoncino-volante.cartoncino-mobile-host {
+        position: fixed;
+        bottom: auto;
+        right: auto;
+        aspect-ratio: auto;
+        transform-origin: 50% 50%;
+        transition:
+          left 1.35s cubic-bezier(.20,.72,.20,1),
+          top 1.35s cubic-bezier(.20,.72,.20,1),
+          width 1.35s cubic-bezier(.20,.72,.20,1),
+          height 1.35s cubic-bezier(.20,.72,.20,1),
+          transform 1.35s cubic-bezier(.20,.72,.20,1),
+          box-shadow .55s ease;
+        will-change: left, top, width, height, transform;
+        touch-action: auto;
+      }
+
+      .cartoncino-volante.cartoncino-mobile-host.mobile-finale {
+        box-shadow: 0 10px 32px rgba(0,0,0,.14);
+      }
+
+      .scena-busta.mobile-fadeout {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .48s cubic-bezier(.22,.61,.36,1);
+      }
+    }
+
 </style>
 </head>
 
@@ -1817,6 +1954,265 @@ risultato.innerHTML =
      CARTONCINO COMPLETO PROTETTO
      ========================= */
 
+
+
+  // usaVersioneSmartphone() — VERSIONE 1.0 — telefono reale, non semplice larghezza finestra
+  function usaVersioneSmartphone() {
+    var coarse = false;
+    try {
+      coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+    } catch (e) {}
+
+    var sw = Number((window.screen && window.screen.width) || window.innerWidth || 0);
+    var sh = Number((window.screen && window.screen.height) || window.innerHeight || 0);
+    var latoCorto = Math.min(sw || 9999, sh || 9999);
+
+    return coarse && latoCorto <= 600;
+  }
+
+  // creaCartoncinoMobile() — VERSIONE 1.0 — SVG verticale 1240x1748, dati protetti + RSVP animato
+  function creaCartoncinoMobile(evento) {
+    evento = evento || {};
+
+    var NS = "http://www.w3.org/2000/svg";
+    var XHTML = "http://www.w3.org/1999/xhtml";
+
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("class", "cartoncino-svg cartoncino-svg-mobile");
+    svg.setAttribute("viewBox", "0 0 1240 1748");
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    svg.setAttribute("aria-label", "Partecipazione");
+
+    var sfondo = document.createElementNS(NS, "image");
+    sfondo.setAttribute("href", "cartoncino_base_verticale_web_q84.jpg");
+    sfondo.setAttribute("x", "0");
+    sfondo.setAttribute("y", "0");
+    sfondo.setAttribute("width", "1240");
+    sfondo.setAttribute("height", "1748");
+    sfondo.setAttribute("preserveAspectRatio", "none");
+    svg.appendChild(sfondo);
+
+    function aggiungiBloccoMobile(x, y, w, h, className, costruttore) {
+      var fo = document.createElementNS(NS, "foreignObject");
+      fo.setAttribute("x", String(x));
+      fo.setAttribute("y", String(y));
+      fo.setAttribute("width", String(w));
+      fo.setAttribute("height", String(h));
+
+      var div = document.createElementNS(XHTML, "div");
+      div.setAttribute("class", "dati-mobile-svg " + className);
+      costruttore(div);
+
+      fo.appendChild(div);
+      svg.appendChild(fo);
+    }
+
+    /* SHABBAT — pulito, bold, senza icone decorative. */
+    aggiungiBloccoMobile(55, 625, 525, 260, "dati-mobile-shabbat-svg", function(div) {
+      var r1 = document.createElementNS(XHTML, "div");
+      r1.textContent = evento.shabbatData || "";
+
+      var r2 = document.createElementNS(XHTML, "div");
+      r2.setAttribute("class", "riga2");
+      r2.textContent =
+        (evento.shabbatLuogo || "") +
+        ((evento.shabbatLuogo || evento.shabbatOra) ? " - ore " : "") +
+        (evento.shabbatOra || "");
+
+      div.appendChild(r1);
+      div.appendChild(r2);
+    });
+
+    /* PARTY — stesso fraseggio/dati della versione orizzontale. */
+    aggiungiBloccoMobile(660, 625, 525, 360, "dati-mobile-party-svg", function(div) {
+      var testoParty = String(evento.partyTesto || "").trim();
+      var riga1Testo = testoParty;
+      var riga2Testo = "";
+      var puntoDomenica = testoParty.search(/\bdomenica\b/i);
+
+      if (puntoDomenica > 0) {
+        riga1Testo = testoParty.substring(0, puntoDomenica).trim();
+        riga2Testo = testoParty.substring(puntoDomenica).trim();
+      }
+
+      var introRiga1 = document.createElementNS(XHTML, "div");
+      introRiga1.textContent = riga1Testo;
+      div.appendChild(introRiga1);
+
+      if (riga2Testo) {
+        var introRiga2 = document.createElementNS(XHTML, "div");
+        introRiga2.setAttribute("class", "intro-riga2");
+        introRiga2.textContent = riga2Testo;
+        div.appendChild(introRiga2);
+      }
+
+      var location = document.createElementNS(XHTML, "div");
+      location.setAttribute("class", "location");
+      location.textContent = evento.partyLocation || "";
+
+      var indirizzo = document.createElementNS(XHTML, "div");
+      indirizzo.setAttribute("class", "indirizzo");
+      indirizzo.textContent =
+        (evento.partyIndirizzo || "") +
+        ((evento.partyIndirizzo || evento.partyOra) ? " - ore " : "") +
+        (evento.partyOra || "");
+
+      div.appendChild(location);
+      div.appendChild(indirizzo);
+    });
+
+    /* IBAN + PayPal restano solo in memoria dopo token valido. */
+    aggiungiBloccoMobile(70, 1430, 1100, 125, "dati-mobile-pagamento-svg", function(div) {
+      var iban = document.createElementNS(XHTML, "div");
+      iban.textContent = evento.ibanTesto || "";
+
+      var paypal = document.createElementNS(XHTML, "div");
+      paypal.setAttribute("class", "paypal");
+      paypal.textContent = evento.paypalTesto || "";
+
+      div.appendChild(iban);
+      div.appendChild(paypal);
+    });
+
+    /* RSVP MOBILE — SVG nativo, grande e centrato, stessa pulsazione affidabile iPhone. */
+    var defs = document.createElementNS(NS, "defs");
+    svg.insertBefore(defs, svg.firstChild);
+
+    var metalGrad = document.createElementNS(NS, "linearGradient");
+    metalGrad.setAttribute("id", "rsvpMetalGradient");
+    metalGrad.setAttribute("x1", "0");
+    metalGrad.setAttribute("y1", "0");
+    metalGrad.setAttribute("x2", "0");
+    metalGrad.setAttribute("y2", "1");
+    [
+      ["0%", "#f8da83"],
+      ["20%", "#efbd4f"],
+      ["52%", "#e1a238"],
+      ["78%", "#c98222"],
+      ["100%", "#f1bf58"]
+    ].forEach(function(s) {
+      var stop = document.createElementNS(NS, "stop");
+      stop.setAttribute("offset", s[0]);
+      stop.setAttribute("stop-color", s[1]);
+      metalGrad.appendChild(stop);
+    });
+    defs.appendChild(metalGrad);
+
+    var shineGrad = document.createElementNS(NS, "linearGradient");
+    shineGrad.setAttribute("id", "rsvpShineGradient");
+    shineGrad.setAttribute("x1", "0");
+    shineGrad.setAttribute("y1", "0");
+    shineGrad.setAttribute("x2", "1");
+    shineGrad.setAttribute("y2", "0");
+    [
+      ["0%",   "#ffffff", "0"],
+      ["35%",  "#ffffff", "0"],
+      ["50%",  "#ffffff", "0.92"],
+      ["65%",  "#ffffff", "0"],
+      ["100%", "#ffffff", "0"]
+    ].forEach(function(s) {
+      var stop = document.createElementNS(NS, "stop");
+      stop.setAttribute("offset", s[0]);
+      stop.setAttribute("stop-color", s[1]);
+      stop.setAttribute("stop-opacity", s[2]);
+      shineGrad.appendChild(stop);
+    });
+    defs.appendChild(shineGrad);
+
+    var clip = document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", "rsvpClip");
+    var clipRect = document.createElementNS(NS, "rect");
+    clipRect.setAttribute("x", "390");
+    clipRect.setAttribute("y", "1580");
+    clipRect.setAttribute("width", "460");
+    clipRect.setAttribute("height", "104");
+    clipRect.setAttribute("rx", "52");
+    clipRect.setAttribute("ry", "52");
+    clip.appendChild(clipRect);
+    defs.appendChild(clip);
+
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "rsvp-svg-group");
+    g.setAttribute("role", "button");
+    g.setAttribute("tabindex", "0");
+    g.setAttribute("aria-label", "Apri RSVP");
+    g.setAttribute("onclick", "event.stopPropagation(); apriModuloRSVP(); return false;");
+
+    function creaRectAnimato(classe, x, y, w, h, rx, espansione, deltaY) {
+      var rect = document.createElementNS(NS, "rect");
+      rect.setAttribute("class", classe);
+      rect.setAttribute("x", String(x));
+      rect.setAttribute("y", String(y));
+      rect.setAttribute("width", String(w));
+      rect.setAttribute("height", String(h));
+      rect.setAttribute("rx", String(rx));
+      rect.setAttribute("ry", String(rx));
+
+      [["x", x, x-espansione/2, x],
+       ["y", y, y-deltaY, y],
+       ["width", w, w+espansione, w],
+       ["height", h, h+deltaY*2, h]].forEach(function(a) {
+        var an = document.createElementNS(NS, "animate");
+        an.setAttribute("attributeName", a[0]);
+        an.setAttribute("values", a[1]+";"+a[2]+";"+a[3]);
+        an.setAttribute("dur", "1.35s");
+        an.setAttribute("repeatCount", "indefinite");
+        rect.appendChild(an);
+      });
+      return rect;
+    }
+
+    var shadow = creaRectAnimato("rsvp-svg-shadow", 390, 1590, 460, 104, 52, 24, 6);
+    g.appendChild(shadow);
+
+    var base = creaRectAnimato("rsvp-svg-base", 390, 1580, 460, 104, 52, 24, 6);
+    base.setAttribute("fill", "url(#rsvpMetalGradient)");
+    g.appendChild(base);
+
+    var inner = creaRectAnimato("rsvp-svg-inner", 399, 1589, 442, 86, 43, 18, 5);
+    g.appendChild(inner);
+
+    var shine = document.createElementNS(NS, "rect");
+    shine.setAttribute("class", "rsvp-svg-shine");
+    shine.setAttribute("x", "300");
+    shine.setAttribute("y", "1568");
+    shine.setAttribute("width", "110");
+    shine.setAttribute("height", "130");
+    shine.setAttribute("clip-path", "url(#rsvpClip)");
+    shine.setAttribute("fill", "url(#rsvpShineGradient)");
+    shine.setAttribute("transform", "skewX(-18)");
+
+    var shineOpacity = document.createElementNS(NS, "animate");
+    shineOpacity.setAttribute("attributeName", "opacity");
+    shineOpacity.setAttribute("values", "0;0;0.9;0.9;0;0");
+    shineOpacity.setAttribute("keyTimes", "0;0.18;0.30;0.52;0.64;1");
+    shineOpacity.setAttribute("dur", "2.7s");
+    shineOpacity.setAttribute("repeatCount", "indefinite");
+    shine.appendChild(shineOpacity);
+
+    var shineMove = document.createElementNS(NS, "animateTransform");
+    shineMove.setAttribute("attributeName", "transform");
+    shineMove.setAttribute("type", "translate");
+    shineMove.setAttribute("values", "-180 0; -180 0; 700 0; 700 0");
+    shineMove.setAttribute("keyTimes", "0;0.18;0.64;1");
+    shineMove.setAttribute("dur", "2.7s");
+    shineMove.setAttribute("repeatCount", "indefinite");
+    shineMove.setAttribute("additive", "sum");
+    shine.appendChild(shineMove);
+    g.appendChild(shine);
+
+    var txt = document.createElementNS(NS, "text");
+    txt.setAttribute("class", "rsvp-svg-text");
+    txt.setAttribute("x", "620");
+    txt.setAttribute("y", "1633");
+    txt.setAttribute("font-size", "48");
+    txt.textContent = "RSVP";
+    g.appendChild(txt);
+
+    svg.appendChild(g);
+    return svg;
+  }
+
   // creaCartoncinoCompleto() — VERSIONE 3.6 — pulsazione SVG stabile iPhone
   function creaCartoncinoCompleto(evento) {
     evento = evento || {};
@@ -2165,8 +2561,13 @@ risultato.innerHTML =
     risultato.innerHTML = "";
 
     var contenitore = document.createElement("div");
-    contenitore.className = "anteprima-cartoncino";
-    contenitore.appendChild(creaCartoncinoCompleto(evento));
+    var mobile = usaVersioneSmartphone();
+    contenitore.className = mobile
+      ? "anteprima-cartoncino anteprima-cartoncino-mobile"
+      : "anteprima-cartoncino";
+    contenitore.appendChild(
+      mobile ? creaCartoncinoMobile(evento) : creaCartoncinoCompleto(evento)
+    );
 
     risultato.appendChild(contenitore);
   }
@@ -2206,9 +2607,12 @@ risultato.innerHTML =
     var host = document.getElementById("cartoncinoHost");
 
     if (host) {
-      host.appendChild(
-        creaCartoncinoCompleto(evento)
-      );
+      if (usaVersioneSmartphone()) {
+        host.classList.add("cartoncino-mobile-host");
+        host.appendChild(creaCartoncinoMobile(evento));
+      } else {
+        host.appendChild(creaCartoncinoCompleto(evento));
+      }
     }
   }
 
@@ -2375,8 +2779,86 @@ function apriBusta() {
   }, 1850);
 }
 
-// estraiCartoncinoFinale() — VERSIONE 1.3 — RSVP SVG nativo incorporato
+
+// estraiCartoncinoFinaleMobile() — VERSIONE 1.0 — rotazione 90° -> verticale + fade busta
+function estraiCartoncinoFinaleMobile(busta) {
+  var originale = busta.querySelector(".cartoncino.cartoncino-mobile-host");
+  if (!originale) return;
+
+  var rect = originale.getBoundingClientRect();
+  var volante = originale.cloneNode(true);
+  volante.classList.add("cartoncino-volante");
+
+  /*
+    getBoundingClientRect() vede il cartoncino già ruotato di 90°.
+    Ricostruiamo il rettangolo NON ruotato mantenendo lo stesso centro:
+    così la prima immagine del clone coincide con il cartoncino nella busta.
+  */
+  var startW = rect.height;
+  var startH = rect.width;
+  var centerX = rect.left + rect.width / 2;
+  var centerY = rect.top + rect.height / 2;
+
+  volante.style.left = (centerX - startW / 2) + "px";
+  volante.style.top = (centerY - startH / 2) + "px";
+  volante.style.width = startW + "px";
+  volante.style.height = startH + "px";
+  volante.style.bottom = "auto";
+  volante.style.transform = "rotate(90deg)";
+
+  document.body.appendChild(volante);
+  originale.style.visibility = "hidden";
+
+  var viewportW = window.innerWidth;
+  var viewportH = window.innerHeight;
+  var rapportoMobile = 1240 / 1748;
+
+  /* Quasi tutta la larghezza in verticale, ma senza tagliare il cartoncino. */
+  var finalWidth = viewportW * 0.985;
+  var finalHeight = finalWidth / rapportoMobile;
+  var maxHeight = viewportH * 0.965;
+
+  if (finalHeight > maxHeight) {
+    finalHeight = maxHeight;
+    finalWidth = finalHeight * rapportoMobile;
+  }
+
+  var finalLeft = (viewportW - finalWidth) / 2;
+  var finalTop = (viewportH - finalHeight) / 2;
+
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      volante.style.left = finalLeft + "px";
+      volante.style.top = finalTop + "px";
+      volante.style.width = finalWidth + "px";
+      volante.style.height = finalHeight + "px";
+      volante.style.transform = "rotate(0deg)";
+      volante.classList.add("mobile-finale");
+    });
+  });
+
+  /* La busta accompagna l'uscita e scompare solo nella fase finale. */
+  setTimeout(function() {
+    var scena = busta.closest ? busta.closest(".scena-busta") : null;
+    if (scena) scena.classList.add("mobile-fadeout");
+  }, 820);
+
+  /*
+    Da qui in poi NON ascoltiamo visualViewport/resize per lo zoom:
+    Safari può quindi mantenere il pinch-to-zoom scelto dall'utente.
+  */
+  setTimeout(function() {
+    volante.classList.add("rsvp-attivo");
+  }, 1400);
+}
+
+// estraiCartoncinoFinale() — VERSIONE 2.0 — desktop invariato + ramo smartphone 7.0
 function estraiCartoncinoFinale(busta) {
+
+  if (usaVersioneSmartphone()) {
+    estraiCartoncinoFinaleMobile(busta);
+    return;
+  }
 
   var originale =
     busta.querySelector(
