@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.2 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.3 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1385,23 +1385,30 @@ height: 285px;
       line-height: 1.12;
     }
 
+    /* Shabbat + Party — VERSIONE 7.0.3
+       Stessa dimensione, stesso interlinea e stessa metrica verticale. */
     .dati-mobile-shabbat-svg,
     .dati-mobile-party-svg {
       width: 100%;
-      font-size: 48px;
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1.10;
+    }
+
+    .dati-mobile-shabbat-svg > div,
+    .dati-mobile-party-svg > div:not(.location):not(.indirizzo) {
+      font-size: 46px;
+      line-height: 1.10;
       font-weight: 700;
     }
 
     .dati-mobile-shabbat-svg .riga2 {
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
-    .dati-mobile-party-svg .intro-riga2 {
-      margin-top: 4px;
-    }
-
+    .dati-mobile-party-svg .intro-riga2,
     .dati-mobile-party-svg .intro-riga3 {
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .dati-mobile-party-svg .location {
@@ -2027,8 +2034,8 @@ risultato.innerHTML =
       div.appendChild(r2);
     });
 
-    /* PARTY — VERSIONE 7.0.2 — righe esplicite e blocco riallineato sotto PARTY. */
-    aggiungiBloccoMobile(570, 725, 590, 420, "dati-mobile-party-svg", function(div) {
+    /* PARTY — VERSIONE 7.0.3 — stessa metrica di Shabbat e leggermente più a sinistra. */
+    aggiungiBloccoMobile(545, 725, 590, 420, "dati-mobile-party-svg", function(div) {
       var introRiga1 = document.createElementNS(XHTML, "div");
       introRiga1.textContent = "Asya è felice di invitarvi";
 
