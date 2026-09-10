@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0 -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.1 -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1388,7 +1388,7 @@ height: 285px;
     .dati-mobile-shabbat-svg,
     .dati-mobile-party-svg {
       width: 100%;
-      font-size: 41px;
+      font-size: 45px;
       font-weight: 700;
     }
 
@@ -1397,11 +1397,15 @@ height: 285px;
     }
 
     .dati-mobile-party-svg .intro-riga2 {
-      margin-top: 5px;
+      margin-top: 4px;
+    }
+
+    .dati-mobile-party-svg .intro-riga3 {
+      margin-top: 4px;
     }
 
     .dati-mobile-party-svg .location {
-      margin-top: 16px;
+      margin-top: 14px;
       font-family: "AmerigoMdBT", Georgia, serif;
       font-size: 54px;
       font-weight: 700;
@@ -1984,7 +1988,7 @@ risultato.innerHTML =
     svg.setAttribute("aria-label", "Partecipazione");
 
     var sfondo = document.createElementNS(NS, "image");
-    sfondo.setAttribute("href", "cartoncino_base_verticale_web_q84.jpg");
+    sfondo.setAttribute("href", "cartoncino_base_verticale_web_q84.jpg?v=7.0.1");
     sfondo.setAttribute("x", "0");
     sfondo.setAttribute("y", "0");
     sfondo.setAttribute("width", "1240");
@@ -2008,7 +2012,7 @@ risultato.innerHTML =
     }
 
     /* SHABBAT — pulito, bold, senza icone decorative. */
-    aggiungiBloccoMobile(55, 625, 525, 260, "dati-mobile-shabbat-svg", function(div) {
+    aggiungiBloccoMobile(55, 685, 525, 275, "dati-mobile-shabbat-svg", function(div) {
       var r1 = document.createElementNS(XHTML, "div");
       r1.textContent = evento.shabbatData || "";
 
@@ -2023,16 +2027,25 @@ risultato.innerHTML =
       div.appendChild(r2);
     });
 
-    /* PARTY — stesso fraseggio/dati della versione orizzontale. */
-    aggiungiBloccoMobile(660, 625, 525, 360, "dati-mobile-party-svg", function(div) {
-      var testoParty = String(evento.partyTesto || "").trim();
+    /* PARTY — VERSIONE 7.0.1 — blocco più basso, più centrato a sinistra e frase su 3 righe. */
+    aggiungiBloccoMobile(620, 685, 560, 390, "dati-mobile-party-svg", function(div) {
+      var testoParty = String(evento.partyTesto || "").replace(/\s+/g, " ").trim();
       var riga1Testo = testoParty;
       var riga2Testo = "";
-      var puntoDomenica = testoParty.search(/\bdomenica\b/i);
+      var riga3Testo = "";
+      var fraseFesta = "alla festa";
+      var puntoFesta = testoParty.toLowerCase().indexOf(fraseFesta);
 
-      if (puntoDomenica > 0) {
-        riga1Testo = testoParty.substring(0, puntoDomenica).trim();
-        riga2Testo = testoParty.substring(puntoDomenica).trim();
+      if (puntoFesta > 0) {
+        riga1Testo = testoParty.substring(0, puntoFesta).trim();
+        riga2Testo = testoParty.substring(puntoFesta, puntoFesta + fraseFesta.length).trim();
+        riga3Testo = testoParty.substring(puntoFesta + fraseFesta.length).trim();
+      } else {
+        var puntoDomenica = testoParty.search(/\bdomenica\b/i);
+        if (puntoDomenica > 0) {
+          riga1Testo = testoParty.substring(0, puntoDomenica).trim();
+          riga3Testo = testoParty.substring(puntoDomenica).trim();
+        }
       }
 
       var introRiga1 = document.createElementNS(XHTML, "div");
@@ -2044,6 +2057,13 @@ risultato.innerHTML =
         introRiga2.setAttribute("class", "intro-riga2");
         introRiga2.textContent = riga2Testo;
         div.appendChild(introRiga2);
+      }
+
+      if (riga3Testo) {
+        var introRiga3 = document.createElementNS(XHTML, "div");
+        introRiga3.setAttribute("class", "intro-riga3");
+        introRiga3.textContent = riga3Testo;
+        div.appendChild(introRiga3);
       }
 
       var location = document.createElementNS(XHTML, "div");
