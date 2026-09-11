@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.8 — PRODUZIONE — FIX FLASH FLIP 3D MOBILE -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.9 — PRODUZIONE — FIX FLASH FLIP 3D MOBILE -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1490,6 +1490,15 @@ height: 285px;
         transform: rotateY(180deg) translateZ(0.1px);
       }
 
+      /* FIX MOBILE 7.0.9 — il fronte resta realmente nascosto nei primi istanti del tocco. */
+      .busta-flip:not(.fronte-mobile-pronto) .fronte-flip {
+        visibility: hidden;
+      }
+
+      .busta-flip.fronte-mobile-pronto .fronte-flip {
+        visibility: visible;
+      }
+
       .cartoncino.cartoncino-mobile-host {
         left: 22.4%;
         bottom: -29px;
@@ -2809,9 +2818,29 @@ function apriBusta() {
     FASE 1
     Rotazione 3D retro -> fronte.
   */
-  flip.classList.add(
-    "in-rotazione"
-  );
+  /*
+    MOBILE 7.0.9
+    Safari/iPhone può comporre per un fotogramma la faccia anteriore
+    nel momento esatto in cui parte il transform 3D.
+    La teniamo quindi nascosta per i primissimi millisecondi e
+    forziamo un pre-paint prima di avviare il flip.
+    Su desktop il comportamento resta identico.
+  */
+  if (usaVersioneSmartphone()) {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        flip.classList.add("in-rotazione");
+
+        setTimeout(function() {
+          flip.classList.add("fronte-mobile-pronto");
+        }, 120);
+      });
+    });
+  } else {
+    flip.classList.add(
+      "in-rotazione"
+    );
+  }
 
 
   /*
