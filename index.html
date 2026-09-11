@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.7 — PRODUZIONE — PARTY MOBILE DA CONFIG + INDIRIZZO 46PX -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.8 — PRODUZIONE — FIX FLASH FLIP 3D MOBILE -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1473,6 +1473,23 @@ height: 285px;
     }
 
     @media (max-width: 767px), (pointer: coarse) {
+      /* FIX MOBILE 7.0.8 — evita il flash della faccia opposta all’avvio del flip 3D su Safari/iPhone. */
+      .faccia-busta {
+        -webkit-backface-visibility: hidden !important;
+        backface-visibility: hidden !important;
+        will-change: transform;
+      }
+
+      .retro-busta {
+        -webkit-transform: rotateY(0deg) translateZ(0.1px);
+        transform: rotateY(0deg) translateZ(0.1px);
+      }
+
+      .fronte-flip {
+        -webkit-transform: rotateY(180deg) translateZ(0.1px);
+        transform: rotateY(180deg) translateZ(0.1px);
+      }
+
       .cartoncino.cartoncino-mobile-host {
         left: 22.4%;
         bottom: -29px;
