@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.6 — PRODUZIONE — CORREZIONE PARTY MOBILE + INDIRIZZO -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.7 — PRODUZIONE — PARTY MOBILE DA CONFIG + INDIRIZZO 46PX -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1445,7 +1445,7 @@ height: 285px;
 
     .dati-mobile-party-svg .indirizzo {
       margin-top: 14px;
-      font-size: 36px;
+      font-size: 46px;
       line-height: 1.10;
     }
 
@@ -2088,18 +2088,29 @@ risultato.innerHTML =
       div.appendChild(r2);
     });
 
-    /* PARTY — VERSIONE 7.0.4 — centrato più a destra sotto Party. */
+    /* PARTY — VERSIONE 7.0.7 — testo letto da CONFIG come nella versione desktop. */
     aggiungiBloccoMobile(575, 725, 590, 420, "dati-mobile-party-svg", function(div) {
+      var testoParty = String(evento.partyTesto || "").trim();
+      var riga1Testo = testoParty;
+      var riga2Testo = "";
+
+      var puntoDomenica = testoParty.search(/\bdomenica\b/i);
+
+      if (puntoDomenica > 0) {
+        riga1Testo = testoParty.substring(0, puntoDomenica).trim();
+        riga2Testo = testoParty.substring(puntoDomenica).trim();
+      }
+
       var introRiga1 = document.createElementNS(XHTML, "div");
-      introRiga1.textContent = "Asya è felice di invitarvi";
+      introRiga1.textContent = riga1Testo;
+      div.appendChild(introRiga1);
 
-      var introRiga2 = document.createElementNS(XHTML, "div");
-      introRiga2.setAttribute("class", "intro-riga2");
-      introRiga2.textContent = "alla festa";
-
-      var introRiga3 = document.createElementNS(XHTML, "div");
-      introRiga3.setAttribute("class", "intro-riga3");
-      introRiga3.textContent = evento.partyData || "";
+      if (riga2Testo) {
+        var introRiga2 = document.createElementNS(XHTML, "div");
+        introRiga2.setAttribute("class", "intro-riga2");
+        introRiga2.textContent = riga2Testo;
+        div.appendChild(introRiga2);
+      }
 
       var location = document.createElementNS(XHTML, "div");
       location.setAttribute("class", "location");
@@ -2118,9 +2129,6 @@ risultato.innerHTML =
         ((partyIndirizzoPulito || evento.partyOra) ? " - ore " : "") +
         (evento.partyOra || "");
 
-      div.appendChild(introRiga1);
-      div.appendChild(introRiga2);
-      div.appendChild(introRiga3);
       div.appendChild(location);
       div.appendChild(indirizzo);
     });
