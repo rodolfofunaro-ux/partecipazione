@@ -2349,7 +2349,7 @@ risultato.innerHTML =
     }
 
     /* Shabbat — POSIZIONE VERSIONE 1.5 — alzato di 65 unità */
-    aggiungiBlocco(28, 540, 690, 150, "dati-shabbat-svg", function(div) {
+    aggiungiBlocco(28, 565, 690, 150, "dati-shabbat-svg", function(div) {
       var r1 = document.createElementNS(XHTML, "div");
       r1.textContent = evento.shabbatData || "";
 
@@ -2367,7 +2367,7 @@ risultato.innerHTML =
     /* Party — VERSIONE 1.3 — alzato di 65 unità
        I valori arrivano esclusivamente dal backend dopo token valido.
        Il testo CONFIG viene diviso graficamente prima di "domenica". */
-    aggiungiBlocco(875, 540, 810, 300, "dati-party-svg", function(div) {
+    aggiungiBlocco(875, 565, 810, 300, "dati-party-svg", function(div) {
       var testoParty = String(evento.partyTesto || "").trim();
       var riga1Testo = testoParty;
       var riga2Testo = "";
