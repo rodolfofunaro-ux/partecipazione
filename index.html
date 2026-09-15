@@ -2101,6 +2101,7 @@ risultato.innerHTML =
     /* SHABBAT — pulito, bold, senza icone decorative. */
     aggiungiBloccoMobile(55, 725, 525, 285, "dati-mobile-shabbat-svg", function(div) {
       var r1 = document.createElementNS(XHTML, "div");
+      r1.style.whiteSpace = "pre-line";
       r1.textContent = evento.shabbatData || "";
 
       var r2 = document.createElementNS(XHTML, "div");
@@ -2129,6 +2130,7 @@ risultato.innerHTML =
 
       var introRiga1 = document.createElementNS(XHTML, "div");
       introRiga1.textContent = riga1Testo;
+      introRiga1.style.whiteSpace = "pre-line";
       div.appendChild(introRiga1);
 
       if (riga2Testo) {
