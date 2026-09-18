@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.9 — PRODUZIONE — FIX FLASH FLIP 3D MOBILE -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.10 — DIAGNOSTICA RSVP — PRODUZIONE 7.0.9 INVARIATA -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -3363,7 +3363,12 @@ function estraiCartoncinoFinale(busta) {
       )
       .then(function(response) {
         if (!response.ok) {
-          throw new Error("Errore HTTP");
+          console.error("[RSVP 7.0.10] Risposta HTTP non valida", {
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url
+          });
+          throw new Error("Errore HTTP " + response.status);
         }
 
         return response.json();
@@ -3371,14 +3376,19 @@ function estraiCartoncinoFinale(busta) {
       .then(function(data) {
 
         /*
-          Nessun falso positivo:
-          consideriamo salvato solo se il backend
-          conferma esplicitamente rsvpSalvato:true.
+          DIAGNOSTICA RSVP — VERSIONE 7.0.10
+          Nessuna modifica alla logica di salvataggio.
+          Se la risposta non contiene la conferma prevista,
+          registriamo in console l'oggetto ricevuto.
         */
         if (
           data.ok !== true ||
           data.rsvpSalvato !== true
         ) {
+          console.error(
+            "[RSVP 7.0.10] Risposta backend inattesa",
+            data
+          );
           throw new Error(
             "Backend RSVP non ancora collegato"
           );
@@ -3406,11 +3416,16 @@ function estraiCartoncinoFinale(busta) {
           chiudiModuloRSVP();
         }, 1200);
       })
-      .catch(function() {
+      .catch(function(errore) {
+
+        console.error(
+          "[RSVP 7.0.10] Errore durante il salvataggio RSVP",
+          errore
+        );
 
         if (messaggio) {
           messaggio.textContent =
-            "Modulo pronto: collegheremo il salvataggio al backend nel debug.";
+            "Non è stato possibile confermare la risposta. Riprova.";
         }
 
         if (pulsante) {
