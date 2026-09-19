@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.10 — DIAGNOSTICA RSVP — PRODUZIONE 7.0.9 INVARIATA -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.11 — PRIVACY DISCRETA SUL CARTONCINO + DIAGNOSTICA RSVP -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -1552,6 +1552,36 @@ height: 285px;
       }
     }
 
+
+
+    /* PRIVACY — VERSIONE 7.0.11 — link discreto sul cartoncino + informativa */
+    .privacy-overlay {
+      position: fixed; inset: 0; z-index: 13000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px; box-sizing: border-box;
+      background: rgba(64,76,83,.42);
+      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    }
+    .privacy-modale {
+      position: relative; width: min(92vw, 560px); max-height: 88vh; overflow-y: auto;
+      box-sizing: border-box; padding: 32px 28px 26px; border-radius: 16px;
+      border: 1px solid rgba(124,184,196,.30); background: rgba(255,255,255,.985);
+      color: #536a70; box-shadow: 0 24px 58px rgba(67,83,91,.24);
+      font-family: Arial, sans-serif; font-size: 14px; line-height: 1.48;
+    }
+    .privacy-modale h2 { margin: 0 36px 18px; text-align: center; font-size: 21px; color: #506a70; }
+    .privacy-modale p { margin: 0 0 12px; }
+    .privacy-chiudi {
+      position: absolute; top: 10px; right: 12px; width: 38px; height: 38px;
+      border: 0; border-radius: 50%; background: rgba(181,224,231,.26);
+      color: #5a6f75; font-size: 26px; line-height: 1; cursor: pointer;
+    }
+    .privacy-svg-link { cursor: pointer; }
+    .privacy-svg-link text {
+      fill: rgba(72,72,72,.68); font-family: Arial, sans-serif; font-weight: 400;
+      text-decoration: underline; text-decoration-thickness: .7px;
+    }
+
 </style>
 </head>
 
@@ -2061,6 +2091,45 @@ risultato.innerHTML =
     return coarse && latoCorto <= 600;
   }
 
+
+
+  // PRIVACY — VERSIONE 7.0.11 — link SVG piccolo nell'angolo inferiore destro
+  function aggiungiLinkPrivacySvg(svg, NS, xDestra, yBase, fontSize, areaLarghezza, areaAltezza) {
+    var gruppo = document.createElementNS(NS, "g");
+    gruppo.setAttribute("class", "privacy-svg-link");
+    gruppo.setAttribute("role", "button");
+    gruppo.setAttribute("tabindex", "0");
+    gruppo.setAttribute("aria-label", "Apri informativa privacy");
+
+    var area = document.createElementNS(NS, "rect");
+    area.setAttribute("x", String(xDestra - areaLarghezza));
+    area.setAttribute("y", String(yBase - areaAltezza + 8));
+    area.setAttribute("width", String(areaLarghezza));
+    area.setAttribute("height", String(areaAltezza));
+    area.setAttribute("fill", "transparent");
+    gruppo.appendChild(area);
+
+    var testo = document.createElementNS(NS, "text");
+    testo.setAttribute("x", String(xDestra));
+    testo.setAttribute("y", String(yBase));
+    testo.setAttribute("text-anchor", "end");
+    testo.setAttribute("font-size", String(fontSize));
+    testo.textContent = "Privacy";
+    gruppo.appendChild(testo);
+
+    gruppo.addEventListener("click", function(ev) {
+      ev.stopPropagation();
+      apriPrivacy();
+    });
+    gruppo.addEventListener("keydown", function(ev) {
+      if (ev.key === "Enter" || ev.key === " ") {
+        ev.preventDefault(); ev.stopPropagation(); apriPrivacy();
+      }
+    });
+
+    svg.appendChild(gruppo);
+  }
+
   // creaCartoncinoMobile() — VERSIONE 1.0 — SVG verticale 1240x1748, dati protetti + RSVP animato
   function creaCartoncinoMobile(evento) {
     evento = evento || {};
@@ -2310,6 +2379,8 @@ risultato.innerHTML =
     g.appendChild(txt);
 
     svg.appendChild(g);
+
+    aggiungiLinkPrivacySvg(svg, NS, 1205, 1714, 25, 205, 62);
     return svg;
   }
 
@@ -2657,6 +2728,8 @@ risultato.innerHTML =
     g.appendChild(txt);
 
     svg.appendChild(g);
+
+    aggiungiLinkPrivacySvg(svg, NS, 1714, 1208, 22, 190, 58);
 
     return svg;
   }
@@ -3088,6 +3161,41 @@ function estraiCartoncinoFinale(busta) {
 
 
 
+
+
+
+    /* =========================
+       PRIVACY — VERSIONE 7.0.11
+       ========================= */
+    function apriPrivacy() {
+      if (document.getElementById("privacyOverlay")) return;
+
+      var overlay = document.createElement("div");
+      overlay.id = "privacyOverlay";
+      overlay.className = "privacy-overlay";
+      overlay.innerHTML =
+        '<div class="privacy-modale" role="dialog" aria-modal="true" aria-labelledby="privacyTitolo">' +
+          '<button type="button" class="privacy-chiudi" onclick="chiudiPrivacy()" aria-label="Chiudi">×</button>' +
+          '<h2 id="privacyTitolo">Privacy</h2>' +
+          '<p>Questa partecipazione digitale è utilizzata esclusivamente per l\'organizzazione di una festa privata.</p>' +
+          '<p>I dati relativi agli invitati sono utilizzati unicamente per gestire l\'invio della partecipazione e le risposte RSVP. La risposta può comprendere lo stato di partecipazione e il numero complessivo di partecipanti, adulti e bambini; non vengono richiesti i nominativi dei singoli partecipanti.</p>' +
+          '<p>Per la gestione dell\'invito il sistema può inoltre registrare informazioni tecniche relative alla sua apertura, come prima e ultima apertura e numero di aperture.</p>' +
+          '<p>Il sistema non utilizza i dati per finalità pubblicitarie o di profilazione e non sono stati inseriti strumenti di tracciamento commerciale o pubblicitario.</p>' +
+          '<p>Per il funzionamento tecnico della partecipazione vengono utilizzati servizi informatici di terzi, tra cui GitHub, Cloudflare e Google. Tali servizi possono trattare dati tecnici di connessione nell\'ambito dell\'erogazione e della sicurezza dei propri servizi.</p>' +
+          '<p>I dati sono utilizzati esclusivamente per l\'organizzazione dell\'evento e non vengono diffusi. Al termine delle esigenze organizzative, i dati tecnici e quelli relativi alla partecipazione non più necessari saranno eliminati dal sistema.</p>' +
+          '<p>Per qualsiasi richiesta relativa ai dati è possibile rivolgersi direttamente all\'organizzatore.</p>' +
+        '</div>';
+
+      document.body.appendChild(overlay);
+      overlay.addEventListener("click", function(ev) {
+        if (ev.target === overlay) chiudiPrivacy();
+      });
+    }
+
+    function chiudiPrivacy() {
+      var overlay = document.getElementById("privacyOverlay");
+      if (overlay) overlay.remove();
+    }
 
     /* =========================
        RSVP
