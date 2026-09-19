@@ -1,4 +1,4 @@
-<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.11 — PRIVACY DISCRETA SUL CARTONCINO + DIAGNOSTICA RSVP -->
+<!-- PARTECIPAZIONE ONLINE — INDEX VERSIONE 7.0.12 — FIX CLICK PRIVACY SU CARTONCINO CLONATO -->
 <!DOCTYPE html>
 <html lang="it">
 
@@ -2117,15 +2117,19 @@ risultato.innerHTML =
     testo.textContent = "Privacy";
     gruppo.appendChild(testo);
 
-    gruppo.addEventListener("click", function(ev) {
-      ev.stopPropagation();
-      apriPrivacy();
-    });
-    gruppo.addEventListener("keydown", function(ev) {
-      if (ev.key === "Enter" || ev.key === " ") {
-        ev.preventDefault(); ev.stopPropagation(); apriPrivacy();
-      }
-    });
+    /*
+      Il cartoncino finale viene creato con cloneNode(true): i listener aggiunti
+      con addEventListener non vengono copiati. Usiamo quindi attributi inline,
+      come già fa il pulsante RSVP, così il comando resta attivo anche sul clone.
+    */
+    gruppo.setAttribute(
+      "onclick",
+      "event.stopPropagation(); apriPrivacy(); return false;"
+    );
+    gruppo.setAttribute(
+      "onkeydown",
+      "if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); apriPrivacy(); return false; }"
+    );
 
     svg.appendChild(gruppo);
   }
